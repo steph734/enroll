@@ -11,33 +11,42 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('teachers', function (Blueprint $table) {
-            $table->id('teacherid');
-            $table->string('full_name'); 
-            $table->integer('grade_level'); 
-            $table->integer('contacts'); 
+        Schema::create('student', function (Blueprint $table) {
+            $table->id('studentid');
+            $table->string('firstname'); 
+            $table->string('middlename');
+            $table->string('lastname');
+            $table->string('gender');
+            $table->integer('age');
+            $table->string('email');
+            $table->integer('phonenumber');
             $table->unsignedBigInteger('subjectid'); 
+            $table->unsignedBigInteger('strandid'); 
             $table->unsignedBigInteger('sectionid'); 
-            $table->unsignedBigInteger('adminid'); 
+            $table->unsignedBigInteger('paymentid'); 
             
             $table->foreign('subjectid')
                   ->references('subjectid') 
                   ->on('subject') 
                   ->onDelete('cascade');
                   
+            $table->foreign('strandid')
+                  ->references('strandid') 
+                  ->on('strand')
+                  ->onDelete('cascade');
+
             $table->foreign('sectionid')
                   ->references('sectionid') 
                   ->on('section')
                   ->onDelete('cascade');
 
-            $table->foreign('adminid')
-                  ->references('adminid') 
-                  ->on('users')
+             $table->foreign('paymentid')
+                  ->references('paymentid') 
+                  ->on('payment')
                   ->onDelete('cascade');
                   
             $table->timestamps();
         });
-
     }
 
     /**
@@ -45,6 +54,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('teacher');
+        Schema::dropIfExists('student');
     }
 };
