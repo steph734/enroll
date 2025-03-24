@@ -1,0 +1,109 @@
+/* ../css/dashboard.css */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+:root {
+  --base-clr: #e1e1e2 !important;
+  --line-clr: #305cde !important;
+  --hover-clr: #305cde !important;
+  --text-clr: #1b1b1b !important;
+  --accent-clr: #305cde !important;
+  --secondary-text-clr: #b0b3c1 !important;
+}
+
+.dashboard-content .card {
+  border-radius: 15px !important;
+  box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
+  -webkit-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
+  -moz-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
+  background-color: white !important;
+  margin: 10px !important;
+}
+
+.card {
+  /* border: 1px solid var(--line-clr) !important; */
+}
+.first-row {
+  min-height: 400px !important;
+}
+
+.dashboard-content .card-body {
+  padding: 20px !important;
+}
+
+.chart-legend {
+  margin-top: 10px !important;
+  display: flex !important;
+  justify-content: center !important;
+  gap: 15px !important;
+}
+
+.chart-legend span {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  font-size: 0.9rem !important;
+}
+
+.stat-card {
+  text-align: center !important;
+}
+
+.stat-card .stat-icon {
+  font-size: 2rem !important;
+  color: var(--accent-clr) !important;
+  margin-bottom: 10px !important;
+}
+
+.stat-card h3 {
+  font-size: 2rem !important;
+  margin-bottom: 5px !important;
+}
+
+.stat-card p {
+  color: var(--secondary-text-clr) !important;
+  margin-bottom: 0 !important;
+}
+
+.card-first {
+  /* width: 280px !important; */
+}
+
+.card-students {
+  height: auto !important;
+}
+
+.card-abm {
+  height: auto !important;
+}
+
+#hummsChart,
+#stemChart {
+  width: 150px !important;
+  height: 150px !important;
+}
+
+#studentsChart {
+  width: 350px !important;
+  height: 350px !important;
+}
+#abmChart {
+  width: 150px !important;
+  height: 150px !important;
+}
+
+.card-bar {
+  height: auto !important;
+}
+
+#barChart {
+  width: 400px !important;
+  height: 200px !important;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 800px) {
+  .dashboard-content .card {
+    margin-bottom: 15px !important;
+    border: 1px solid var(--line-clr) !important;
+  }
+}
