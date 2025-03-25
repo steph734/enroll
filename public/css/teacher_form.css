@@ -12,6 +12,14 @@
   /* border: 1px solid #305cde; */
   /* border-radius: 5px; */
 }
+.card{
+  border-radius: 0 15px 15px 15px;
+  transition: transform 0.2s ease;
+}
+
+.card:hover{
+  transform: translateY(-2px);
+}
 
 .profile-pic {
   width: 150px;

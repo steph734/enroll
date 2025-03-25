@@ -6,9 +6,9 @@
 @section('content')
 
 <div class="teachers-content">
-    <div class="row mb-3">
+    <div class="mb-3 row">
         <div class="row">
-            <div class="card p-3 card-header-teacher">
+            <div class="p-3 card card-header-teacher">
                 <div class="card-body">
                     <div class="d-flex">
                         <div class="card-title d-flex align-items-center">
@@ -27,9 +27,9 @@
                     </div>
 
                     <!-- Filters Section -->
-                    <div class="filters d-flex justify-content-between align-items-center mt-3">
+                    <div class="mt-3 filters d-flex justify-content-between align-items-center">
                         <!-- Tabs for filtering by category -->
-                        <div class="tabs d-flex gap-3">
+                        <div class="gap-3 tabs d-flex">
                             <button class="tab active">ALL Teachers</button>
                             <button class="tab">STEM</button>
                             <button class="tab">ABM</button>
@@ -37,7 +37,7 @@
                         </div>
 
                         <!-- Dropdowns for Filter by and Sort by -->
-                        <div class="dropdowns d-flex gap-2">
+                        <div class="gap-2 dropdowns d-flex">
                             <select class="form-select" style="width: 150px;">
                                 <option>Filter by</option>
                                 <option value="department">Strand</option>
@@ -54,8 +54,8 @@
                         </div>
 
                         <!-- Add Teacher Button -->
-                        <a href="../layout/web-layout.php?page=teacher_form">
-                            <button class="btn btn-primary add-teacher p-1 rounded-5">Add Teacher</button>
+                        <a href="{{ route('enrollment.show','teacher_form') }}">
+                            <button class="p-1 btn btn-primary add-teacher rounded-5">Add Teacher</button>
                         </a>
                     </div>
                 </div>
@@ -63,8 +63,8 @@
         </div>
     </div>
 
-    <div class="row mb-3">
-        <div class="card p-3 card-table ">
+    <div class="mb-3 row">
+        <div class="p-3 card card-table ">
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover table-striped ">

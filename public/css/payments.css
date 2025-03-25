@@ -1,0 +1,198 @@
+/* payments.css */
+
+
+.payment-content {
+    margin: 10px !important;
+    font-family: "Arial", sans-serif;
+  }
+  
+  /* Card for the table */
+  .card-table {
+    min-height: 100vh !important;
+    border-radius: 1em !important;
+    box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
+    -webkit-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
+    -moz-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
+  }
+  
+  /* Card for the header (search and filters) */
+  .card-header-payment {
+    position: sticky !important;
+    top: 0 !important;
+    border-radius: 1em 1em !important;
+    box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
+    -webkit-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
+    -moz-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
+  }
+  
+  /* Search container styling */
+  .search-container-dash {
+    margin-top: 10px !important;
+    position: relative !important;
+    width: 350px !important;
+  }
+  
+  .search-container-dash input {
+    width: 100% !important;
+    height: 40px !important;
+    font-size: 16px !important;
+    padding: 10px 20px 10px 40px !important;
+    border-radius: 30px !important;
+    border: 1px solid var(--line-clr) !important;
+  }
+  
+  .search-container-dash i {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    color: #bbc0c9 !important;
+    font-size: 18px;
+    pointer-events: none;
+  }
+  
+  /* Table row styling */
+  tr {
+    cursor: pointer;
+    height: 50px !important;
+  }
+  
+  /* Filters section */
+  .filters {
+    margin-top: 20px !important;
+  }
+  
+  /* Tabs (ALL Students, Paid, Unpaid) */
+  .tabs {
+    display: flex;
+    gap: 15px;
+  }
+  
+  .tab {
+    background: none;
+    border: none;
+    padding: 8px 16px;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .tab.active {
+    color: #007bff !important;
+    border-bottom: 2px solid #007bff !important;
+  }
+  
+  .tab:hover {
+    color: #007bff;
+  }
+  
+  /* Dropdowns (Filter by, Sort by) */
+  .dropdowns {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .form-select {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f2f5ff;
+    cursor: pointer !important;
+  }
+  
+  /* Summary cards (Total Payments, Outstanding Balance, Unpaid Count) */
+  .card {
+    border-radius: 1em !important;
+    box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
+    -webkit-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
+    -moz-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
+    transition: transform 0.2s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-2px);
+  }
+  
+  .card-body {
+    text-align: center;
+  }
+  
+  .card-body i {
+    font-size: 24px;
+  }
+  
+  .card-body .text-success {
+    color: #28a745 !important;
+  }
+  
+  .card-body .text-warning {
+    color: #ffc107 !important;
+  }
+  
+  .card-body .text-danger {
+    color: #dc3545 !important;
+  }
+  
+  .card-body h5 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 10px 0;
+  }
+  
+  .card-body p {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+  }
+  
+  /* Table styling */
+  .table th,
+  .table td {
+    font-size: 14px;
+    vertical-align: middle;
+  }
+  
+  /* Action buttons (View, Edit) */
+  .table .btn-warning {
+    background-color: #ffc107;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: #fff;
+  }
+  
+  .table .btn-warning:hover {
+    background-color: #e0a800;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .search-container-dash {
+      width: 100% !important;
+    }
+  
+    .filters {
+      flex-direction: column;
+      gap: 10px;
+    }
+  
+    .tabs {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  
+    .dropdowns {
+      width: 100%;
+      justify-content: space-between;
+    }
+  
+    .dropdowns .form-select {
+      width: 48%;
+    }
+  
+    .card-body h5 {
+      font-size: 20px;
+    }
+  }

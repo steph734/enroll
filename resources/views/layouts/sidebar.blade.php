@@ -1,9 +1,10 @@
 <nav id="sidebar">
     <div class="sidebar-header">
-        <span class="logo">Enrollment System</span>
-        <button id="toggle-btn">
+        <button id="toggle-btn" style="margin:0;">
             <i class="fa-solid fa-bars-staggered"></i>
         </button>
+        <h4 class="logo">SJE</h4>
+
     </div>
     <ul>
         <li class="{{ $page === 'dashboard' || is_null($page) ? 'active' : '' }}">

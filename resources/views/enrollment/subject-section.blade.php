@@ -1,17 +1,22 @@
-<link rel="stylesheet" href="../css/subject_section.css">
+@extends('layouts.app')
+@section('title','subjects&sections')
+@section('styles')
+    <link rel="stylesheet" href="{{asset('css/subject_section.css')}}">
+@endsection
+@section('content')
 
 <div class="assignment-content">
     <div class="alert alert-success" style="display: none;">Profile updated successfully!</div>
     <div class="alert alert-danger" style="display: none;">Invalid email format.</div>
 
-    <div class="row mb-5">
+    <div class="mb-5 row">
         <!-- Assigned Subjects & Sections -->
         <div class="col-8 assignment-section">
-            <h4 class="section-title m-2 mb-0">Assigned Subjects & Sections</h4>
-            <div class="card p-3 m-2 mt-0 card-table-assigned">
+            <h4 class="m-2 mb-0 section-title">Assigned Subjects & Sections</h4>
+            <div class="p-3 m-2 mt-0 card card-table-assigned">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-striped">
+                        <table class="table table-hover table-striped" style="cursor: pointer;">
                             <thead>
                                 <tr>
                                     <th>Teacher's Name</th>
@@ -53,12 +58,12 @@
 
         <!-- Teacher's Profile -->
         <div class="col-4 profile-section">
-            <h4 class="section-title m-2 mb-0">Teacher's Profile</h4>
-            <div class="card p-3 m-2 mt-0">
+            <h4 class="m-2 mb-0 section-title">Teacher's Profile</h4>
+            <div class="p-3 m-2 mt-0 card">
                 <div class="card-body">
                     <div class="card-title">
-                        <div class="text-center mb-3">
-                            <div class="profile-pic mx-auto"></div>
+                        <div class="mb-3 text-center">
+                            <div class="mx-auto profile-pic"></div>
                             <h5 class="mt-2">433123</h5>
                         </div>
                         <form>
@@ -118,7 +123,7 @@
                                     <option value="Science">Science</option>
                                 </select>
                             </div>
-                            <button type="submit" name="save_profile" class="btn btn-primary w-100 mt-3">Save
+                            <button type="submit" name="save_profile" class="mt-3 btn btn-primary w-100">Save
                                 Info</button>
                         </form>
                     </div>
@@ -129,23 +134,23 @@
 
     <!-- Add Subject/Section -->
     <div class="row">
-        <h4 class="section-title m-2 mb-0">Subject/Section</h4>
-        <div class="card p-3 m-2 mt-0">
+        <h4 class="m-2 mb-0 section-title">Subject/Section</h4>
+        <div class="p-3 m-2 mt-0 card">
             <div class="card-body">
-                <ul class="nav nav-tabs mt-3">
-                    <li class="nav-item mx-1">
+                <ul class="mt-3 nav nav-tabs">
+                    <li class="mx-1 nav-item">
                         <a class="nav-link active" href="#section" data-bs-toggle="tab">Section</a>
                     </li>
-                    <li class="nav-item mx-1">
+                    <li class="mx-1 nav-item">
                         <a class="nav-link" href="#subject" data-bs-toggle="tab">Subject</a>
                     </li>
                 </ul>
-                <div class="tab-content mt-3">
+                <div class="mt-3 tab-content">
                     <!-- Section Tab -->
                     <div class="tab-pane fade show active" id="section">
-                        <div class="d-flex justify-content-between mb-3">
+                        <div class="mb-3 d-flex justify-content-between">
                             <div class="search-container">
-                                <input type="text" id="sectionSearch" class="form-control w-100 p-1"
+                                <input type="text" id="sectionSearch" class="p-1 form-control w-100"
                                     placeholder="Search...">
                             </div>
                             <div class="filter-container">
@@ -156,7 +161,7 @@
                                 </select>
                             </div>
                         </div>
-                        <table class="table table-striped">
+                        <table class="table table-hover table-striped" style="cursor: pointer;">
                             <thead>
                                 <tr>
                                     <th>Section Name</th>
@@ -171,7 +176,7 @@
                                     <td>STEM 11-A</td>
                                     <td>Grade 11</td>
                                     <td>STEM</td>
-                                    <td><span class="badge bg-danger p-1">Occupied</span></td>
+                                    <td><span class="p-1 badge bg-danger">Occupied</span></td>
                                     <td>
                                         <button class="btn btn-sm btn-success assign-btn">Assign</button>
                                         <button class="btn btn-sm btn-warning edit-btn">Edit</button>
@@ -181,7 +186,7 @@
                                     <td>HUMSS 11-C</td>
                                     <td>Grade 11</td>
                                     <td>HUMSS</td>
-                                    <td><span class="badge bg-danger p-1">Occupied</span></td>
+                                    <td><span class="p-1 badge bg-danger">Occupied</span></td>
                                     <td>
                                         <button class="btn btn-sm btn-success assign-btn">Assign</button>
                                         <button class="btn btn-sm btn-warning edit-btn">Edit</button>
@@ -193,9 +198,9 @@
 
                     <!-- Subject Tab -->
                     <div class="tab-pane fade" id="subject">
-                        <div class="d-flex justify-content-between mb-3">
+                        <div class="mb-3 d-flex justify-content-between">
                             <div class="search-container">
-                                <input type="text" id="subjectSearch" class="form-control w-100 p-1"
+                                <input type="text" id="subjectSearch" class="p-1 form-control w-100"
                                     placeholder="Search...">
                             </div>
                             <div class="filter-container">
@@ -207,7 +212,7 @@
                             </div>
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-striped">
+                            <table class="table table-striped table-hover" style="cursor: pointer;">
                                 <thead>
                                     <tr>
                                         <th>Subject Name</th>
@@ -284,3 +289,4 @@
         });
     });
 </script>
+@endsection

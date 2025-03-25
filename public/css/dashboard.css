@@ -19,9 +19,12 @@
     margin: 10px !important;
 }
 
-.card {
-    /* border: 1px solid var(--line-clr) !important; */
+.card{
+    transition: transform 0.2s ease;
 }
+.card:hover {
+    transform: translateY(-2px);
+  }
 .first-row {
     min-height: 400px !important;
 }

@@ -22,6 +22,11 @@ tr {
   box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26) !important;
   -webkit-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26) !important;
   -moz-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26) !important;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
 }
 
 h4 {

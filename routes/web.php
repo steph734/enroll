@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
@@ -7,14 +8,14 @@ use App\Http\Controllers\EnrollmentController;
 
 Route::middleware('auth')->group(function () {
     Route::get('/enrollment/{page}', [EnrollmentController::class, 'show'])->name('enrollment.show');
-    Route::post('/logout', [Auth::class, 'logout'])->name('logout');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 Route::get('/', function () {
     return view('login.login');
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return view('enrollment.dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
