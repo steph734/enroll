@@ -3,7 +3,12 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\EnrollmentController;
 
+Route::middleware('auth')->group(function () {
+    Route::get('/enrollment/{page}', [EnrollmentController::class, 'show'])->name('enrollment.show');
+    Route::post('/logout', [Auth::class, 'logout'])->name('logout');
+});
 Route::get('/', function () {
     return view('login.login');
 });

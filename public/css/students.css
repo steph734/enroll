@@ -1,137 +1,137 @@
 .students-content {
-  margin: 10px !important;
+    margin: 10px !important;
 }
 .card-table {
-  min-height: 100vh !important;
-  /* border: 1px solid var(--line-clr) !important; */
-  border-radius: 1em !important;
-  box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
-  -webkit-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
-  -moz-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
+    min-height: 100vh !important;
+    /* border: 1px solid var(--line-clr) !important; */
+    border-radius: 1em !important;
+    box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
+    -webkit-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
+    -moz-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
 }
 .card-header-student {
-  /* border: 1px solid var(--line-clr) !important; */
-  position: sticky !important;
-  top: 0 !important;
-  border-radius: 1em 1em !important;
-  box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
-  -webkit-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
-  -moz-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
+    /* border: 1px solid var(--line-clr) !important; */
+    position: sticky !important;
+    top: 0 !important;
+    border-radius: 1em 1em !important;
+    box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
+    -webkit-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
+    -moz-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
 }
 
 .row-header-student {
-  position: sticky !important;
-  top: 0 !important;
+    position: sticky !important;
+    top: 0 !important;
 }
 .search-container-dash {
-  margin-top: 10px !important;
-  position: relative !important;
+    margin-top: 10px !important;
+    position: relative !important;
 }
 
 .search-container-dash input {
-  width: 350px !important;
-  height: 40px !important;
-  font-size: 16px !important;
-  padding: 10px 20px 10px 40px !important;
-  border-radius: 30px !important;
-  border: 1px solid var(--line-clr) !important;
+    width: 350px !important;
+    height: 40px !important;
+    font-size: 16px !important;
+    padding: 10px 20px 10px 40px !important;
+    border-radius: 30px !important;
+    border: 1px solid var(--line-clr) !important;
 }
 
 .search-container-dash i {
-  position: absolute;
-  top: 50%;
-  left: 10px;
-  transform: translateY(-50%);
-  color: #bbc0c9 !important;
-  font-size: 18px;
-  pointer-events: none;
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    color: #bbc0c9 !important;
+    font-size: 18px;
+    pointer-events: none;
 }
 
 tr {
-  cursor: pointer;
-  height: 50px !important;
+    cursor: pointer;
+    height: 50px !important;
 }
 
 /* Style for the filters container */
 .filters {
-  margin-top: 20px !important;
+    margin-top: 20px !important;
 }
 
 /* Style for the tabs */
 .tabs {
-  display: flex;
-  gap: 15px;
+    display: flex;
+    gap: 15px;
 }
 
 .tab {
-  background: none;
-  border: none;
-  padding: 8px 16px;
-  font-size: 14px;
-  color: #333;
-  cursor: pointer;
-  transition: all 0.3s ease;
+    background: none;
+    border: none;
+    padding: 8px 16px;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 .tab.active {
-  color: #007bff !important;
-  border-bottom: 2px solid #007bff !important;
+    color: #007bff !important;
+    border-bottom: 2px solid #007bff !important;
 }
 
 .tab:hover {
-  color: #007bff;
+    color: #007bff;
 }
 
 /* Style for the dropdowns */
 .dropdowns {
-  display: flex;
-  gap: 10px;
+    display: flex;
+    gap: 10px;
 }
 
 .form-select {
-  padding: 8px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f2f5ff !important;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f2f5ff !important;
 }
-  
+
 /* Style for the Add Student button */
 .add-student {
-  padding: 8px 16px;
-  font-size: 14px;
-  border-radius: 20px;
-  width: 150px;
-  height: 30px;
-  background-color: #305cde;
-  border: none;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 20px;
+    width: 150px;
+    height: 30px;
+    background-color: #305cde;
+    border: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .add-student:hover {
-  background-color: #0056b3;
-  box-shadow: 0 1px 2px #111111;
-  transform: translateY(-2px);
+    background-color: #0056b3;
+    box-shadow: 0 1px 2px #111111;
+    transform: translateY(-2px);
 }
 
 /* Adjust the search bar to match the image */
 .search-container-dash {
-  position: relative;
-  width: 300px;
+    position: relative;
+    width: 300px;
 }
 
 .search-container-dash input {
-  width: 100%;
-  padding: 8px 40px 8px 10px;
-  border: 1px solid #ccc;
-  border-radius: 20px;
-  font-size: 14px;
+    width: 100%;
+    padding: 8px 40px 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    font-size: 14px;
 }
 
 .search-container-dash .fa-magnifying-glass {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #666;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
 }
