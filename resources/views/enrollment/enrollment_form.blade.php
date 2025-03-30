@@ -6,7 +6,8 @@
 @section('content')
 <div>
     <p class="mb-4 text-center h4 " style="color: var(--text-clr) !important;">Student Enrollment Form</p>
-    <form method="POST" action="" enctype="multipart/form-data">
+    <form method="POST" action="{{ route('enrollment.store') }}" enctype="multipart/form-data">
+        @csrf
         <!-- Personal Information -->
         <h5 class="section-title">Personal Information</h5>
         <div class="mb-3 shadow card form-section">
@@ -52,7 +53,7 @@
                         </div>
                         <div class="p-1 mb-3 col-md-4">
                             <label for="age" class="form-label">Age</label>
-                            <input type="number" class="form-control" id="age" name="age" min="1" required>
+                            <input type="number" class="form-control" id="age" name="age" m in="1" required>
                         </div>
                     </div>
                     <div class="row">
@@ -277,9 +278,8 @@
         <div class="p-3 card">
             <div class="gap-3 d-flex justify-content-center">
                 <button type="submit" class="btn btn-outline-primary btn-lg w-25">Enroll</button>
-                <button type="button" class="btn btn-primary btn-lg w-25">
-                    Cancel
-                </button>
+                <a href="{{ route('students') }}" class="btn btn-primary btn-lg w-25">Cancel</a>
+                
             </div>
         </div>
     </form>

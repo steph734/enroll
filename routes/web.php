@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EnrollmentController;
+use App\Http\Controllers\StudentController;
 
 Route::middleware('auth')->group(function () {
     Route::get('/enrollment/{page}', [EnrollmentController::class, 'show'])->name('enrollment.show');
@@ -27,5 +28,9 @@ Route::middleware('auth')->group(function () {
 Route::get('/signup', function () {
     return view('login.signup');
 });
+
+
+Route::get('/enrollment', [StudentController::class, 'index'])->name('students');
+Route::post('/enrollment', [StudentController::class, 'store'])->name('student.store');
 
 require __DIR__ . '/auth.php';

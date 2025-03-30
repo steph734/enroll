@@ -104,7 +104,7 @@
                 data: [40, 60],
                 backgroundColor: ['#5e63ff', '#d3d3d3']
             }]
-        },
+        }
         options: {
             responsive: true,
             plugins: {
