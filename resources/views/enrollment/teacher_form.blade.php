@@ -8,7 +8,8 @@
 <div>
     <p class="mb-4 text-center h4" style="color: var(--text-clr) !important;">Teacher's Form</p>
   
-    <form method="POST" action="" enctype="multipart/form-data">
+    <form method="POST" action="{{ route('teachers.store') }}" enctype="multipart/form-data">
+        @csrf
         <!-- Personal Information -->
         <h5 class="section-title">Personal Information</h5>
         <div class="mb-3 shadow card form-section">

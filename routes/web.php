@@ -6,6 +6,8 @@ use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\TeacherController;
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/enrollment/{page}', [EnrollmentController::class, 'show'])->name('enrollment.show');
@@ -32,5 +34,8 @@ Route::get('/signup', function () {
 
 Route::get('/enrollment', [StudentController::class, 'index'])->name('students');
 Route::post('/enrollment', [StudentController::class, 'store'])->name('student.store');
+
+Route::get('/enrollment/teacher_form', [TeacherController::class, 'create'])->name('teachers.create');
+Route::post('/enrollment/teacher_form', [TeacherController::class, 'store'])->name('teachers.store');
 
 require __DIR__ . '/auth.php';

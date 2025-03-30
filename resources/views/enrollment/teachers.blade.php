@@ -73,7 +73,7 @@
                                 <th scope="col" class="align-middle">#</th>
                                 <th scope="col" class="align-middle">First</th>
                                 <th scope="col" class="align-middle">Last</th>
-                                <th scope="col" class="align-middle">Strand</th>
+                                <th scope="col" class="align-middle">Age</th>
                             </tr>
                         </thead>
                         <tbody d-flex align-items-center>
