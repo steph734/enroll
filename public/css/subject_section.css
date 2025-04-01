@@ -1,119 +1,137 @@
 .section-title {
-  color: #242425;
-  padding: 5px 10px;
-  margin-bottom: 0;
-  width: 300px;
-  text-align: center;
-  border-radius: 10px 10px 0 0;
-  font-size: 1.25rem;
-  font-weight: 600;
-  /* From https://css.glass */
-  background: rgba(255, 255, 255, 0.34);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(7px);
-  -webkit-backdrop-filter: blur(7px);
+    color: #242425;
+    padding: 5px 10px;
+    margin-bottom: 0;
+    width: 300px;
+    text-align: center;
+    border-radius: 10px 10px 0 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    /* From https://css.glass */
+    background: rgba(255, 255, 255, 0.34);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
 }
 
 tr {
-  height: 50px !important;
+    height: 50px !important;
 }
 .card {
-  border-radius: 0 1em 1em 1em;
-  box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26) !important;
-  -webkit-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26) !important;
-  -moz-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26) !important;
-  transition: transform 0.2s ease;
+    border-radius: 0 1em 1em 1em;
+    box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26) !important;
+    -webkit-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26) !important;
+    -moz-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26) !important;
+    transition: transform 0.2s ease;
 }
 
 .card:hover {
-  transform: translateY(-2px);
+    transform: translateY(-2px);
 }
 
 h4 {
-  font-size: 18px !important;
-  font-weight: 600;
-  padding: 0.3em !important;
+    font-size: 18px !important;
+    font-weight: 600;
+    padding: 0.3em !important;
 }
 .profile-pic {
-  width: 100px;
-  height: 100px;
-  background-color: #305cde;
-  border-radius: 50%;
-  margin: 0 auto;
+    width: 100px;
+    height: 100px;
+    background-color: #305cde;
+    border-radius: 50%;
+    margin: 0 auto;
 }
 
 .nav-tabs .nav-link {
-  border: none;
-  border-bottom: 2px solid transparent;
-  color: #666;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: #666;
 }
 
 .nav-tabs .nav-link.active {
-  border-bottom: 2px solid #305cde;
-  color: #305cde;
+    border-bottom: 2px solid #305cde;
+    color: #305cde;
 }
 
 .search-container input {
-  border-radius: 20px;
-  padding: 8px 15px;
+    border-radius: 20px;
+    padding: 8px 15px;
 }
 
 .filter-container .form-select {
-  border-radius: 4px;
-  padding: 8px;
+    border-radius: 4px;
+    padding: 8px;
 }
 
 .filter-container .form-select:hover {
-  background-color: #f0f4ff;
+    background-color: #f0f4ff;
 }
 
 .assign-btn,
 .edit-btn {
-  margin-right: 5px;
+    margin-right: 5px;
 }
 
 .badge.bg-danger {
-  font-size: 0.75rem;
+    font-size: 0.75rem;
 }
 
 .table th,
 .table td {
-  vertical-align: middle;
+    vertical-align: middle;
 }
 
 .table-hover tbody tr:hover {
-  background-color: #f1f5ff;
+    background-color: #f1f5ff;
 }
 
 .card-table-assigned {
-  min-height: 112vh !important;
+    min-height: 112vh !important;
+}
+
+.badge.bg-blue {
+    background-color: #007bff;
+    color: white;
+}
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+.form-control,
+.form-select {
+    border-radius: 5px;
+    border: 1px solid #ced4da;
 }
 
 @media (max-width: 768px) {
-  .assignment-content {
-    padding: 0 10px;
-  }
+    .assignment-content {
+        padding: 0 10px;
+    }
 
-  .section-title {
-    width: 100%;
-  }
+    .section-title {
+        width: 100%;
+    }
 
-  .profile-pic {
-    width: 80px;
-    height: 80px;
-  }
+    .profile-pic {
+        width: 80px;
+        height: 80px;
+    }
 
-  .search-container input,
-  .filter-container .form-select {
-    width: 100% !important;
-    margin-bottom: 10px;
-  }
+    .search-container input,
+    .filter-container .form-select {
+        width: 100% !important;
+        margin-bottom: 10px;
+    }
 
-  .row.mb-5 {
-    flex-direction: column;
-  }
+    .row.mb-5 {
+        flex-direction: column;
+    }
 
-  .col-6 {
-    width: 100%;
-  }
+    .col-6 {
+        width: 100%;
+    }
 }

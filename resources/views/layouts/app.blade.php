@@ -15,10 +15,10 @@
     @yield('styles')
     <!-- Add this for page-specific styles -->
     <style>
-        body {
-            background: rgb(155, 182, 243);
-            background: linear-gradient(137deg, rgba(155, 182, 243, 1) 0%, rgba(203, 220, 255, 1) 21%, rgba(237, 243, 255, 0.999964951801033) 52%, rgba(184, 206, 255, 1) 100%, rgba(184, 206, 255, 1) 100%);
-        }
+    body {
+        background: rgb(155, 182, 243);
+        background: linear-gradient(137deg, rgba(155, 182, 243, 1) 0%, rgba(203, 220, 255, 1) 21%, rgba(237, 243, 255, 0.999964951801033) 52%, rgba(184, 206, 255, 1) 100%, rgba(184, 206, 255, 1) 100%);
+    }
     </style>
 </head>
 
@@ -64,11 +64,15 @@
         @yield('content')
     </main>
 
+
+
+
     @vite(['resources/js/app.js'])
     <script src="{{ asset('statics/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('js/app.js') }}"></script>
     @yield('scripts')
     <!-- Add this for page-specific scripts -->
+
 </body>
 
 </html>

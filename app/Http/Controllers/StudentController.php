@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Support\Facades\Storage;
 use App\Models\Student;
 
@@ -29,11 +30,11 @@ class StudentController extends Controller
 
         // Handle file uploads
         $data = $request->all();
-        
+
         if ($request->hasFile('profile_picture')) {
             $data['profile_picture'] = $request->file('profile_picture')->store('profiles', 'public');
         }
-        
+
         if ($request->hasFile('transcript')) {
             $data['transcript'] = $request->file('transcript')->store('transcripts', 'public');
         }

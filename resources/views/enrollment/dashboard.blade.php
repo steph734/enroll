@@ -95,123 +95,123 @@
 @section('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Pie Chart for HUMMS
-    const hummsChart = new Chart(document.getElementById('hummsChart'), {
-        type: 'pie',
-        data: {
-            labels: ['HUMMS', 'Others'],
-            datasets: [{
-                data: [40, 60],
-                backgroundColor: ['#5e63ff', '#d3d3d3']
-            }]
-        }
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: false
-                }
+// Pie Chart for HUMMS
+const hummsChart = new Chart(document.getElementById('hummsChart'), {
+    type: 'pie',
+    data: {
+        labels: ['HUMMS', 'Others'],
+        datasets: [{
+            data: [40, 60],
+            backgroundColor: ['#5e63ff', '#d3d3d3']
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false
             }
         }
-    });
+    }
+});
 
-    // Pie Chart for STEM
-    const stemChart = new Chart(document.getElementById('stemChart'), {
-        type: 'pie',
-        data: {
-            labels: ['STEM', 'Others'],
-            datasets: [{
-                data: [50, 50],
-                backgroundColor: ['#305cde', '#d3d3d3']
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: false
-                }
+// Pie Chart for STEM
+const stemChart = new Chart(document.getElementById('stemChart'), {
+    type: 'pie',
+    data: {
+        labels: ['STEM', 'Others'],
+        datasets: [{
+            data: [50, 50],
+            backgroundColor: ['#305cde', '#d3d3d3']
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false
             }
         }
-    });
+    }
+});
 
-    // Pie Chart for ABM
-    const abmChart = new Chart(document.getElementById('abmChart'), {
-        type: 'pie',
-        data: {
-            labels: ['ABM', 'Others'],
-            datasets: [{
-                data: [30, 70],
-                backgroundColor: ['#5e63ff', '#d3d3d3']
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: false
-                }
+// Pie Chart for ABM
+const abmChart = new Chart(document.getElementById('abmChart'), {
+    type: 'pie',
+    data: {
+        labels: ['ABM', 'Others'],
+        datasets: [{
+            data: [30, 70],
+            backgroundColor: ['#5e63ff', '#d3d3d3']
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false
             }
         }
-    });
+    }
+});
 
-    // Larger Pie Chart for Students
-    const studentsChart = new Chart(document.getElementById('studentsChart'), {
-        type: 'pie',
-        data: {
-            labels: ['STEM', 'ABM', 'HUMMS'],
-            datasets: [{
-                data: [40, 30, 30],
-                backgroundColor: ['#305cde', '#5e63ff', '#d3d3d3']
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: false
-                }
+// Larger Pie Chart for Students
+const studentsChart = new Chart(document.getElementById('studentsChart'), {
+    type: 'pie',
+    data: {
+        labels: ['STEM', 'ABM', 'HUMMS'],
+        datasets: [{
+            data: [40, 30, 30],
+            backgroundColor: ['#305cde', '#5e63ff', '#d3d3d3']
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false
             }
         }
-    });
+    }
+});
 
-    // Bar Chart
-    const barChart = new Chart(document.getElementById('barChart'), {
-        type: 'bar',
-        data: {
-            labels: ['STEM', 'ABM', 'HUMMS'],
-            datasets: [{
-                    label: 'STEM',
-                    data: [80, 0, 0],
-                    backgroundColor: '#305cde'
-                },
-                {
-                    label: 'ABM',
-                    data: [0, 60, 0],
-                    backgroundColor: '#5e63ff'
-                },
-                {
-                    label: 'HUMMS',
-                    data: [0, 0, 40],
-                    backgroundColor: '#d3d3d3'
-                }
-            ]
-        },
-        options: {
-            indexAxis: 'y',
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: false
-                }
+// Bar Chart
+const barChart = new Chart(document.getElementById('barChart'), {
+    type: 'bar',
+    data: {
+        labels: ['STEM', 'ABM', 'HUMMS'],
+        datasets: [{
+                label: 'STEM',
+                data: [80, 0, 0],
+                backgroundColor: '#305cde'
             },
-            scales: {
-                x: {
-                    beginAtZero: true,
-                    max: 100
-                }
+            {
+                label: 'ABM',
+                data: [0, 60, 0],
+                backgroundColor: '#5e63ff'
+            },
+            {
+                label: 'HUMMS',
+                data: [0, 0, 40],
+                backgroundColor: '#d3d3d3'
+            }
+        ]
+    },
+    options: {
+        indexAxis: 'y',
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            x: {
+                beginAtZero: true,
+                max: 100
             }
         }
-    });
+    }
+});
 </script>
 @endsection
