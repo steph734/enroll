@@ -9,6 +9,11 @@ use Illuminate\Http\Request;
 
 class StudentController extends Controller
 {
+
+    public function create()
+    {
+        return view('enrollment.enrollment_form'); 
+    }
     public function store(Request $request)
     {
         // Validate the request
@@ -42,12 +47,12 @@ class StudentController extends Controller
         // Create student record
         Student::create($data);
 
-        return redirect()->route('students')->with('success', 'Student enrolled successfully!');
+        return redirect()->route('student.index');
     }
 
     public function index()
     {
-        // Add logic to show all students if needed
-        return view('students.index');
+      
+        return view('enrollment.students');
     }
 }

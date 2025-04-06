@@ -55,7 +55,7 @@
                         </div>
 
                         <!-- Add Student Button -->
-                        <a href="{{ route('enrollment.show','enrollment_form') }}">
+                        <a href="{{ route('student.create','enrollment_form') }}">
                             <button class="btn btn-primary add-student">Add Student</button>
                         </a>
                     </div>

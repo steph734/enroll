@@ -2,17 +2,16 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\LoginController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
-
+use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
     Route::get('/enrollment/{page}', [EnrollmentController::class, 'show'])->name('enrollment.show');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
+
 Route::get('/', function () {
     return view('login.login');
 });
@@ -31,11 +30,21 @@ Route::get('/signup', function () {
     return view('login.signup');
 });
 
+Route::get('/enrollment/enrollment_form', [StudentController::class, 'index'])->name('student.index');
+Route::get('/enrollment/enrollment_form', [TeacherController::class, 'create'])->name('student.create');
+Route::post('/enrollment/enrollment_form', [StudentController::class, 'store'])->name('student.store');
 
-Route::get('/enrollment', [StudentController::class, 'index'])->name('students');
-Route::post('/enrollment', [StudentController::class, 'store'])->name('student.store');
+Route::resource('/enrollment', EnrollmentController::class);
+Route::resource('teachers', TeacherController::class);
 
+Route::get('/enrollment/teacher_form', [TeacherController::class, 'create'])->name('enrollment.show');
+Route::post('/enrollment/teachers', [TeacherController::class, 'store'])->name('teachers.store');
+Route::get('enrollment.teachers', [TeacherController::class, 'index'])->name('teachers.index');
 Route::get('/enrollment/teacher_form', [TeacherController::class, 'create'])->name('teachers.create');
 Route::post('/enrollment/teacher_form', [TeacherController::class, 'store'])->name('teachers.store');
+Route::get('/enrollment/teachers/{id}/edit', [TeacherController::class, 'edit'])->name('enrollment.teachers.edit');
+Route::put('/enrollment/teachers/{id}', [TeacherController::class, 'update'])->name('enrollment.teachers.update');
+Route::delete('/enrollment/teachers/{id}', [TeacherController::class, 'destroy'])->name('enrollment.teachers.destroy');
+
 
 require __DIR__ . '/auth.php';
