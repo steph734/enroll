@@ -41,8 +41,15 @@
                                     <label class="form-label mb-1">Teacher</label>
                                     <select class="form-select" name="teacher">
                                         <option value="">Select a teacher</option>
-                                        <option value="Eli Sorono">Eli Sorono</option>
-                                        <option value="John Doe">John Doe</option>
+                                        @forelse(\App\Models\Teacher::all() as $teacher)
+                                            <option value="{{ $teacher->id }}"
+                                                data-id="{{ $teacher->teacher_id }}"
+                                                data-email="{{ $teacher->email }}">
+                                                {{ $teacher->first_name }} {{ $teacher->last_name }}
+                                            </option>
+                                        @empty
+                                            <option value="">No teachers available</option>
+                                        @endforelse
                                     </select>
                                 </div>
                                 <div class="col-md-4 p-1">
@@ -274,6 +281,9 @@
 </div>
 
 <script>
+
+
+
 // Search functionality for assignments
 const assignmentSearch = document.getElementById('assignmentSearch');
 const assignmentRows = document.querySelectorAll('.assignment-row');

@@ -23,38 +23,25 @@ class TeacherController extends Controller
     public function edit($id)
     {
         $teacher = Teacher::findOrFail($id);
-        return view('enrollment.teachers.edit', compact('teachers'));
-    }
-    public function update(Request $request, $id)
-    {
-        $teacher = Teacher::findOrFail($id);
-
-        $validator = Validator::make($request->all(), [
-            'first_name' => 'required|string|max:255',
-            'middle_name' => 'nullable|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => 'required|email|unique:teachers,email,' . $teacher->id,
-            'age' => 'required|integer|min:18|max:100',
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()
-                           ->withErrors($validator)
-                           ->withInput();
-        }
-
-        $teacher->update([
-            'first_name' => $request->first_name,
-            'middle_name' => $request->middle_name,
-            'last_name' => $request->last_name,
-            'email' => $request->email,
-            'age' => $request->age,
-        ]);
-
-        return redirect()->route('teachers.index')
-                        ->with('success', 'Teacher updated successfully');
+        return view('enrollment.teachers', compact('teachers'));
     }
 
+    public function update(Request $request, Teacher $teacher)
+{
+    $validated = $request->validate([
+        'first_name' => 'required|string|max:255',
+        'middle_name' => 'nullable|string|max:255',
+        'last_name' => 'required|string|max:255',
+        'email' => 'required|email|unique:teachers,email,' . $teacher->id,
+        'age' => 'required|integer|min:18|max:100',
+        'specialization' => 'required|in:STEM,ABM,HUMMMS',
+        'employment_status' => 'required|in:Full-time,Part-time,Contractual',
+    ]);
+
+    $teacher->update($validated);
+    
+    return redirect()->route('teachers.index')->with('success', 'Teacher updated successfully');
+}
     public function destroy($id)
     {
         $teacher = Teacher::findOrFail($id);

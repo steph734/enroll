@@ -12,36 +12,30 @@
             <div class="row">
                 <div class="p-3 card card-header-teacher">
                     <div class="card-body">
-                        <div class="d-flex">
-                            <div class="card-title d-flex align-items-center">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="card-title">
                                 <h5>List of Teachers</h5>
-                                <form action="teachers" id="searchForm" style="margin-left: 230px !important;">
-                                    <div class="search-container-dash">
-                                        <i class="fa-solid fa-magnifying-glass"></i>
-                                        <input type="text" placeholder="Search..." id="searchInput">
-                                        <div id="suggestions" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ddd; border-radius: 4px; max-height: 200px; overflow-y: auto; z-index: 1000;">
-                                        </div>
-                                    </div>
-                                </form>
                             </div>
+                            <form action="teachers" id="searchForm">
+                                <div class="search-container-dash">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <input type="text" placeholder="Search..." id="searchInput" class="form-control">
+                                    <div id="suggestions" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ddd; border-radius: 4px; max-height: 200px; overflow-y: auto; z-index: 1000;"></div>
+                                </div>
+                            </form>
                         </div>
 
                         <!-- Filters Section -->
                         <div class="mt-3 filters d-flex justify-content-between align-items-center">
                             <div class="gap-3 tabs d-flex">
-                                <button class="tab active">ALL Teachers</button>
-                                <button class="tab">STEM</button>
-                                <button class="tab">ABM</button>
-                                <button class="tab">HUMMMS</button>
+                                <button class="tab active" data-filter="all">ALL Teachers</button>
+                                <button class="tab" data-filter="Academic">Academic Track</button>
+                                <button class="tab" data-filter="TVL">TVL</button>
+                                <button class="tab" data-filter="Sports">Sports</button>
+                                <button class="tab" data-filter="Arts and Design">Arts and Design</button>
                             </div>
 
                             <div class="gap-2 dropdowns d-flex">
-                                <select class="form-select" style="width: 150px;">
-                                    <option>Filter by</option>
-                                    <option value="department">Strand</option>
-                                    <option value="years">Years of Service</option>
-                                    <option value="status">Status</option>
-                                </select>
                                 <select class="form-select" style="width: 150px;">
                                     <option>Sort by</option>
                                     <option value="name-asc">Name (A-Z)</option>
@@ -64,45 +58,58 @@
             <div class="p-3 card card-table">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-hover table-striped">
+                        <table class="table table-hover table-striped" style="cursor: pointer;">
                             <thead>
                                 <tr>
                                     <th scope="col" class="align-middle">ID</th>
                                     <th scope="col" class="align-middle">Firstname</th>
-                                    <th scope="col" class="align-middle">Middlename</th>
                                     <th scope="col" class="align-middle">Lastname</th>
                                     <th scope="col" class="align-middle">Email</th>
                                     <th scope="col" class="align-middle">Age</th>
+                                    <th scope="col" class="align-middle">Specialization</th>
+                                    <th scope="col" class="align-middle">Employment Status</th>
+                                    <th scope="col" class="align-middle">Subjects</th>
                                     <th scope="col" class="align-middle">Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-
-                                <tbody>
-                                    @forelse(\App\Models\Teacher::all() as $teacher)
-                                        <tr>
-                                            <td>{{ $teacher->id }}</td>
-                                            <td>{{ $teacher->first_name }}</td>
-                                            <td>{{ $teacher->middle_name }}</td>
-                                            <td>{{ $teacher->last_name }}</td>
-                                            <td>{{ $teacher->email }}</td>
-                                            <td>{{ $teacher->age }}</td>
-                                            <td>
-                                                <div style="display: flex; gap: 4px;">
-                                                    <a href="{{ route('teachers.edit', $teacher->id) }}" style="padding: 4px 8px; background-color: #ffc107; color: black; text-decoration: none; border-radius: 3px; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#e0a800'" onmouseout="this.style.backgroundColor='#ffc107'">Edit</a>
-                                                    <form action="{{ route('teachers.destroy', $teacher->id) }}" method="POST" style="display: inline;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" style="padding: 4px 8px; background-color: #dc3545; color: white; border: none; border-radius: 3px; cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#c82333'" onmouseout="this.style.backgroundColor='#dc3545'" onclick="return confirm('Are you sure you want to delete this teacher?')">Delete</button>
-                                                    </form>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="7" class="text-center">No teachers found.</td>
-                                        </tr>
-                                    @endforelse
+                            <tbody id="teachersTable">
+                                @forelse(\App\Models\Teacher::all() as $teacher)
+                                    <tr class="teacher-row" data-specialization="{{ $teacher->specialization }}">
+                                        <td>{{ $teacher->id }}</td>
+                                        <td>{{ $teacher->first_name }}</td>
+                                        <td>{{ $teacher->last_name }}</td>
+                                        <td>{{ $teacher->email }}</td>
+                                        <td>{{ $teacher->age }}</td>
+                                        <td>{{ $teacher->specialization }}</td>
+                                        <td>{{ $teacher->employment_status }}</td>
+                                        <td>{{ $teacher->subjects }}</td>
+                                        <td>
+                                            <a href="{{ route('teachers.edit', $teacher->id) }}"
+                                               style="color: #ffc107; text-decoration: none; margin-right: 20px;"
+                                               title="Edit">
+                                                <i class="fa-solid fa-pen-to-square"
+                                                   onmouseover="this.style.color='#e0a800'" 
+                                                   onmouseout="this.style.color='#ffc107'"></i>
+                                            </a>
+                                            <form action="{{ route('teachers.destroy', $teacher->id) }}" method="POST" style="display: inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" 
+                                                        style="background: none; border: none; color: #dc3545; cursor: pointer;"
+                                                        title="Delete"
+                                                        onclick="return confirm('Are you sure you want to delete this teacher?')">
+                                                    <i class="fa-solid fa-trash" 
+                                                       onmouseover="this.style.color='#c82333'" 
+                                                       onmouseout="this.style.color='#dc3545'"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="9" class="text-center">No teachers found.</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -112,44 +119,72 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('searchInput');
-            const searchForm = document.getElementById('searchForm');
-
-            searchInput.addEventListener('input', function(e) {
-                const searchTerm = e.target.value;
+    document.addEventListener('DOMContentLoaded', function() {
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const teacherRows = document.querySelectorAll('.teacher-row');
+        
+        searchInput.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            
+            teacherRows.forEach(row => {
+                const firstName = row.cells[1].textContent.toLowerCase();
+                const lastName = row.cells[2].textContent.toLowerCase();
+                const email = row.cells[3].textContent.toLowerCase();
+                const specialization = row.cells[5].textContent.toLowerCase();
                 
-                const url = new URL(window.location);
-                if (searchTerm) {
-                    url.searchParams.set('search', searchTerm);
+                if (firstName.includes(searchTerm) || 
+                    lastName.includes(searchTerm) || 
+                    email.includes(searchTerm) || 
+                    specialization.includes(searchTerm)) {
+                    row.style.display = '';
                 } else {
-                    url.searchParams.delete('search');
+                    row.style.display = 'none';
                 }
-                window.history.pushState({}, '', url);
-
-                fetch(`/teachers?search=${searchTerm}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        // Handle suggestions if needed
-                    })
-                    .catch(error => console.error('Error:', error));
             });
+        });
 
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    const strand = this.textContent === 'ALL Teachers' ? '' : this.textContent;
-                    const url = new URL(window.location);
-                    if (strand) {
-                        url.searchParams.set('strand', strand);
+        // Tab filtering
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                const filter = this.getAttribute('data-filter');
+                
+                teacherRows.forEach(row => {
+                    const specialization = row.getAttribute('data-specialization');
+                    if (filter === 'all' || specialization === filter) {
+                        row.style.display = '';
                     } else {
-                        url.searchParams.delete('strand');
+                        row.style.display = 'none';
                     }
-                    window.location = url;
                 });
             });
         });
+
+        // Sort functionality
+        const sortSelect = document.querySelector('.form-select');
+        sortSelect.addEventListener('change', function() {
+            const sortValue = this.value;
+            const tbody = document.getElementById('teachersTable');
+            const rows = Array.from(teacherRows);
+            
+            rows.sort((a, b) => {
+                if (sortValue === 'name-asc') {
+                    return a.cells[1].textContent.localeCompare(b.cells[1].textContent);
+                } else if (sortValue === 'name-desc') {
+                    return b.cells[1].textContent.localeCompare(a.cells[1].textContent);
+                } else if (sortValue === 'years-asc') {
+                    return parseInt(a.cells[4].textContent) - parseInt(b.cells[4].textContent);
+                } else if (sortValue === 'years-desc') {
+                    return parseInt(b.cells[4].textContent) - parseInt(a.cells[4].textContent);
+                }
+                return 0;
+            });
+
+            rows.forEach(row => tbody.appendChild(row));
+        });
+    });
     </script>
 @endsection
