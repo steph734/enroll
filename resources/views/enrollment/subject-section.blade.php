@@ -274,22 +274,24 @@
                                 </tr>
                             </thead>
                             <tbody id="subjectTable">
+                                
                                 <tr class="subject-row">
-                                    <td>Mathematics</td>
-                                    <td>Grade 11</td>
-                                    <td>STEM</td>
-                                    <td>
-                                        <i class="fa fa-eye"></i>
-
-                                    </td>
-                                </tr>
-                                <tr class="subject-row">
-                                    <td>English</td>
-                                    <td>Grade 11</td>
-                                    <td>HUMSS</td>
-                                    <td>
-                                        <i class="fa fa-eye"></i>
-                                    </td>
+                                    @forelse (\App\Models\Subject::all() as $subject)
+                                    <tr class="subject-row">
+                                        <td>{{ $subject->subjectname }}</td>
+                                        <td>{{ $subject->description }}</td>
+                                        <td>{{ $subject->gradelevel }}</td>
+                                        <td>
+                                            <button class="btn" title="View">
+                                                <i class="fa-solid fa-eye" style="color:#305cde; font-size: 18px;"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="text-center">No subjects available</td>
+                                    </tr>
+                                @endforelse
                                 </tr>
                             </tbody>
                         </table>
