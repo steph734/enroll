@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('subjectname');
             $table->string('description');
+            $table->time('start_time')->nullable(); // Add start_time
+             $table->time('end_time')->nullable();
             $table->string('gradelevel');
             $table->enum('status',['ongoingg', 'completed', 'cancelled']);
             $table->timestamps();

@@ -53,8 +53,8 @@
                                     </select>
                                 </div>
                                 <div class="col-md-4 p-1">
-                                    <label class="form-label mb-1">ID</label>
-                                    <input type="text" class="form-control" name="id" placeholder="ID" readonly>
+                                    <label class="form-label mb-1">Employment</label>
+                                    <input type="text" class="form-control" name="id" placeholder="EmployementStatus" readonly>
                                 </div>
                                 <div class="col-md-4 m-1">
                                     <label class="form-label mb-1">Email</label>
@@ -67,24 +67,44 @@
                             <div class="col-md-4 p-1">
                                 <label class="form-label mb-1">Section</label>
                                 <select class="form-select" name="section">
-                                    <option value="STEM-A1">STEM-A1</option>
-                                    <option value="HUMSS 11-C">HUMSS 11-C</option>
+                                    @forelse(\App\Models\Section::all() as $section)
+                                    <option value="{{ $section->id }}"
+                                            data-sectionname="{{ $section->sectionname }}">
+                                        {{ $section->sectionname }}
+                                    </option>
+                                @empty
+                                    <option value="">No sections available</option>
+                                @endforelse
                                 </select>
                             </div>
                             <div class="col-md-4 p-1">
                                 <label class="form-label mb-1">Subject</label>
                                 <select class="form-select" name="subject">
-                                    <option value="Biology">Biology</option>
-                                    <option value="Gen Math">Gen Math</option>
-                                    <option value="English">English</option>
+                                    <option value="">Select a subject</option>
+                                    @forelse(\App\Models\Subject::all() as $subject)
+                                        <option value="{{ $subject->id }}"
+                                            data-description="{{ $subject->description }}"
+                                            data-gradelevel="{{ $subject->gradelevel }}"
+                                            data-status="{{ $subject->status }}">
+                                            {{ $subject->subjectname }}
+                                        </option>
+                                    @empty
+                                        <option value="">No subjects available</option>
+                                    @endforelse
                                 </select>
                             </div>
                             <div class="col-md-4 p-1">
                                 <label class="form-label mb-1">Time</label>
                                 <select class="form-select" name="time">
-                                    <option value="8:00 AM - 9:00 AM">8:00 AM - 9:00 AM</option>
-                                    <option value="9:00 AM - 10:00 AM">9:00 AM - 10:00 AM</option>
-                                    <option value="10:00 AM - 12:00 PM">10:00 AM - 12:00 PM</option>
+                                    @forelse(\App\Models\Subject::whereNotNull('start_time')->whereNotNull('end_time')->get() as $subject)
+                                    <option value="{{ $subject->id }}"
+                                            data-start-time="{{ $subject->start_time }}"
+                                            data-end-time="{{ $subject->end_time }}">
+                                        {{ \Carbon\Carbon::parse($subject->start_time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($subject->end_time)->format('h:i A') }}
+                                    </option>
+                                @empty
+                                    <option value="">No times available</option>
+                                @endforelse
                                 </select>
                             </div>
                             <div class="col-md-2 m-1">
@@ -248,8 +268,8 @@
                             <thead>
                                 <tr>
                                     <th>Subject Name</th>
+                                    <th>Description</th>
                                     <th>Grade Level</th>
-                                    <th>Strand</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -281,8 +301,26 @@
 </div>
 
 <script>
+// Teacher selection handling
+document.querySelector('select[name="teacher"]').addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    const teacherId = selectedOption.getAttribute('data-id') || '';
+    const teacherEmail = selectedOption.getAttribute('data-email') || '';
+    const employmentStatus = selectedOption.getAttribute('data-employment-status') || '';
 
+    // Update the input fields
+    document.querySelector('input[name="id"]').value = teacherId;
+    document.querySelector('input[name="email"]').value = teacherEmail;
+    document.querySelector('input[name="employment_status"]').value = employmentStatus;
+});
 
+// Reset input fields when form is cleared
+document.querySelector('button[type="reset"]').addEventListener('click', function() {
+    document.querySelector('input[name="id"]').value = '';
+    document.querySelector('input[name="email"]').value = '';
+    document.querySelector('input[name="employment_status"]').value = '';
+    document.querySelector('select[name="teacher"]').value = '';
+});
 
 // Search functionality for assignments
 const assignmentSearch = document.getElementById('assignmentSearch');
