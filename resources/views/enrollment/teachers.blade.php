@@ -37,6 +37,12 @@
 
                             <div class="gap-2 dropdowns d-flex">
                                 <select class="form-select" style="width: 150px;">
+                                    <option>Filter by</option>
+                                    <option value="grade">Grade</option>
+                                    <option value="age">Age</option>
+                                    <option value="status">Status</option>
+                                </select>
+                                <select class="form-select" style="width: 150px;">
                                     <option>Sort by</option>
                                     <option value="name-asc">Name (A-Z)</option>
                                     <option value="name-desc">Name (Z-A)</option>

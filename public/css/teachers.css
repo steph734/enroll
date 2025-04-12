@@ -122,24 +122,27 @@ tr {
   transform: translateY(-2px);
 }
 
-/* Adjust the search bar to match the image */
 .search-container-dash {
-  position: relative;
-  width: 300px;
+  margin-top: 10px !important;
+  position: relative !important;
 }
 
 .search-container-dash input {
-  width: 100%;
-  padding: 8px 40px 8px 10px;
-  border: 1px solid #ccc;
-  border-radius: 20px;
-  font-size: 14px;
+  width: 300px !important;
+  height: 40px !important;
+  font-size: 16px !important;
+  padding: 10px 20px 10px 40px !important;
+  border-radius: 30px !important;
+  border: 1px solid var(--line-clr) !important;
 }
 
-.search-container-dash .fa-magnifying-glass {
+.search-container-dash i {
   position: absolute;
-  right: 10px;
   top: 50%;
+  left: 10px;
   transform: translateY(-50%);
-  color: #666;
+  color: #bbc0c9 !important;
+  font-size: 18px;
+  pointer-events: none;
 }
+

@@ -60,7 +60,7 @@
                                     <label class="form-label mb-1">Email</label>
                                     <input type="email" class="form-control" name="email" placeholder="Email" readonly>
                                 </div>
-                            </div>
+                            </div>  
                         </div>
                         <hr>
                         <div class="row mb-3 mt-1 d-flex justify-content-center">

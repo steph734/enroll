@@ -14,6 +14,9 @@ return new class extends Migration
         Schema::create('subjects', function (Blueprint $table) {
             $table->id();
             $table->string('subjectname');
+            $table->string('description');
+            $table->string('gradelevel');
+            $table->enum('status',['ongoingg', 'completed', 'cancelled']);
             $table->timestamps();
         });
     }

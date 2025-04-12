@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('strand', function (Blueprint $table) {
+        Schema::create('section', function (Blueprint $table) {
             $table->id();
-            $table->string('strandname');
-            $table->string('description');
-            $table->string('track');
-           
+            $table->string('sectioname');
+            $table->string('gradelevel');
+          
+            $table->foreign('id')->references('id')->on('strand'); 
+            $table->unsignedBigInteger('strandid')->nullable()->index();  
+            $table->timestamps();
         });
     }
 
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('strand');
+        Schema::dropIfExists('section');
     }
 };
