@@ -12,8 +12,11 @@ class Section extends Model
         'sectioname',
         'gradelevel',
         'strandid',
+        'code', // Add the new field
     ];
-
-    
+    public function strand()
+    {
+        return $this->belongsTo(Strand::class, 'strandid');
+    }
 
 }

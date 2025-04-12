@@ -67,10 +67,11 @@
                             <div class="col-md-4 p-1">
                                 <label class="form-label mb-1">Section</label>
                                 <select class="form-select" name="section">
-                                    @forelse(\App\Models\Section::all() as $section)
+                                    @forelse(\App\Models\Section::whereNotNull('sectioname')->whereNotNull('code')->get() as $section)
                                     <option value="{{ $section->id }}"
-                                            data-sectionname="{{ $section->sectionname }}">
-                                        {{ $section->sectionname }}
+                                            data-sectioname="{{ $section->sectioname }}"
+                                            data-code="{{ $section->code }}">
+                                        {{ $section->sectioname }} - {{ $section->code }}
                                     </option>
                                 @empty
                                     <option value="">No sections available</option>

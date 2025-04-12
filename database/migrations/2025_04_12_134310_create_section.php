@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('sectioname');
             $table->string('gradelevel');
-          
-            $table->foreign('id')->references('id')->on('strand'); 
-            $table->unsignedBigInteger('strandid')->nullable()->index();  
+            $table->string('code', 50)->unique()->nullable(); // Added column for 'STEM-A1'
+            $table->unsignedBigInteger('strandid')->nullable()->index();
+            $table->foreign('strandid')->references('id')->on('strand'); // Fixed foreign key
             $table->timestamps();
         });
     }
