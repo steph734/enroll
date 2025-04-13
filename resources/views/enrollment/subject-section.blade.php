@@ -67,56 +67,58 @@
                             </div>
                         </div>
                         <hr>
-                        <div class="row mb-3 mt-1 d-flex justify-content-center">
-                            <div class="col-md-4 p-1">
-                                <label class="form-label mb-1">Section</label>
-                                <select class="form-select" name="section">
-                                    <option value="">Select a section</option>
-                                    @forelse(\App\Models\Section::whereNotNull('sectioname')->whereNotNull('code')->get() as $section)
-                                        <option value="{{ $section->id }}">
-                                            {{ $section->sectioname }} - {{ $section->code }}
-                                        </option>
-                                    @empty
-                                        <option value="">No sections available</option>
-                                    @endforelse
-                                </select>
-                                @error('section')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="col-md-4 p-1">
-                                <label class="form-label mb-1">Subject</label>
-                                <select class="form-select" name="subject">
-                                    <option value="">Select a subject</option>
-                                    @forelse(\App\Models\Subject::all() as $subject)
-                                        <option value="{{ $subject->id }}">
-                                            {{ $subject->subjectname }}
-                                        </option>
-                                    @empty
-                                        <option value="">No subjects available</option>
-                                    @endforelse
-                                </select>
-                                @error('subject')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="col-md-4 p-1">
-                                <label class="form-label mb-1">Time</label>
-                                <select class="form-select" name="time">
-                                    <option value="">Select a time</option>
-                                    @forelse(\App\Models\Subject::whereNotNull('start_time')->whereNotNull('end_time')->get() as $subject)
-                                        <option value="{{ $subject->id }}"
-                                                data-start-time="{{ $subject->start_time }}"
-                                                data-end-time="{{ $subject->end_time }}">
-                                            {{ \Carbon\Carbon::parse($subject->start_time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($subject->end_time)->format('h:i A') }}
-                                        </option>
-                                    @empty
-                                        <option value="">No times available</option>
-                                    @endforelse
-                                </select>
-                                @error('time')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
+                        <div id="assignmentFields">
+                            <div class="row mb-3 mt-1 d-flex justify-content-center assignment-field-set">
+                                <div class="col-md-4 p-1">
+                                    <label class="form-label mb-1">Section</label>
+                                    <select class="form-select" name="assignments[0][section]">
+                                        <option value="">Select a section</option>
+                                        @forelse(\App\Models\Section::whereNotNull('sectioname')->whereNotNull('code')->get() as $section)
+                                            <option value="{{ $section->id }}">
+                                                {{ $section->sectioname }} - {{ $section->code }}
+                                            </option>
+                                        @empty
+                                            <option value="">No sections available</option>
+                                        @endforelse
+                                    </select>
+                                    @error('assignments.0.section')
+                                        <div class="text-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-md-4 p-1">
+                                    <label class="form-label mb-1">Subject</label>
+                                    <select class="form-select" name="assignments[0][subject]">
+                                        <option value="">Select a subject</option>
+                                        @forelse(\App\Models\Subject::all() as $subject)
+                                            <option value="{{ $subject->id }}">
+                                                {{ $subject->subjectname }}
+                                            </option>
+                                        @empty
+                                            <option value="">No subjects available</option>
+                                        @endforelse
+                                    </select>
+                                    @error('assignments.0.subject')
+                                        <div class="text-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-md-4 p-1">
+                                    <label class="form-label mb-1">Time</label>
+                                    <select class="form-select" name="assignments[0][time]">
+                                        <option value="">Select a time</option>
+                                        @forelse(\App\Models\Subject::whereNotNull('start_time')->whereNotNull('end_time')->get() as $subject)
+                                            <option value="{{ $subject->id }}"
+                                                    data-start-time="{{ $subject->start_time }}"
+                                                    data-end-time="{{ $subject->end_time }}">
+                                                {{ \Carbon\Carbon::parse($subject->start_time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($subject->end_time)->format('h:i A') }}
+                                            </option>
+                                        @empty
+                                            <option value="">No times available</option>
+                                        @endforelse
+                                    </select>
+                                    @error('assignments.0.time')
+                                        <div class="text-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
                         <div class="row d-flex justify-content-center gap-1">
@@ -125,6 +127,11 @@
                             </div>
                             <div class="col-md-3">
                                 <button type="reset" class="btn btn-outline-secondary w-100">Clear</button>
+                            </div>
+                        </div>
+                        <div class="row d-flex justify-content-center mt-2">
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-outline-primary w-100" id="addFieldsBtn">+</button>
                             </div>
                         </div>
                     </form>
@@ -303,10 +310,79 @@ document.querySelector('#teacherSelect').addEventListener('change', function() {
     document.querySelector('#email').value = selectedOption.getAttribute('data-email') || '';
 });
 
+// Function to add new assignment fields
+document.getElementById('addFieldsBtn').addEventListener('click', function() {
+    const container = document.getElementById('assignmentFields');
+    const fieldSets = container.querySelectorAll('.assignment-field-set');
+    const index = fieldSets.length;
+
+    const newFieldSet = document.createElement('div');
+    newFieldSet.className = 'row mb-3 mt-1 d-flex justify-content-center assignment-field-set';
+    newFieldSet.innerHTML = `
+        <div class="col-md-4 p-1">
+            <label class="form-label mb-1">Section</label>
+            <select class="form-select" name="assignments[${index}][section]">
+                <option value="">Select a section</option>
+                @forelse(\App\Models\Section::whereNotNull('sectioname')->whereNotNull('code')->get() as $section)
+                    <option value="{{ $section->id }}">
+                        {{ $section->sectioname }} - {{ $section->code }}
+                    </option>
+                @empty
+                    <option value="">No sections available</option>
+                @endforelse
+            </select>
+        </div>
+        <div class="col-md-4 p-1">
+            <label class="form-label mb-1">Subject</label>
+            <select class="form-select" name="assignments[${index}][subject]">
+                <option value="">Select a subject</option>
+                @forelse(\App\Models\Subject::all() as $subject)
+                    <option value="{{ $subject->id }}">
+                        {{ $subject->subjectname }}
+                    </option>
+                @empty
+                    <option value="">No subjects available</option>
+                @endforelse
+            </select>
+        </div>
+        <div class="col-md-4 p-1">
+            <label class="form-label mb-1">Time</label>
+            <select class="form-select" name="assignments[${index}][time]">
+                <option value="">Select a time</option>
+                @forelse(\App\Models\Subject::whereNotNull('start_time')->whereNotNull('end_time')->get() as $subject)
+                    <option value="{{ $subject->id }}"
+                            data-start-time="{{ $subject->start_time }}"
+                            data-end-time="{{ $subject->end_time }}">
+                        {{ \Carbon\Carbon::parse($subject->start_time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($subject->end_time)->format('h:i A') }}
+                    </option>
+                @empty
+                    <option value="">No times available</option>
+                @endforelse
+            </select>
+        </div>
+        <div class="col-md-1 p-1">
+            <button type="button" class="btn btn-danger btn-sm remove-field-set w-100 mt-4">Remove</button>
+        </div>
+    `;
+
+    container.appendChild(newFieldSet);
+
+    // Add event listener for the remove button
+    newFieldSet.querySelector('.remove-field-set').addEventListener('click', function() {
+        newFieldSet.remove();
+    });
+});
+
+// Update the reset button to clear dynamically added fields
 document.querySelector('button[type="reset"]').addEventListener('click', function() {
     document.querySelector('#employmentStatus').value = '';
     document.querySelector('#email').value = '';
     document.querySelector('#teacherSelect').value = '';
+    const container = document.getElementById('assignmentFields');
+    const fieldSets = container.querySelectorAll('.assignment-field-set');
+    for (let i = 1; i < fieldSets.length; i++) {
+        fieldSets[i].remove();
+    }
 });
 
 const assignmentSearch = document.getElementById('assignmentSearch');

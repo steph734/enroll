@@ -63,72 +63,77 @@ class TeacherController extends Controller
     }
 
 
-    public function edit($id)
+    public function edit(Teacher $teacher)
     {
-        $teacher = Teacher::findOrFail($id);
-        return view('enrollment.edit', compact('teachers'));
+        return view('enrollment.edit', compact('teacher'));
     }
 
-    /**
-     * Update the specified teacher in storage.
-     */
-    public function update(Request $request, $id)
+    public function update(Request $request, Teacher $teacher)
     {
-        $teacher = Teacher::findOrFail($id);
-
-        // Validation rules
         $validated = $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:teachers,email,' . $teacher->id,
-            'age' => 'required|integer|min:18',
-            'specialization' => 'required|string|max:255',
-            'employment_status' => 'required|string|max:255',
-            'subjects' => 'required|string|max:255',
+            'age' => 'required|integer|min:1',
+            'specialization' => 'required|in:Academic,TVL,Sports,Arts',
+            'employment_status' => 'required|in:Full-time,Part-time',
+            'subjects' => 'required|string',
             'profile_picture' => 'nullable|image|max:2048',
+            'middle_name' => 'nullable|string|max:255',
+            'date_of_birth' => 'required|date',
+            'gender' => 'required|in:Male,Female',
+            'nationality' => 'required|string|max:255',
+            'address' => 'required|string|max:255',
+            'contact_number' => 'required|string|max:20',
+            'degree' => 'required|string|max:255',
+            'major' => 'required|string|max:255',
+            'university' => 'required|string|max:255',
+            'year_graduated' => 'required|string|max:4',
+            'prc_license' => 'required|string|max:255',
+            'license_validity' => 'required|date',
+            'let_date' => 'required|date',
             'prc_copy' => 'nullable|file|mimes:pdf,jpg,png|max:2048',
+            'previous_school' => 'nullable|string|max:255',
+            'position' => 'nullable|string|max:255',
+            'years_experience' => 'nullable|integer|min:0',
+            'teaching_schedule' => 'required|in:Morning,Afternoon,Evening',
+            'certifications' => 'nullable|string',
+            'medical_info' => 'nullable|string',
+            'accommodations' => 'nullable|string',
             'resume' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
             'transcript' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+            'date_hired' => 'required|date',
+            'employee_id' => 'required|string|max:255',
         ]);
 
         // Handle file uploads
-        $paths = [];
         if ($request->hasFile('profile_picture')) {
-            // Delete old profile picture if it exists
             if ($teacher->profile_picture) {
-                Storage::delete($teacher->profile_picture);
+                Storage::disk('public')->delete($teacher->profile_picture);
             }
-            $paths['profile_picture'] = $request->file('profile_picture')->store('public/teachers/profiles');
+            $validated['profile_picture'] = $request->file('profile_picture')->store('teachers', 'public');
         }
         if ($request->hasFile('prc_copy')) {
-            // Delete old PRC copy if it exists
             if ($teacher->prc_copy) {
-                Storage::delete($teacher->prc_copy);
+                Storage::disk('public')->delete($teacher->prc_copy);
             }
-            $paths['prc_copy'] = $request->file('prc_copy')->store('public/teachers/documents');
+            $validated['prc_copy'] = $request->file('prc_copy')->store('teachers', 'public');
         }
         if ($request->hasFile('resume')) {
-            // Delete old resume if it exists
             if ($teacher->resume) {
-                Storage::delete($teacher->resume);
+                Storage::disk('public')->delete($teacher->resume);
             }
-            $paths['resume'] = $request->file('resume')->store('public/teachers/documents');
+            $validated['resume'] = $request->file('resume')->store('teachers', 'public');
         }
         if ($request->hasFile('transcript')) {
-            // Delete old transcript if it exists
             if ($teacher->transcript) {
-                Storage::delete($teacher->transcript);
+                Storage::disk('public')->delete($teacher->transcript);
             }
-            $paths['transcript'] = $request->file('transcript')->store('public/teachers/documents');
+            $validated['transcript'] = $request->file('transcript')->store('teachers', 'public');
         }
 
-        // Update teacher record
-        $teacher->update(array_merge(
-            $request->only(['first_name', 'last_name', 'email', 'age', 'specialization', 'employment_status', 'subjects']),
-            $paths
-        ));
-
-        return redirect()->route('teachers.index')->with('success', 'Teacher updated successfully');
+        $teacher->update($validated);
+        return redirect()->route('teachers.index')->with('success', 'Teacher updated successfully.');
     }
 }
 
