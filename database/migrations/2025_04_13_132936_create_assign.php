@@ -1,51 +1,35 @@
 <?php
 
-namespace App\Http\Controllers;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use App\Models\Assign;
-use App\Models\Teacher;
-use App\Models\Section;
-use App\Models\Subject;
-use Illuminate\Http\Request;
-
-class AssignController extends Controller
+return new class extends Migration
 {
-    public function index()
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
     {
-        $assignments = Assign::all();
-        $teachers = Teacher::all();
-        $sections = Section::whereNotNull('sectioname')->whereNotNull('code')->get();
-        $subjects = Subject::all();
-
-        return view('assign.index', compact('assign'));
+        Schema::create('assign', function (Blueprint $table) {
+            $table->id();
+            $table->string('teachername');
+            $table->string('employmentstatus');
+            $table->string('email');
+            $table->string('section');
+            $table->string('subject');
+            $table->time('start_time')->nullable(); // Add start_time
+            $table->time('end_time')->nullable();
+            $table->enum('status',['ongoing', 'completed', 'cancelled']);
+            $table->timestamps();
+        });
     }
 
-    public function store(Request $request)
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
     {
-        $validated = $request->validate([
-            'teacher' => 'required|exists:teachers,id',
-            'section' => 'required|exists:sections,id',
-            'subject' => 'required|exists:subjects,id',
-            'time' => 'required|exists:subjects,id',
-        ]);
-
-        // Fetch teacher details
-        $teacher = Teacher::find($request->teacher);
-        $section = Section::find($request->section);
-        $subject = Subject::find($request->subject);
-        $timeSubject = Subject::find($request->time); // Assuming time is tied to subject
-
-        Assign::create([
-            'teachername' => $teacher->first_name . ' ' . $teacher->last_name,
-            'employmentstatus' => $teacher->teacher_id ?? 'N/A', // Adjust based on actual field
-            'email' => $teacher->email,
-            'section' => $section->sectioname . ' - ' . $section->code,
-            'subject' => $subject->subjectname,
-            'start_time' => $timeSubject->start_time,
-            'end_time' => $timeSubject->end_time,
-            'status' => 'ongoing', // Default status
-        ]);
-
-        return redirect()->route('assign.index')->with('success', 'Assignment created successfully.');
+        Schema::dropIfExists('assign');
     }
-}
+};

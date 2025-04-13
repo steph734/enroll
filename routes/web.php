@@ -47,7 +47,7 @@ Route::get('enrollment/teachers/{id}/edit', [TeacherController::class, 'edit'])-
 Route::put('enrollment/teachers/{id}', [TeacherController::class, 'update'])->name('teachers.update');
 Route::delete('/enrollment/teachers/{id}', [TeacherController::class, 'destroy'])->name('enrollment.teachers.destroy');
 
-Route::get('enrollment.subject-section', [AssignController::class, 'index'])->name('assign.index');
-Route::post('/enrollment/subject-section', [AssignController::class, 'store'])->name('assign.store');
+Route::get('/assign', [AssignController::class, 'index'])->name('assign.index');
+Route::post('/assign', [AssignController::class, 'store'])->name('assign.store');
 
 require __DIR__ . '/auth.php';

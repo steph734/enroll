@@ -7,65 +7,65 @@ use App\Models\Teacher;
 use App\Models\Section;
 use App\Models\Subject;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class AssignController extends Controller
 {
     public function index()
     {
-        $assign = Assign::all();
-        return view('enrollment.subject-section', compact('assign'));
+        $assignments = Assign::all(); // Fetch all assignments
+        $teachers = Teacher::all();
+        $sections = Section::whereNotNull('sectioname')->whereNotNull('code')->get();
+        $subjects = Subject::all();
+        return view('enrollment.subject-section', compact('assignments', 'teachers', 'sections', 'subjects'));
+    }
+
+    public function create()
+    {
+        $teachers = Teacher::all();
+        $sections = Section::whereNotNull('sectioname')->whereNotNull('code')->get();
+        $subjects = Subject::all();
+        $assignments = Assign::all();
+        return view('enrollment.subject-section', compact('teachers', 'section', 'subjects', 'assign'));
     }
 
     public function store(Request $request)
     {
-        try {
-            $validated = $request->validate([
-                'teacher' => 'required|exists:teachers,id',
-                'section' => 'required|exists:sections,id',
-                'subject' => 'required|exists:subjects,id',
-                'time' => 'required',
-                'status' => 'required|in:ongoing,completed,cancelled',
-            ]);
+        // Validation rules
+        $validated = $request->validate([
+            'teacher_id' => 'required|exists:teachers,id',
+            'assignments' => 'required|array',
+            'assignments.*.section_id' => 'required|exists:sections,id',
+            'assignments.*.subject_id' => 'required|exists:subjects,id',
+            'assignments.*.time_id' => 'required|exists:subjects,id',
+        ]);
 
-            $teacher = Teacher::findOrFail($request->teacher);
-            $section = Section::findOrFail($request->section);
-            $subject = Subject::findOrFail($request->subject);
+        $teacher = Teacher::findOrFail($request->teacher_id);
 
-            [$start_time, $end_time] = explode(' - ', $request->time);
+        foreach ($request->assignments as $assignment) {
+            $section = Section::findOrFail($assignment['section_id']);
+            $subject = Subject::findOrFail($assignment['subject_id']);
+            $timeSubject = Subject::findOrFail($assignment['time_id']);
 
-            $assignment = Assign::create([
-                'teacher' => $teacher->first_name . ' ' . $teacher->last_name,
-                'employmentstatus' => $teacher->employment_status ?? 'N/A',
+            Assign::create([
+                'teachername' => $teacher->first_name . ' ' . $teacher->last_name,
+                'employmentstatus' => $teacher->employment_status,
                 'email' => $teacher->email,
                 'section' => $section->sectioname . ' - ' . $section->code,
                 'subject' => $subject->subjectname,
-                'start_time' => \Carbon\Carbon::parse($start_time)->format('H:i:s'),
-                'end_time' => \Carbon\Carbon::parse($end_time)->format('H:i:s'),
-                'status' => $request->status,
+                'start_time' => $timeSubject->start_time,
+                'end_time' => $timeSubject->end_time,
+                'status' => 'ongoing', // Default status
             ]);
-
-            Log::info('Assignment created', ['id' => $assignment->id]);
-
-            return redirect()->back()->with('success', 'Assignment created successfully.');
-        } catch (\Exception $e) {
-            Log::error('Error in store: ' . $e->getMessage());
-            return back()->with('error', 'Failed to create assignment.');
         }
+
+        return redirect()->route('assign.create')->with('success', 'Assignment registered successfully');
     }
 
     public function destroy($id)
     {
-        try {
-            $assign = Assign::findOrFail($id);
-            $assign->delete();
+        $assignment = Assign::findOrFail($id);
+        $assignment->delete();
 
-            Log::info('Assignment deleted', ['id' => $id]);
-
-            return redirect()->back()->with('success', 'Assignment removed successfully.');
-        } catch (\Exception $e) {
-            Log::error('Error in destroy: ' . $e->getMessage());
-            return back()->with('error', 'Failed to delete assignment.');
-        }
+        return redirect()->route('assign.index')->with('success', 'Assignment deleted successfully');
     }
 }

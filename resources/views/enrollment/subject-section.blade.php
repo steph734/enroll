@@ -191,7 +191,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="text-center">No assignments available</td>
+                                        <td colspan="6" class="text-center">No assign available</td>
                                     </tr>
                                 @endforelse
                             </tbody>
