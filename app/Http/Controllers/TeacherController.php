@@ -66,7 +66,7 @@ class TeacherController extends Controller
     public function edit($id)
     {
         $teacher = Teacher::findOrFail($id);
-        return view('enrollment.edit', compact('teacher'));
+        return view('enrollment.edit', compact('teachers'));
     }
 
     /**

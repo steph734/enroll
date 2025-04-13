@@ -7,12 +7,10 @@
 @endsection
 
 @section('content')
-
 <div class="assignment-content">
+    <p class="h4 mb-4" style="color: var(--text-clr) !important;">Subject and Section Management</p>
 
-    <p class="h4 mb-4" style="color: var(--text-clr) !important;">Subject and Section Management</->
-
-        <!-- Navigation Tabs -->
+    <!-- Navigation Tabs -->
     <ul class="nav nav-tabs mb-4">
         <li class="nav-item m-1">
             <a class="nav-link active p-1" href="#assign" data-bs-toggle="tab">Assign</a>
@@ -21,96 +19,104 @@
             <a class="nav-link p-1" href="#section" data-bs-toggle="tab">Section</a>
         </li>
         <li class="nav-item m-1">
-            <a class="nav-link p-1  " href="#subject" data-bs-toggle="tab">Subject</a>
+            <a class="nav-link p-1" href="#subject" data-bs-toggle="tab">Subject</a>
         </li>
     </ul>
 
     <div class="tab-content">
         <!-- Assign Tab -->
-
         <div class="tab-pane fade show active" id="assign">
             <div class="card mb-4 p-3">
                 <div class="card-body">
-                    <form>
+                    @if (session('success'))
+                        <div class="alert alert-success">{{ session('success') }}</div>
+                    @endif
+                    <form action="{{ route('assign.store') }}" method="POST">
+                        @csrf
                         <div class="row mb-3">
                             <div class="col-md-3 p-1 profile d-flex justify-content-center">
                                 <i class="fa-solid fa-image" style="font-size: 100px; color:gray;"></i>
                             </div>
-                            <div class="col-md-9 p-1 d-flex ">
+                            <div class="col-md-9 p-1 d-flex">
                                 <div class="col-md-4 p-1">
                                     <label class="form-label mb-1">Teacher</label>
-                                    <select class="form-select" name="teacher">
+                                    <select class="form-select" name="teacher" id="teacherSelect">
                                         <option value="">Select a teacher</option>
                                         @forelse(\App\Models\Teacher::all() as $teacher)
                                             <option value="{{ $teacher->id }}"
-                                                data-id="{{ $teacher->teacher_id }}"
-                                                data-email="{{ $teacher->email }}">
+                                                    data-employment-status="{{ $teacher->employment_status }}"
+                                                    data-email="{{ $teacher->email }}">
                                                 {{ $teacher->first_name }} {{ $teacher->last_name }}
                                             </option>
                                         @empty
                                             <option value="">No teachers available</option>
                                         @endforelse
                                     </select>
+                                    @error('teacher')
+                                        <div class="text-danger">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="col-md-4 p-1">
                                     <label class="form-label mb-1">Employment</label>
-                                    <input type="text" class="form-control" name="id" placeholder="EmployementStatus" readonly>
+                                    <input type="text" class="form-control" id="employmentStatus" readonly>
                                 </div>
-                                <div class="col-md-4 m-1">
+                                <div class="col-md-4 p-1">
                                     <label class="form-label mb-1">Email</label>
-                                    <input type="email" class="form-control" name="email" placeholder="Email" readonly>
+                                    <input type="email" class="form-control" id="email" readonly>
                                 </div>
-                            </div>  
+                            </div>
                         </div>
                         <hr>
                         <div class="row mb-3 mt-1 d-flex justify-content-center">
                             <div class="col-md-4 p-1">
                                 <label class="form-label mb-1">Section</label>
                                 <select class="form-select" name="section">
+                                    <option value="">Select a section</option>
                                     @forelse(\App\Models\Section::whereNotNull('sectioname')->whereNotNull('code')->get() as $section)
-                                    <option value="{{ $section->id }}"
-                                            data-sectioname="{{ $section->sectioname }}"
-                                            data-code="{{ $section->code }}">
-                                        {{ $section->sectioname }} - {{ $section->code }}
-                                    </option>
-                                @empty
-                                    <option value="">No sections available</option>
-                                @endforelse
+                                        <option value="{{ $section->id }}">
+                                            {{ $section->sectioname }} - {{ $section->code }}
+                                        </option>
+                                    @empty
+                                        <option value="">No sections available</option>
+                                    @endforelse
                                 </select>
+                                @error('section')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                             <div class="col-md-4 p-1">
                                 <label class="form-label mb-1">Subject</label>
                                 <select class="form-select" name="subject">
                                     <option value="">Select a subject</option>
                                     @forelse(\App\Models\Subject::all() as $subject)
-                                        <option value="{{ $subject->id }}"
-                                            data-description="{{ $subject->description }}"
-                                            data-gradelevel="{{ $subject->gradelevel }}"
-                                            data-status="{{ $subject->status }}">
+                                        <option value="{{ $subject->id }}">
                                             {{ $subject->subjectname }}
                                         </option>
                                     @empty
                                         <option value="">No subjects available</option>
                                     @endforelse
                                 </select>
+                                @error('subject')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                             <div class="col-md-4 p-1">
                                 <label class="form-label mb-1">Time</label>
                                 <select class="form-select" name="time">
+                                    <option value="">Select a time</option>
                                     @forelse(\App\Models\Subject::whereNotNull('start_time')->whereNotNull('end_time')->get() as $subject)
-                                    <option value="{{ $subject->id }}"
-                                            data-start-time="{{ $subject->start_time }}"
-                                            data-end-time="{{ $subject->end_time }}">
-                                        {{ \Carbon\Carbon::parse($subject->start_time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($subject->end_time)->format('h:i A') }}
-                                    </option>
-                                @empty
-                                    <option value="">No times available</option>
-                                @endforelse
+                                        <option value="{{ $subject->id }}"
+                                                data-start-time="{{ $subject->start_time }}"
+                                                data-end-time="{{ $subject->end_time }}">
+                                            {{ \Carbon\Carbon::parse($subject->start_time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($subject->end_time)->format('h:i A') }}
+                                        </option>
+                                    @empty
+                                        <option value="">No times available</option>
+                                    @endforelse
                                 </select>
-                            </div>
-                            <div class="col-md-2 m-1">
-                                <button type="button" class="btn btn-outline-secondary w-100"><i
-                                        class="fa fa-plus"></i></button>
+                                @error('time')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                         <div class="row d-flex justify-content-center gap-1">
@@ -131,7 +137,7 @@
                     <div class="mb-3 d-flex justify-content-between">
                         <div class="search-container">
                             <input type="text" id="assignmentSearch" class="p-1 form-control w-100"
-                                placeholder="Search here...">
+                                   placeholder="Search here...">
                         </div>
                         <div class="filter-container">
                             <select class="form-select" style="width: 150px;">
@@ -147,7 +153,6 @@
                                 <tr>
                                     <th>Teacher</th>
                                     <th>Subject Name</th>
-                                    <th>Grade Level</th>
                                     <th>Section</th>
                                     <th>Time</th>
                                     <th>Status</th>
@@ -155,42 +160,33 @@
                                 </tr>
                             </thead>
                             <tbody id="assignmentTable">
-                                <tr class="assignment-row">
-                                    <td>Eli Sorono</td>
-                                    <td>Gen Math</td>
-                                    <td>Grade 11</td>
-                                    <td>STEM-A1</td>
-                                    <td>8:00 AM - 9:00 AM</td>
-                                    <td><span class="p-1 badge bg-blue">Ongoing</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-warning edit-btn">Edit</button>
-                                        <button class="btn btn-sm btn-danger remove-btn">Remove</button>
-                                    </td>
-                                </tr>
-                                <tr class="assignment-row">
-                                    <td>Eli Sorono</td>
-                                    <td>Biology</td>
-                                    <td>Grade 11</td>
-                                    <td>STEM-A1</td>
-                                    <td>10:00 AM - 12:00 PM</td>
-                                    <td><span class="p-1 badge bg-blue">Ongoing</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-warning edit-btn">Edit</button>
-                                        <button class="btn btn-sm btn-danger remove-btn">Remove</button>
-                                    </td>
-                                </tr>
-                                <tr class="assignment-row">
-                                    <td>Eli Sorono</td>
-                                    <td>Biology</td>
-                                    <td>Grade 11</td>
-                                    <td>STEM-A1</td>
-                                    <td>9:00 AM - 10:00 AM</td>
-                                    <td><span class="p-1 badge bg-blue">Canceled</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-warning edit-btn">Edit</button>
-                                        <button class="btn btn-sm btn-danger remove-btn">Remove</button>
-                                    </td>
-                                </tr>
+                                @forelse(\App\Models\Assign::all() as $assignment)
+                                    <tr class="assignment-row">
+                                        <td>{{ $assignment->teachername }}</td>
+                                        <td>{{ $assignment->subject }}</td>
+                                        <td>{{ $assignment->section }}</td>
+                                        <td>
+                                            {{ \Carbon\Carbon::parse($assignment->start_time)->format('h:i A') }} -
+                                            {{ \Carbon\Carbon::parse($assignment->end_time)->format('h:i A') }}
+                                        </td>
+                                        <td>
+                                            <span class="p-1 badge {{ $assignment->status == 'ongoing' ? 'bg-blue' : ($assignment->status == 'completed' ? 'bg-green' : 'bg-red') }}">
+                                                {{ ucfirst($assignment->status) }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <form action="{{ route('assign.destroy', $assignment->id) }}" method="POST" style="display:inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-danger remove-btn">Remove</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="6" class="text-center">No assignments available</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -198,15 +194,14 @@
             </div>
         </div>
 
-        <!-- Section Tab (Retained from Original) -->
-
+        <!-- Section Tab -->
         <div class="tab-pane fade" id="section">
             <div class="card p-3">
                 <div class="card-body">
                     <div class="mb-3 d-flex justify-content-between">
                         <div class="search-container">
                             <input type="text" id="sectionSearch" class="p-1 form-control w-100"
-                                placeholder="Search...">
+                                   placeholder="Search...">
                         </div>
                         <div class="filter-container">
                             <select class="form-select" style="width: 150px;">
@@ -220,41 +215,42 @@
                         <thead>
                             <tr>
                                 <th>Section Name</th>
-                                <th>Grade Level</th>
-                                <th>Strand</th>
-                                <th>Slot</th>
-                                <th class="text-center">Action</th>
+                                <th>Gradelevel</th>
+                                <th>Code</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody id="sectionTable">
-                            <tr class="section-row">
-                                <td>STEM-A1</td>
-                                <td>Grade 11</td>
-                                <td>STEM</td>
-                                <td><span class="p-1 badge bg-blue">Full</span></td>
-                                <td class="text-center"><i class="fa fa-eye"></i></td>
-                            </tr>
-                            <tr class="section-row">
-                                <td>HUMSS 11-C</td>
-                                <td>Grade 11</td>
-                                <td>HUMSS</td>
-                                <td><span class="p-1 badge bg-blue">38/40</span></td>
-                                <td class="text-center"><i class="fa fa-eye"></i></td>
-
-                            </tr>
+                            @forelse (\App\Models\Section::all() as $section)
+                                <tr class="section-row">
+                                    <td>{{ $section->sectioname }}</td>
+                                    <td>{{ $section->gradelevel }}</td>
+                                    <td>{{ $section->code }}</td>
+                                    <td class="text">
+                                        <button class="btn" title="View">
+                                            <i class="fa-solid fa-eye" style="color:#305cde; font-size: 18px;"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="text-center">No sections available</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
-        <!-- Subject Tab (Retained from Original) -->
+
+        <!-- Subject Tab -->
         <div class="tab-pane fade" id="subject">
             <div class="card p-3">
                 <div class="card-body">
                     <div class="mb-3 d-flex justify-content-between">
                         <div class="search-container">
                             <input type="text" id="subjectSearch" class="p-1 form-control w-100"
-                                placeholder="Search...">
+                                   placeholder="Search...">
                         </div>
                         <div class="filter-container">
                             <select class="form-select" style="width: 150px;">
@@ -275,9 +271,7 @@
                                 </tr>
                             </thead>
                             <tbody id="subjectTable">
-                                
-                                <tr class="subject-row">
-                                    @forelse (\App\Models\Subject::all() as $subject)
+                                @forelse(\App\Models\Subject::all() as $subject)
                                     <tr class="subject-row">
                                         <td>{{ $subject->subjectname }}</td>
                                         <td>{{ $subject->description }}</td>
@@ -290,10 +284,9 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="3" class="text-center">No subjects available</td>
+                                        <td colspan="4" class="text-center">No subjects available</td>
                                     </tr>
                                 @endforelse
-                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -304,28 +297,18 @@
 </div>
 
 <script>
-// Teacher selection handling
-document.querySelector('select[name="teacher"]').addEventListener('change', function() {
+document.querySelector('#teacherSelect').addEventListener('change', function() {
     const selectedOption = this.options[this.selectedIndex];
-    const teacherId = selectedOption.getAttribute('data-id') || '';
-    const teacherEmail = selectedOption.getAttribute('data-email') || '';
-    const employmentStatus = selectedOption.getAttribute('data-employment-status') || '';
-
-    // Update the input fields
-    document.querySelector('input[name="id"]').value = teacherId;
-    document.querySelector('input[name="email"]').value = teacherEmail;
-    document.querySelector('input[name="employment_status"]').value = employmentStatus;
+    document.querySelector('#employmentStatus').value = selectedOption.getAttribute('data-employment-status') || '';
+    document.querySelector('#email').value = selectedOption.getAttribute('data-email') || '';
 });
 
-// Reset input fields when form is cleared
 document.querySelector('button[type="reset"]').addEventListener('click', function() {
-    document.querySelector('input[name="id"]').value = '';
-    document.querySelector('input[name="email"]').value = '';
-    document.querySelector('input[name="employment_status"]').value = '';
-    document.querySelector('select[name="teacher"]').value = '';
+    document.querySelector('#employmentStatus').value = '';
+    document.querySelector('#email').value = '';
+    document.querySelector('#teacherSelect').value = '';
 });
 
-// Search functionality for assignments
 const assignmentSearch = document.getElementById('assignmentSearch');
 const assignmentRows = document.querySelectorAll('.assignment-row');
 
@@ -334,10 +317,8 @@ assignmentSearch.addEventListener('input', () => {
     assignmentRows.forEach(row => {
         const teacher = row.cells[0].textContent.toLowerCase();
         const subject = row.cells[1].textContent.toLowerCase();
-        const gradeLevel = row.cells[2].textContent.toLowerCase();
-        const section = row.cells[3].textContent.toLowerCase();
-        if (teacher.includes(searchTerm) || subject.includes(searchTerm) || gradeLevel.includes(
-                searchTerm) || section.includes(searchTerm)) {
+        const section = row.cells[2].textContent.toLowerCase();
+        if (teacher.includes(searchTerm) || subject.includes(searchTerm) || section.includes(searchTerm)) {
             row.style.display = '';
         } else {
             row.style.display = 'none';
@@ -345,7 +326,6 @@ assignmentSearch.addEventListener('input', () => {
     });
 });
 
-// Search functionality for sections
 const sectionSearch = document.getElementById('sectionSearch');
 const sectionRows = document.querySelectorAll('.section-row');
 
@@ -353,10 +333,8 @@ sectionSearch.addEventListener('input', () => {
     const searchTerm = sectionSearch.value.toLowerCase();
     sectionRows.forEach(row => {
         const sectionName = row.cells[0].textContent.toLowerCase();
-        const gradeLevel = row.cells[1].textContent.toLowerCase();
-        const strand = row.cells[2].textContent.toLowerCase();
-        if (sectionName.includes(searchTerm) || gradeLevel.includes(searchTerm) || strand.includes(
-                searchTerm)) {
+        const code = row.cells[1].textContent.toLowerCase();
+        if (sectionName.includes(searchTerm) || code.includes(searchTerm)) {
             row.style.display = '';
         } else {
             row.style.display = 'none';
@@ -364,7 +342,6 @@ sectionSearch.addEventListener('input', () => {
     });
 });
 
-// Search functionality for subjects
 const subjectSearch = document.getElementById('subjectSearch');
 const subjectRows = document.querySelectorAll('.subject-row');
 
@@ -372,10 +349,9 @@ subjectSearch.addEventListener('input', () => {
     const searchTerm = subjectSearch.value.toLowerCase();
     subjectRows.forEach(row => {
         const subjectName = row.cells[0].textContent.toLowerCase();
-        const gradeLevel = row.cells[1].textContent.toLowerCase();
-        const strand = row.cells[2].textContent.toLowerCase();
-        if (subjectName.includes(searchTerm) || gradeLevel.includes(searchTerm) || strand.includes(
-                searchTerm)) {
+        const description = row.cells[1].textContent.toLowerCase();
+        const gradeLevel = row.cells[2].textContent.toLowerCase();
+        if (subjectName.includes(searchTerm) || description.includes(searchTerm) || gradeLevel.includes(searchTerm)) {
             row.style.display = '';
         } else {
             row.style.display = 'none';

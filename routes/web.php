@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\AssignController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
@@ -42,10 +43,11 @@ Route::post('/enrollment/teachers', [TeacherController::class, 'store'])->name('
 Route::get('enrollment.teachers', [TeacherController::class, 'index'])->name('teachers.index');
 Route::get('/enrollment/teacher_form', [TeacherController::class, 'create'])->name('teachers.create');
 Route::post('/enrollment/teacher_form', [TeacherController::class, 'store'])->name('teachers.store');
-Route::get('/teachers/{id}/edit', [TeacherController::class, 'edit'])->name('teachers.edit');
-    Route::put('/teachers/{id}', [TeacherController::class, 'update'])->name('teachers.update');
+Route::get('enrollment/teachers/{id}/edit', [TeacherController::class, 'edit'])->name('teachers.edit');
+    Route::put('enrollment/teachers/{id}', [TeacherController::class, 'update'])->name('teachers.update');
 Route::delete('/enrollment/teachers/{id}', [TeacherController::class, 'destroy'])->name('enrollment.teachers.destroy');
 
-
+Route::get('enrollment.subject-section', [AssignController::class, 'index'])->name('assign.index');
+Route::post('/enrollment/subject-section', [AssignController::class, 'store'])->name('assign.store');
 
 require __DIR__ . '/auth.php';
