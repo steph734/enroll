@@ -31,11 +31,12 @@ Route::get('/signup', function () {
     return view('login.signup');
 });
 
-Route::get('/enrollment/enrollment_form', [StudentController::class, 'index'])->name('student.index');
-Route::get('/enrollment/enrollment_form', [TeacherController::class, 'create'])->name('student.create');
+Route::get('/enrollment/students', [StudentController::class, 'index'])->name('student.index');
+Route::get('/enrollment/enrollment_form', [StudentController::class, 'create'])->name('student.create');
 Route::post('/enrollment/enrollment_form', [StudentController::class, 'store'])->name('student.store');
-
 Route::resource('/enrollment', EnrollmentController::class); 
+
+
 Route::resource('teachers', TeacherController::class);
 
 Route::get('/enrollment/teacher_form', [TeacherController::class, 'create'])->name('enrollment.show');

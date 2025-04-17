@@ -121,6 +121,11 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row d-flex justify-content-center mt-2 mb-3">
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-outline-primary w-100" id="addFieldsBtn">+</button>
+                            </div>
+                        </div>
                         <div class="row d-flex justify-content-center gap-1">
                             <div class="col-md-3">
                                 <button type="submit" class="btn btn-primary w-100">Assign</button>
@@ -129,11 +134,7 @@
                                 <button type="reset" class="btn btn-outline-secondary w-100">Clear</button>
                             </div>
                         </div>
-                        <div class="row d-flex justify-content-center mt-2">
-                            <div class="col-md-3">
-                                <button type="button" class="btn btn-outline-primary w-100" id="addFieldsBtn">+</button>
-                            </div>
-                        </div>
+                        
                     </form>
                 </div>
             </div>

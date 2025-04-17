@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title','students')
+@section('title', 'Students')
 @section('styles')
 <link rel="stylesheet" href="{{ asset('css/students.css') }}">
 @endsection
@@ -10,40 +10,33 @@
         <div class="row row-header-student">
             <div class="p-3 card card-header-student sticky-card">
                 <div class="card-body">
-                    <div class="d-flex">
-                        <div class="card-title d-flex align-items-center">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="card-title">
                             <h5>List of Students</h5>
-                            <form action="" id="searchForm" style="margin-left: 230px !important;">
-                                <div class="search-container-dash">
-                                    <i class="fa-solid fa-magnifying-glass"></i>
-                                    <input type="text" placeholder="Search..." id="searchInput">
-                                    <!-- Suggestions dropdown -->
-                                    <div id="suggestions"
-                                        style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ddd; border-radius: 4px; max-height: 200px; overflow-y: auto; z-index: 1000;">
-                                    </div>
-                                </div>
-                            </form>
                         </div>
+                        <form action="" id="searchForm">
+                            <div class="search-container-dash">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="text" placeholder="Search..." id="searchInput" class="form-control">
+                                <div id="suggestions" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ddd; border-radius: 4px; max-height: 200px; overflow-y: auto; z-index: 1000;"></div>
+                            </div>
+                        </form>
                     </div>
-
 
                     <!-- Filters Section -->
                     <div class="mt-3 filters d-flex justify-content-between align-items-center">
-                        <!-- Tabs for filtering by category -->
                         <div class="gap-3 tabs d-flex">
-                            <button class="tab active">ALL Students</button>
-                            <button class="tab">STEM</button>
-                            <button class="tab">ABM</button>
-                            <button class="tab">HUMMMS</button>
+                            <button class="tab active" data-filter="all">ALL Students</button>
+                            <button class="tab" data-filter="STEM">STEM</button>
+                            <button class="tab" data-filter="ABM">ABM</button>
+                            <button class="tab" data-filter="HUMSS">HUMSS</button>
                         </div>
 
-                        <!-- Dropdowns for Filter by and Sort by -->
                         <div class="gap-2 dropdowns d-flex">
                             <select class="form-select" style="width: 150px;">
                                 <option>Filter by</option>
                                 <option value="grade">Grade</option>
                                 <option value="age">Age</option>
-                                <option value="status">Status</option>
                             </select>
                             <select class="form-select" style="width: 150px;">
                                 <option>Sort by</option>
@@ -54,8 +47,7 @@
                             </select>
                         </div>
 
-                        <!-- Add Student Button -->
-                        <a href="{{ route('student.create','enrollment_form') }}">
+                        <a href="{{ route('student.create') }}">
                             <button class="btn btn-primary add-student">Add Student</button>
                         </a>
                     </div>
@@ -65,36 +57,57 @@
     </div>
 
     <div class="mb-3 row">
-        <div class="p-3 card card-table ">
+        <div class="p-3 card card-table">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-hover table-striped ">
+                    <table class="table table-hover table-striped" style="cursor: pointer;">
                         <thead>
                             <tr>
-                                <th scope="col" class="align-middle">#</th>
-                                <th scope="col" class="align-middle">First</th>
-                                <th scope="col" class="align-middle">Last</th>
-                                <th scope="col" class="align-middle">Handle</th>
+                                <th scope="col" class="align-middle">ID</th>
+                                <th scope="col" class="align-middle">First Name</th>
+                                <th scope="col" class="align-middle">Last Name</th>
+                                <th scope="col" class="align-middle">Email</th>
+                                <th scope="col" class="align-middle">Age</th>
+                                <th scope="col" class="align-middle">Grade Level</th>
+                                <th scope="col" class="align-middle">Action</th>
                             </tr>
                         </thead>
-                        <tbody d-flex align-items-center>
-                            <tr>
-                                <th scope="row" class="align-middle">1</th>
-                                <td class="align-middle">Mark</td>
-                                <td class="align-middle">Otto</td>
-                                <td class="align-middle">@mdo</td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="align-middle">2</th>
-                                <td class="align-middle">Jacob</td>
-                                <td class="align-middle">Thornton</td>
-                                <td class="align-middle">@fat</td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="align-middle">3</th>
-                                <td colspan="2" class="align-middle">Larry the Bird</td>
-                                <td class="align-middle">@twitter</td>
-                            </tr>
+                        <tbody id="studentsTable">
+                            @forelse(\App\Models\Student::all() as $student)
+                                <tr class="student-row" data-grade-level="{{ $student->grade_level }}">
+                                    <td>{{ $student->id }}</td>
+                                    <td>{{ $student->first_name }}</td>
+                                    <td>{{ $student->last_name }}</td>
+                                    <td>{{ $student->email }}</td>
+                                    <td>{{ $student->age }}</td>
+                                    <td>{{ $student->grade_level }}</td>
+                                    <td>
+                                        <a href=""
+                                           style="color: #ffc107; text-decoration: none; margin-right: 20px;"
+                                           title="Edit">
+                                            <i class="fa-solid fa-pen-to-square"
+                                               onmouseover="this.style.color='#e0a800'"
+                                               onmouseout="this.style.color='#ffc107'"></i>
+                                        </a>
+                                        <form action="" method="POST" style="display: inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                    style="background: none; border: none; color: #dc3545; cursor: pointer;"
+                                                    title="Delete"
+                                                    onclick="return confirm('Are you sure you want to delete this student?')">
+                                                <i class="fa-solid fa-trash"
+                                                   onmouseover="this.style.color='#c82333'"
+                                                   onmouseout="this.style.color='#dc3545'"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="text-center">No students found.</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -102,4 +115,74 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    const studentRows = document.querySelectorAll('.student-row');
+    
+    searchInput.addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        
+        studentRows.forEach(row => {
+            const firstName = row.cells[1].textContent.toLowerCase();
+            const lastName = row.cells[2].textContent.toLowerCase();
+            const email = row.cells[3].textContent.toLowerCase();
+            const gradeLevel = row.cells[5].textContent.toLowerCase();
+            
+            if (firstName.includes(searchTerm) || 
+                lastName.includes(searchTerm) || 
+                email.includes(searchTerm) || 
+                gradeLevel.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+
+    // Tab filtering
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            
+            const filter = this.getAttribute('data-filter');
+            
+            studentRows.forEach(row => {
+                const gradeLevel = row.getAttribute('data-grade-level');
+                if (filter === 'all' || gradeLevel === filter) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    // Sort functionality
+    const sortSelect = document.querySelectorAll('.form-select')[1]; // Second select is for sorting
+    sortSelect.addEventListener('change', function() {
+        const sortValue = this.value;
+        const tbody = document.getElementById('studentsTable');
+        const rows = Array.from(studentRows);
+        
+        rows.sort((a, b) => {
+            if (sortValue === 'name-asc') {
+                return a.cells[1].textContent.localeCompare(b.cells[1].textContent);
+            } else if (sortValue === 'name-desc') {
+                return b.cells[1].textContent.localeCompare(a.cells[1].textContent);
+            } else if (sortValue === 'grade-asc') {
+                return a.cells[5].textContent.localeCompare(b.cells[5].textContent);
+            } else if (sortValue === 'grade-desc') {
+                return b.cells[5].textContent.localeCompare(a.cells[5].textContent);
+            }
+            return 0;
+        });
+
+        rows.forEach(row => tbody.appendChild(row));
+    });
+});
+</script>
 @endsection
