@@ -68,6 +68,8 @@
                                 <th scope="col" class="align-middle">Last Name</th>
                                 <th scope="col" class="align-middle">Email</th>
                                 <th scope="col" class="align-middle">Age</th>
+                                <th scope="col" class="align-middle">Strand</th>
+                                <th scope="col" class="align-middle">Track</th>
                                 <th scope="col" class="align-middle">Grade Level</th>
                                 <th scope="col" class="align-middle">Action</th>
                             </tr>
@@ -80,14 +82,12 @@
                                     <td>{{ $student->last_name }}</td>
                                     <td>{{ $student->email }}</td>
                                     <td>{{ $student->age }}</td>
+                                    <td>{{ $student->strand }}</td>
+                                    <td>{{ $student->track }}</td>
                                     <td>{{ $student->grade_level }}</td>
                                     <td>
-                                        <a href=""
-                                           style="color: #ffc107; text-decoration: none; margin-right: 20px;"
-                                           title="Edit">
-                                            <i class="fa-solid fa-pen-to-square"
-                                               onmouseover="this.style.color='#e0a800'"
-                                               onmouseout="this.style.color='#ffc107'"></i>
+                                        <a href="" class="btn" title="View">
+                                            <i class="fa-solid fa-eye" style="color:#305cde; font-size: 18px;"></i>
                                         </a>
                                         <form action="" method="POST" style="display: inline;">
                                             @csrf
@@ -160,7 +160,24 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
-
+// Tab filtering
+document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        
+        const filter = this.getAttribute('data-filter');
+        
+        teacherRows.forEach(row => {
+            const specialization = row.getAttribute('data-specialization');
+            if (filter === 'all' || specialization === filter) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+});
     // Sort functionality
     const sortSelect = document.querySelectorAll('.form-select')[1]; // Second select is for sorting
     sortSelect.addEventListener('change', function() {

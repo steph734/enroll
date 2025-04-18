@@ -278,7 +278,7 @@
         <div class="p-3 card">
             <div class="gap-3 d-flex justify-content-center">
                 <button type="submit" class="btn btn-outline-primary btn-lg w-25">Enroll</button>
-                <a href="{{ route('student.index') }}" class="btn btn-primary btn-lg w-25">Cancel</a>
+                <a href="{{ route('students.index') }}" class="btn btn-primary btn-lg w-25">Cancel</a>
 
             </div>
         </div>

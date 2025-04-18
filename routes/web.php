@@ -31,10 +31,10 @@ Route::get('/signup', function () {
     return view('login.signup');
 });
 
-Route::get('/enrollment/students', [StudentController::class, 'index'])->name('student.index');
+Route::get('/enrollment/students', [StudentController::class, 'index'])->name('students.index');
 Route::get('/enrollment/enrollment_form', [StudentController::class, 'create'])->name('student.create');
 Route::post('/enrollment/enrollment_form', [StudentController::class, 'store'])->name('student.store');
-Route::resource('/enrollment', EnrollmentController::class); 
+Route::resource('/enrollment/students', StudentController::class); 
 
 
 Route::resource('teachers', TeacherController::class);

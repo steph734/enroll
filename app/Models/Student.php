@@ -2,12 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Student extends Model
 {
-    use HasFactory;
 
     protected $table = 'students';
 
@@ -21,6 +19,23 @@ class Student extends Model
         'age',
         'nationality',
         'address',
+        'zip_code',
+        'guardian_first_name',
+        'guardian_last_name',
+        'relationship',
+        'guardian_contact',
+        'previous_school',
+        'grade_completed',
+        'school_year_completed',
+        'transcript',
+        'track',
+        'strand',
+        'class_schedule',
+        'payment_amount',
+        'payment_date',
+        'receipt_number',
+        'payment_method',
+        'home_address',
         'contact_number',
         'email',
         'school',

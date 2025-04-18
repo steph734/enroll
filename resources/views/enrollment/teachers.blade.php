@@ -90,7 +90,7 @@
                                         <td>{{ $teacher->employment_status }}</td>
                                         <td>{{ $teacher->subjects }}</td>
                                         <td>
-                                            <a href="{{ route('enrollment.edit', $teacher->id) }}"
+                                            <a href="{{ route('teachers.edit', $teacher->id) }}"
                                                style="color: #ffc107; text-decoration: none; margin-right: 20px;"
                                                title="Edit">
                                                 <i class="fa-solid fa-pen-to-square"

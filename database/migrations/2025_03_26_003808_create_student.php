@@ -38,7 +38,7 @@ return new class extends Migration
             $table->string('gpa')->nullable();
             $table->string('transcript');
             $table->string('track');
-            $table->string('strand')->nullable();
+            $table->string('strand');
             $table->string('grade_level');
             $table->string('class_schedule');
             $table->text('additional_notes')->nullable();
