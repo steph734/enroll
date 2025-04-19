@@ -34,6 +34,7 @@ Route::get('/signup', function () {
 Route::get('/enrollment/students', [StudentController::class, 'index'])->name('students.index');
 Route::get('/enrollment/enrollment_form', [StudentController::class, 'create'])->name('student.create');
 Route::post('/enrollment/enrollment_form', [StudentController::class, 'store'])->name('student.store');
+Route::delete('/enrollment/students/{id}', [StudentController::class, 'destroy'])->name('student.destroy');
 Route::resource('/enrollment/students', StudentController::class); 
 
 

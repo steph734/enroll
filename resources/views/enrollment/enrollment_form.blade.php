@@ -243,12 +243,10 @@
         <!-- Payment -->
         <h5 class="section-title">Payment</h5>
         <div class="mb-3 shadow card form-section">
-
             <div class="m-3 row">
                 <div class="p-1 mb-3 col-md-4">
                     <label for="payment_amount" class="form-label">Payment Amount</label>
-                    <input type="number" class="form-control" id="payment_amount" name="payment_amount" step="0.01"
-                        required min="0">
+                    <input type="number" class="form-control" id="payment_amount" name="payment_amount" step="0.01" required min="0">
                 </div>
                 <div class="p-1 mb-3 col-md-4">
                     <label for="payment_date" class="form-label">Payment Date</label>
@@ -256,8 +254,7 @@
                 </div>
                 <div class="p-1 mb-3 col-md-4">
                     <label for="receipt_number" class="form-label">Receipt Number</label>
-                    <input type="text" class="form-control" id="receipt_number" name="receipt_number" value="P03"
-                        required>
+                    <input type="text" class="form-control" id="receipt_number" name="receipt_number" value="P03" required>
                 </div>
             </div>
             <div class="m-3 row">
@@ -271,7 +268,12 @@
                         <option value="Bank Transfer">Bank Transfer</option>
                     </select>
                 </div>
+                <div class="p-1 mb-3 col-md-4">
+                    <label for="studentid" class="form-label">StudentID</label>
+                    <input type="text" class="form-control" id="studentid" name="studentid" value="{{ $studentid ?? '' }}" readonly required>
+                </div>
             </div>
+        </div>
         </div>
 
         <!-- Submit Button -->
@@ -285,3 +287,17 @@
     </form>
 </div>
 @endsection
+<<script>
+    // Function to generate a 6-digit student ID
+    function generateStudentID() {
+        return Math.floor(100000 + Math.random() * 900000); // Generates number between 100000 and 999999
+    }
+
+    // Set the student ID value when the page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        const studentIDField = document.getElementById('studentid');
+        if (!studentIDField.value) { // Only set if the field is empty
+            studentIDField.value = generateStudentID();
+        }
+    });
+</script>

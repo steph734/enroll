@@ -11,6 +11,11 @@ class StudentController extends Controller
     // Display the student enrollment form
     public function create()
     {
+         
+          do {
+            $studentId = rand(100000, 999999);
+        } while (Student::where('studentid', $studentId)->exists());
+        
         return view('enrollment.enrollment_form');
     }
     public function index()
@@ -58,6 +63,7 @@ class StudentController extends Controller
             'payment_date' => 'required|date',
             'receipt_number' => 'required|string|max:255',
             'payment_method' => 'required|string|max:255',
+            'studentid' => 'required|numeric|digits:6',
         ]);
 
         // Handle file uploads
@@ -105,8 +111,17 @@ class StudentController extends Controller
             'payment_date' => $request->payment_date,
             'receipt_number' => $request->receipt_number,
             'payment_method' => $request->payment_method,
+            'studentid' => $request->studentid,
         ]);
 
         return redirect()->route('students.index')->with('success', 'Student enrolled successfully!');
+    }
+
+    public function destroy($id)
+    {
+        $student = Student::findOrFail($id);
+        $student->delete();
+
+        return redirect()->route('students.index')->with('success', 'Student deleted successfully.');
     }
 }

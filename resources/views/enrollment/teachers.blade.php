@@ -74,7 +74,7 @@
                                     <th scope="col" class="align-middle">Age</th>
                                     <th scope="col" class="align-middle">Specialization</th>
                                     <th scope="col" class="align-middle">Employment Status</th>
-                                    <th scope="col" class="align-middle">Subjects</th>
+                                    <th scope="col" class="align-middle">Status</th>
                                     <th scope="col" class="align-middle">Action</th>
                                 </tr>
                             </thead>
@@ -88,7 +88,13 @@
                                         <td>{{ $teacher->age }}</td>
                                         <td>{{ $teacher->specialization }}</td>
                                         <td>{{ $teacher->employment_status }}</td>
-                                        <td>{{ $teacher->subjects }}</td>
+                                        <td>
+                                            <select name="status" class="status-dropdown">
+                                            <option value="ongoing">Ongoing</option>
+                                            <option value="graduated">Graduated</option>
+                                            <option value="dropped">Dropped</option>
+                                        </select>
+                                    </td>
                                         <td>
                                             <a href="{{ route('teachers.edit', $teacher->id) }}"
                                                style="color: #ffc107; text-decoration: none; margin-right: 20px;"

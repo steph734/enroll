@@ -140,3 +140,34 @@ tr {
     transform: translateY(-50%);
     color: #666;
 }
+.status-dropdown {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    background-color: #fff;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+    cursor: pointer;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    width: 120px;
+}
+
+.status-dropdown:hover {
+    border-color: #6c757d;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.status-dropdown:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.status-dropdown option {
+    padding: 10px;
+}
+
+/* Ensure table cell alignment */
+td .status-dropdown {
+    vertical-align: middle;
+}

@@ -71,13 +71,14 @@
                                 <th scope="col" class="align-middle">Strand</th>
                                 <th scope="col" class="align-middle">Track</th>
                                 <th scope="col" class="align-middle">Grade Level</th>
+                                <th scope="col" class="align-middle">Status</th>
                                 <th scope="col" class="align-middle">Action</th>
                             </tr>
                         </thead>
                         <tbody id="studentsTable">
                             @forelse(\App\Models\Student::all() as $student)
                                 <tr class="student-row" data-grade-level="{{ $student->grade_level }}">
-                                    <td>{{ $student->id }}</td>
+                                    <td>{{ $student->studentid }}</td>
                                     <td>{{ $student->first_name }}</td>
                                     <td>{{ $student->last_name }}</td>
                                     <td>{{ $student->email }}</td>
@@ -86,26 +87,28 @@
                                     <td>{{ $student->track }}</td>
                                     <td>{{ $student->grade_level }}</td>
                                     <td>
+                                        <select name="status" class="status-dropdown">
+                                        <option value="ongoing">Ongoing</option>
+                                        <option value="graduated">Graduated</option>
+                                        <option value="dropped">Dropped</option>
+                                    </select>
+                                </td>
+                                    <td>
                                         <a href="" class="btn" title="View">
                                             <i class="fa-solid fa-eye" style="color:#305cde; font-size: 18px;"></i>
                                         </a>
-                                        <form action="" method="POST" style="display: inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                    style="background: none; border: none; color: #dc3545; cursor: pointer;"
-                                                    title="Delete"
-                                                    onclick="return confirm('Are you sure you want to delete this student?')">
-                                                <i class="fa-solid fa-trash"
-                                                   onmouseover="this.style.color='#c82333'"
-                                                   onmouseout="this.style.color='#dc3545'"></i>
-                                            </button>
-                                        </form>
+                                        <a href=""
+                                            style="color: #ffc107; text-decoration: none; margin-right: 20px;"
+                                            title="Edit">
+                                             <i class="fa-solid fa-pen-to-square"
+                                                onmouseover="this.style.color='#e0a800'" 
+                                                onmouseout="this.style.color='#ffc107'"></i>
+                                         </a>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="text-center">No students found.</td>
+                                    <td colspan="10" class="text-center">No students found.</td>
                                 </tr>
                             @endforelse
                         </tbody>

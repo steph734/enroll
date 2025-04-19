@@ -145,4 +145,23 @@ tr {
   font-size: 18px;
   pointer-events: none;
 }
+.status-dropdown:hover {
+  border-color: #6c757d;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.status-dropdown:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.status-dropdown option {
+  padding: 10px;
+}
+
+/* Ensure table cell alignment */
+td .status-dropdown {
+  vertical-align: middle;
+}
 
