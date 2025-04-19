@@ -172,57 +172,75 @@
                 </div>
             </div>
         </div>
-
-        <!-- Program Enrollment -->
-        <h5 class="section-title">Program Enrollment</h5>
-        <div class="mb-3 shadow card form-section">
-
-            <div class="m-3 row">
-                <div class="p-1 mb-3 col-md-3">
-                    <label for="track" class="form-label">Track</label>
-                    <select class="form-select" id="track" name="track" required>
-                        <option value="">Select</option>
-                        <option value="Academic">Academic</option>
-                        <option value="Technical">Technical</option>
-                        <option value="Vocational">Vocational</option>
-                    </select>
-                </div>
-                <div class="p-1 mb-3 col-md-3">
-                    <label for="strand" class="form-label">Strand</label>
-                    <select class="form-select" id="strand" name="strand">
-                        <option value="">Select</option>
-                        <option value="STEM">STEM</option>
-                        <option value="HUMSS">HUMSS</option>
-                        <option value="ABM">ABM</option>
-                        <option value="GAS">GAS</option>
-                    </select>
-                </div>
-                <div class="p-1 mb-3 col-md-3">
-                    <label for="grade_level" class="form-label">Grade Level</label>
-                    <select class="form-select" id="grade_level" name="grade_level" required>
-                        <option value="">Select</option>
-                        <option value="Grade 11">Grade 11</option>
-                        <option value="Grade 12">Grade 12</option>
-                    </select>
-                </div>
-                <div class="p-1 mb-3 col-md-3">
-                    <label for="class_schedule" class="form-label">Preferred Class Schedule</label>
-                    <select class="form-select" id="class_schedule" name="class_schedule" required>
-                        <option value="">Select</option>
-                        <option value="Morning">Morning</option>
-                        <option value="Afternoon">Afternoon</option>
-                        <option value="Evening">Evening</option>
-                    </select>
-                </div>
-            </div>
-            <div class="m-3 row">
-                <div class="p-1 mb-3 col-md-12">
-                    <label for="additional_notes" class="form-label">Additional Notes</label>
-                    <textarea class="form-control" id="additional_notes" name="additional_notes" rows="3"></textarea>
-                </div>
-            </div>
+<!-- Program Enrollment -->
+<h5 class="section-title">Program Enrollment</h5>
+<div class="mb-3 shadow card form-section">
+    <div class="m-3 row">
+        <div class="p-1 mb-3 col-md-3">
+            <label class="form-label mb-1" for="track">Track</label>
+            <select class="form-select" name="track" id="track">
+                <option value="">Select a track</option>
+                @forelse(\App\Models\Strand::all() as $track)
+                    <option value="{{ $track->track }}" {{ old('track') == $track->track ? 'selected' : '' }}>
+                        {{ $track->track }}
+                    </option>
+                @empty
+                    <option value="">No tracks available</option>
+                @endforelse
+            </select>
+            @error('track')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
         </div>
-
+        <div class="p-1 mb-3 col-md-3">
+            <label class="form-label" for="strand">Strand</label>
+            <select class="form-select" id="strand" name="strand">
+                @forelse(\App\Models\Strand::all() as $strand)
+                    <option value="{{ $strand->strandname }}" {{ old('strand') == $strand->strandname ? 'selected' : '' }}>
+                        {{ $strand->strandname }}
+                    </option>
+                @empty
+                    <option value="">No strands available</option>
+                @endforelse
+            </select>
+            @error('strand')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
+        </div>
+        <div class="p-1 mb-3 col-md-3">
+            <label class="form-label" for="grade_level">Grade Level</label>
+            <select class="form-select" id="grade_level" name="grade_level" required>
+                <option value="">Select</option>
+                <option value="Grade 11">Grade 11</option>
+                <option value="Grade 12">Grade 12</option>
+            </select>
+            @error('grade_level')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
+        </div>
+        <div class="p-1 mb-3 col-md-3">
+            <label class="form-label" for="class_schedule">Preferred Class Schedule</label>
+            <select class="form-select" id="class_schedule" name="class_schedule" required>
+                <option value="">Select</option>
+                <option value="Morning">Morning</option>
+                <option value="Afternoon">Afternoon</option>
+                <option value="Evening">Evening</option>
+            </select>
+            @error('class_schedule')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
+        </div>
+    </div>
+    <div class="m-3 row">
+        <div class="p-1 mb-3 col-md-12">
+            <label class="form-label" for="additional_notes">Additional Notes</label>
+            <textarea class="form-control" id="additional_notes" name="additional_notes" rows="3"></textarea>
+            @error('additional_notes')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
+        </div>
+    </div>
+</div>
         <!-- Additional Information -->
         <h5 class="section-title">Additional Information</h5>
         <div class="mb-3 shadow card form-section">
@@ -239,44 +257,10 @@
                 </div>
             </div>
         </div>
-
-        <!-- Payment -->
-        <h5 class="section-title">Payment</h5>
-        <div class="mb-3 shadow card form-section">
-            <div class="m-3 row">
-                <div class="p-1 mb-3 col-md-4">
-                    <label for="payment_amount" class="form-label">Payment Amount</label>
-                    <input type="number" class="form-control" id="payment_amount" name="payment_amount" step="0.01" required min="0">
-                </div>
-                <div class="p-1 mb-3 col-md-4">
-                    <label for="payment_date" class="form-label">Payment Date</label>
-                    <input type="date" class="form-control" id="payment_date" name="payment_date" required>
-                </div>
-                <div class="p-1 mb-3 col-md-4">
-                    <label for="receipt_number" class="form-label">Receipt Number</label>
-                    <input type="text" class="form-control" id="receipt_number" name="receipt_number" value="P03" required>
-                </div>
-            </div>
-            <div class="m-3 row">
-                <div class="p-1 mb-3 col-md-4">
-                    <label for="payment_method" class="form-label">Payment Method</label>
-                    <select class="form-select" id="payment_method" name="payment_method" required>
-                        <option value="">Select</option>
-                        <option value="Credit Card">Credit Card</option>
-                        <option value="Debit Card">Debit Card</option>
-                        <option value="Cash">Cash</option>
-                        <option value="Bank Transfer">Bank Transfer</option>
-                    </select>
-                </div>
                 <div class="p-1 mb-3 col-md-4">
                     <label for="studentid" class="form-label">StudentID</label>
                     <input type="text" class="form-control" id="studentid" name="studentid" value="{{ $studentid ?? '' }}" readonly required>
                 </div>
-                <div class="p-1 mb-3 col-md-4">
-                    <label for="studentid" class="form-label">AmountDue</label>
-                    <input type="text" class="form-control" id="amount_due" name="amount_due" value="40000" readonly required>
-                </div>
-            </div>
         </div>
         </div>
 

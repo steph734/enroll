@@ -46,11 +46,6 @@ return new class extends Migration
             $table->text('additional_notes')->nullable();
             $table->text('medical_info')->nullable();
             $table->text('special_accommodations')->nullable();
-            $table->decimal('payment_amount', 8, 2);
-            $table->date('payment_date');
-            $table->string('receipt_number');
-            $table->string('payment_method');
-            $table->decimal('amount_due', 10, 2)->default(40000.00);
             $table->timestamps();
         });
     }

@@ -12,10 +12,6 @@ class StudentController extends Controller
     public function create()
     {
          
-          do {
-            $studentId = rand(100000, 999999);
-        } while (Student::where('studentid', $studentId)->exists());
-        
         return view('enrollment.enrollment_form');
     }
     public function index()
@@ -59,10 +55,6 @@ class StudentController extends Controller
             'additional_notes' => 'nullable|string',
             'medical_info' => 'nullable|string',
             'special_accommodations' => 'nullable|string',
-            'payment_amount' => 'required|numeric|min:0',
-            'payment_date' => 'required|date',
-            'receipt_number' => 'required|string|max:255',
-            'payment_method' => 'required|string|max:255',
             'studentid' => 'required|numeric|digits:6',
         ]);
 
@@ -107,10 +99,6 @@ class StudentController extends Controller
             'additional_notes' => $request->additional_notes,
             'medical_info' => $request->medical_info,
             'special_accommodations' => $request->special_accommodations,
-            'payment_amount' => $request->payment_amount,
-            'payment_date' => $request->payment_date,
-            'receipt_number' => $request->receipt_number,
-            'payment_method' => $request->payment_method,
             'studentid' => $request->studentid,
         ]);
 
