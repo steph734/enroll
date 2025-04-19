@@ -108,23 +108,26 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <th scope="row" class="align-middle">202501</th>
-                                <td class="align-middle">Juan Dela Cruz</td>
-                                <td class="align-middle">11 - STEM A</td>
-                                <td class="align-middle">₱5,000</td>
-                                <td class="align-middle">₱2,000</td>
-                                <td class="align-middle">₱2,000</td>
-                                <td class="align-middle">Partial</td>
-                                <td class="align-middle">02/10/2025</td>
-                                <td class="align-middle">
-                                    <button class="btn"><i class="fa-solid fa-eye"
-                                            style="color:#305cde; font-size: 18px;"></i></button>
-                                    <button class="btn "><i class="fa-solid fa-edit"
-                                            style="color:#305cde; font-size: 18px;"></i></button>
-                                </td>
-                            </tr>
-                            <!-- Add more rows dynamically using PHP if needed -->
+                            @forelse(\App\Models\Student::with('section')->get() as $student)
+                                <tr>
+                                    <th scope="row" class="align-middle">{{ $student->studentid }}</th>
+                                    <td class="align-middle">{{ $student->first_name }} {{ $student->last_name }}</td>
+                                    <td class="align-middle">{{ $student->grade_level }} - {{ $student->section ? $student->section->code : 'N/A' }}</td>
+                                    <td class="align-middle">₱{{ number_format($student->amount_due, 2) }}</td>
+                                    <td class="align-middle">₱{{ number_format($student->payment_amount, 2) }}</td>
+                                    <td class="align-middle">₱{{ number_format($student->balance, 2) }}</td>
+                                    <td class="align-middle">{{ $student->status }}</td>
+                                    <td class="align-middle">{{ $student->payment_date ? \Carbon\Carbon::parse($student->payment_date)->format('m/d/Y') : 'N/A' }}</td>
+                                    <td class="align-middle">
+                                        <button class="btn"><i class="fa-solid fa-eye" style="color:#305cde; font-size: 18px;"></i></button>
+                                        <button class="btn"><i class="fa-solid fa-edit" style="color:#305cde; font-size: 18px;"></i></button>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="9" class="text-center">No students found.</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>

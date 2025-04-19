@@ -6,6 +6,7 @@ use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\AssignController;
+use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
@@ -37,6 +38,8 @@ Route::post('/enrollment/enrollment_form', [StudentController::class, 'store'])-
 Route::delete('/enrollment/students/{id}', [StudentController::class, 'destroy'])->name('student.destroy');
 Route::resource('/enrollment/students', StudentController::class); 
 
+
+Route::get('enrollment/payments', [PaymentController::class, 'index'])->name('payments.index');
 
 Route::resource('teachers', TeacherController::class);
 

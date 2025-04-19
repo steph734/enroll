@@ -272,6 +272,10 @@
                     <label for="studentid" class="form-label">StudentID</label>
                     <input type="text" class="form-control" id="studentid" name="studentid" value="{{ $studentid ?? '' }}" readonly required>
                 </div>
+                <div class="p-1 mb-3 col-md-4">
+                    <label for="studentid" class="form-label">AmountDue</label>
+                    <input type="text" class="form-control" id="amount_due" name="amount_due" value="40000" readonly required>
+                </div>
             </div>
         </div>
         </div>

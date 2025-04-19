@@ -18,5 +18,10 @@ class Section extends Model
     {
         return $this->belongsTo(Strand::class, 'strandid');
     }
+    
+    public function students()
+    {
+        return $this->hasMany(Student::class);
+    }
 
 }

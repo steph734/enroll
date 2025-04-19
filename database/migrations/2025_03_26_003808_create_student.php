@@ -50,6 +50,7 @@ return new class extends Migration
             $table->date('payment_date');
             $table->string('receipt_number');
             $table->string('payment_method');
+            $table->decimal('amount_due', 10, 2)->default(40000.00);
             $table->timestamps();
         });
     }

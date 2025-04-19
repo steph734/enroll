@@ -36,6 +36,7 @@ class Student extends Model
         'payment_amount',
         'payment_date',
         'receipt_number',
+        'amount_due',
         'payment_method',
         'home_address',
         'contact_number',
@@ -47,4 +48,20 @@ class Student extends Model
         'parent_contact',
         'parent_email',
     ];
+    
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    // Relationship to fetch the latest payment
+    public function latestPayment()
+    {
+        return $this->hasOne(Payment::class)->latestOfMany();
+    }
+
+    public function section()
+    {
+        return $this->belongsTo(Section::class);
+    }
 }
