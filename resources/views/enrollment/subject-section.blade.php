@@ -225,6 +225,7 @@
                                 <th>Section Name</th>
                                 <th>Gradelevel</th>
                                 <th>Code</th>
+                                <th>Slots</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -234,6 +235,9 @@
                                     <td>{{ $section->sectioname }}</td>
                                     <td>{{ $section->gradelevel }}</td>
                                     <td>{{ $section->code }}</td>
+                                    <td style="{{ $section->current_slots == 50 ? 'color: green;' : ($section->current_slots == 0 ? 'color: red;' : '') }}">
+                                        {{ $section->current_slots }}/{{ $section->max_slots }}
+                                    </td>
                                     <td class="text">
                                         <button class="btn" title="View">
                                             <i class="fa-solid fa-eye" style="color:#305cde; font-size: 18px;"></i>

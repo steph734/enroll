@@ -12,7 +12,9 @@ class Section extends Model
         'sectioname',
         'gradelevel',
         'strandid',
-        'code', // Add the new field
+        'code',
+        'max_slots',
+        'current_slots', // Add the new field
     ];
     public function strand()
     {
