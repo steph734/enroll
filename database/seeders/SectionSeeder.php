@@ -22,6 +22,12 @@ class SectionSeeder extends Seeder
         ]);
 
         Section::create([
+            'sectioname' => 'STEM-A2',
+            'gradelevel' => 'Grade 12',
+            'code' => 'STEM-A1-102',
+        ]);
+
+        Section::create([
             'sectioname' => 'ABM-B2',
             'gradelevel' => 'Grade 12',
             'code' => 'ABM-B1-101',

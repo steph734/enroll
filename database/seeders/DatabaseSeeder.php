@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(SubjectSeeder::class);
         $this->call(SectionSeeder::class);
+        $this->call(StrandSeeder::class);
 
         User::factory()->create([
             'name' => 'Test User',

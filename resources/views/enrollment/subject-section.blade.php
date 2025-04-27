@@ -235,7 +235,7 @@
                                     <td>{{ $section->sectioname }}</td>
                                     <td>{{ $section->gradelevel }}</td>
                                     <td>{{ $section->code }}</td>
-                                    <td style="{{ $section->current_slots == 50 ? 'color: green;' : ($section->current_slots == 0 ? 'color: red;' : '') }}">
+                                    <td style="{{ $section->current_slots == 30 ? 'color: green;' : ($section->current_slots == 0 ? 'color: red;' : '') }}">
                                         {{ $section->current_slots }}/{{ $section->max_slots }}
                                     </td>
                                     <td class="text">
