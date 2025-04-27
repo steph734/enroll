@@ -12,8 +12,8 @@ class TeacherController extends Controller
 {
 
     public function index() {
-        $teachers = Teacher::all(); // Fetch all teachers from the database
-        return view('enrollment.teachers', compact('teachers'));
+        $teacher = Teacher::all(); // Fetch all teachers from the database
+        return view('enrollment.teachers', compact('teacher'));
     }
     
     public function create()
@@ -63,17 +63,18 @@ class TeacherController extends Controller
     }
 
 
-    public function edit(Teacher $teacher)
+    public function edit($id)
     {
+        $teacher = Teacher::findOrFail($id);
         return view('enrollment.edit', compact('teacher'));
     }
-
-    public function update(Request $request, Teacher $teacher)
+    
+    public function update(Request $request, $id)
     {
         $validated = $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'email' => 'required|email|unique:teachers,email,' . $teacher->id,
+            'email' => 'required|email|unique:teachers,email,' . $id,
             'age' => 'required|integer|min:1',
             'specialization' => 'required|in:Academic,TVL,Sports,Arts',
             'employment_status' => 'required|in:Full-time,Part-time',
@@ -105,7 +106,9 @@ class TeacherController extends Controller
             'date_hired' => 'required|date',
             'employee_id' => 'required|string|max:255',
         ]);
-
+    
+        $teacher = Teacher::findOrFail($id);
+    
         // Handle file uploads
         if ($request->hasFile('profile_picture')) {
             if ($teacher->profile_picture) {
@@ -131,13 +134,11 @@ class TeacherController extends Controller
             }
             $validated['transcript'] = $request->file('transcript')->store('teachers', 'public');
         }
-
+    
         $teacher->update($validated);
         return redirect()->route('teachers.index')->with('success', 'Teacher updated successfully.');
-    }
 }
 
+}
 
-
-
-
+?>

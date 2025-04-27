@@ -96,6 +96,9 @@
                                         </select>
                                     </td>
                                         <td>
+                                            <a href="" class="btn" title="View">
+                                                <i class="fa-solid fa-eye" style="color:#305cde; font-size: 18px;"></i>
+                                            </a>
                                             <a href="{{ route('teachers.edit', $teacher->id) }}"
                                                style="color: #ffc107; text-decoration: none; margin-right: 20px;"
                                                title="Edit">
@@ -103,18 +106,7 @@
                                                    onmouseover="this.style.color='#e0a800'" 
                                                    onmouseout="this.style.color='#ffc107'"></i>
                                             </a>
-                                            <form action="{{ route('teachers.destroy', $teacher->id) }}" method="POST" style="display: inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" 
-                                                        style="background: none; border: none; color: #dc3545; cursor: pointer;"
-                                                        title="Delete"
-                                                        onclick="return confirm('Are you sure you want to delete this teacher?')">
-                                                    <i class="fa-solid fa-trash" 
-                                                       onmouseover="this.style.color='#c82333'" 
-                                                       onmouseout="this.style.color='#dc3545'"></i>
-                                                </button>
-                                            </form>
+                                           
                                         </td>
                                     </tr>
                                 @empty

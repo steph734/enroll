@@ -13,7 +13,7 @@ class Teacher extends Model
         'license_validity', 'let_date', 'specialization', 'prc_copy',
         'previous_school', 'position', 'years_experience', 'employment_status',
         'teaching_schedule', 'subjects', 'certifications', 'medical_info',
-        'accommodations', 'resume', 'transcript', 'date_hired', 'employee_id'
+        'accommodations', 'resume', 'transcript', 'date_hired', 'employee_id', 'status'
     ];
 }
 

@@ -87,17 +87,21 @@
                                     <td>{{ $student->track }}</td>
                                     <td>{{ $student->grade_level }}</td>
                                     <td>
-                                        <select name="status" class="status-dropdown">
-                                        <option value="ongoing">Ongoing</option>
-                                        <option value="graduated">Graduated</option>
-                                        <option value="dropped">Dropped</option>
-                                    </select>
-                                </td>
+                                        <form action="{{ route('student.update', $student->id) }}" method="POST">
+                                            @csrf
+                                            @method('PUT')
+                                            <select name="status" class="status-dropdown" onchange="this.form.submit()">
+                                                <option value="ongoing" {{ $student->status == 'ongoing' ? 'selected' : '' }}>Ongoing</option>
+                                                <option value="graduated" {{ $student->status == 'graduated' ? 'selected' : '' }}>Graduated</option>
+                                                <option value="dropped" {{ $student->status == 'dropped' ? 'selected' : '' }}>Dropped</option>
+                                            </select>
+                                        </form>
+                                    </td>
                                     <td>
                                         <a href="" class="btn" title="View">
                                             <i class="fa-solid fa-eye" style="color:#305cde; font-size: 18px;"></i>
                                         </a>
-                                        <a href=""
+                                        <a href="{{ route('student.edit', $student->id) }}"
                                             style="color: #ffc107; text-decoration: none; margin-right: 20px;"
                                             title="Edit">
                                              <i class="fa-solid fa-pen-to-square"
@@ -132,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const firstName = row.cells[1].textContent.toLowerCase();
             const lastName = row.cells[2].textContent.toLowerCase();
             const email = row.cells[3].textContent.toLowerCase();
-            const gradeLevel = row.cells[5].textContent.toLowerCase();
+            const gradeLevel = row.cells[7].textContent.toLowerCase(); // Updated to correct column
             
             if (firstName.includes(searchTerm) || 
                 lastName.includes(searchTerm) || 
@@ -154,8 +158,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const filter = this.getAttribute('data-filter');
             
             studentRows.forEach(row => {
-                const gradeLevel = row.getAttribute('data-grade-level');
-                if (filter === 'all' || gradeLevel === filter) {
+                const strand = row.cells[5].textContent; // Strand column
+                if (filter === 'all' || strand === filter) {
                     row.style.display = '';
                 } else {
                     row.style.display = 'none';
@@ -163,24 +167,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
-// Tab filtering
-document.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click', function() {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        this.classList.add('active');
-        
-        const filter = this.getAttribute('data-filter');
-        
-        teacherRows.forEach(row => {
-            const specialization = row.getAttribute('data-specialization');
-            if (filter === 'all' || specialization === filter) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        });
-    });
-});
+
     // Sort functionality
     const sortSelect = document.querySelectorAll('.form-select')[1]; // Second select is for sorting
     sortSelect.addEventListener('change', function() {
@@ -194,9 +181,9 @@ document.querySelectorAll('.tab').forEach(tab => {
             } else if (sortValue === 'name-desc') {
                 return b.cells[1].textContent.localeCompare(a.cells[1].textContent);
             } else if (sortValue === 'grade-asc') {
-                return a.cells[5].textContent.localeCompare(b.cells[5].textContent);
+                return a.cells[7].textContent.localeCompare(b.cells[7].textContent);
             } else if (sortValue === 'grade-desc') {
-                return b.cells[5].textContent.localeCompare(a.cells[5].textContent);
+                return b.cells[7].textContent.localeCompare(a.cells[7].textContent);
             }
             return 0;
         });

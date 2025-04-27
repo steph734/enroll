@@ -35,6 +35,8 @@ Route::get('/signup', function () {
 Route::get('/enrollment/students', [StudentController::class, 'index'])->name('students.index');
 Route::get('/enrollment/enrollment_form', [StudentController::class, 'create'])->name('student.create');
 Route::post('/enrollment/enrollment_form', [StudentController::class, 'store'])->name('student.store');
+Route::get('/enrollment/students/{id}/studentedit', [StudentController::class, 'edit'])->name('student.edit');
+Route::put('/enrollment/students/{id}', [StudentController::class, 'update'])->name('student.update');
 Route::delete('/enrollment/students/{id}', [StudentController::class, 'destroy'])->name('student.destroy');
 Route::resource('/enrollment/students', StudentController::class); 
 
@@ -50,8 +52,8 @@ Route::post('/enrollment/teachers', [TeacherController::class, 'store'])->name('
 Route::get('enrollment.teachers', [TeacherController::class, 'index'])->name('teachers.index');
 Route::get('/enrollment/teacher_form', [TeacherController::class, 'create'])->name('teachers.create');
 Route::post('/enrollment/teacher_form', [TeacherController::class, 'store'])->name('teachers.store');
-Route::get('enrollment/teachers/{id}/edit', [TeacherController::class, 'edit'])->name('teachers.edit');
-Route::put('enrollment/teachers/{id}', [TeacherController::class, 'update'])->name('teachers.update');
+Route::get('/enrollment/teachers/{id}/edit', [TeacherController::class, 'edit'])->name('teachers.edit');
+Route::put('/enrollment/teachers/{id}', [TeacherController::class, 'update'])->name('teachers.update');
 Route::delete('/enrollment/teachers/{id}', [TeacherController::class, 'destroy'])->name('enrollment.teachers.destroy');
 
 Route::get('/assign', [AssignController::class, 'index'])->name('assign.index');
