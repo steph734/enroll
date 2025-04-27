@@ -70,11 +70,12 @@
                                 <th scope="col" class="align-middle">Section</th>
                                 <th scope="col" class="align-middle">Grade Level</th>
                                 <th scope="col" class="align-middle">Day</th>
-                                <th scope="col" class="align-middle">Term</th>
+                                <th scope="col" class="align-middle">Semester</th>
                                 <th scope="col" class="align-middle">Time</th>
                                 <th scope="col" class="align-middle">Room</th>
                                 <th scope="col" class="align-middle">Strand</th>
                                 <th scope="col" class="align-middle">Status</th>
+                                <th scope="col" class="align-middle">Teachername</th>
                                 <th scope="col" class="align-middle">Action</th>
                             </tr>
                         </thead>
@@ -89,6 +90,7 @@
                                 <td class="align-middle">Rizal</td>
                                 <td class="align-middle">STEM</td>
                                 <td class="align-middle"></td>
+                                <td class="align-middle">Eli</td>
                                 <td class="align-middle">
                                     <button class="btn"><i class="fa-solid fa-eye"
                                             style="color:#305cde; font-size: 18px;"></i></button>

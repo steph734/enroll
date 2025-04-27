@@ -178,16 +178,18 @@
                <div class="p-1 mb-3 col-md-6">
                    <label for="specialization" class="form-label">Teaching Specialization/Track</label>
                    <select class="form-select @error('specialization') is-invalid @enderror" id="specialization" name="specialization" required>
-                       <option value="">Select</option>
-                       <option value="Academic" {{ old('specialization') == 'Academic' ? 'selected' : '' }}>Academic (STEM, ABM, HUMSS, GAS)</option>
-                       <option value="TVL" {{ old('specialization') == 'TVL' ? 'selected' : '' }}>Technical-Vocational-Livelihood (TVL)</option>
-                       <option value="Sports" {{ old('specialization') == 'Sports' ? 'selected' : '' }}>Sports</option>
-                       <option value="Arts" {{ old('specialization') == 'Arts' ? 'selected' : '' }}>Arts and Design</option>
-                   </select>
-                   @error('specialization')
-                       <div class="invalid-feedback">{{ $message }}</div>
-                   @enderror
-               </div>
+                    @forelse(\App\Models\Strand::all() as $track)
+                    <option value="{{ $track->strandname }}" {{ old('track') == $track->strandname ? 'selected' : '' }}>
+                        {{ $track->strandname }}
+                    </option>
+                @empty
+                    <option value="">No tracks available</option>
+                @endforelse
+            </select>
+            @error('track')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
+        </div>
                <div class="p-1 mb-3 col-md-6">
                    <label for="prc_copy" class="form-label">PRC License Copy</label>
                    <input type="file" class="form-control @error('prc_copy') is-invalid @enderror" id="prc_copy" name="prc_copy" accept=".pdf,.jpg,.png" required>

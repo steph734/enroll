@@ -18,7 +18,7 @@ return new class extends Migration
             $table->time('start_time')->nullable(); // Add start_time
              $table->time('end_time')->nullable();
             $table->string('gradelevel');
-            $table->enum('status',['ongoingg', 'completed', 'cancelled']);
+            $table->enum('status',['ongoing', 'completed', 'cancelled']);
             $table->timestamps();
         });
     }
