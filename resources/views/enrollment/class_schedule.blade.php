@@ -80,25 +80,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <th scope="row" class="align-middle">Gen Math</th>
-                                <td class="align-middle">STEM-A1</td>
-                                <td class="align-middle">11</td>
-                                <td class="align-middle">M-F</td>
-                                <td class="align-middle">1st Term</td>
-                                <td class="align-middle">7:00-8:00</td>
-                                <td class="align-middle">Rizal</td>
-                                <td class="align-middle">STEM</td>
-                                <td class="align-middle"></td>
-                                <td class="align-middle">Eli</td>
-                                <td class="align-middle">
-                                    <button class="btn"><i class="fa-solid fa-eye"
-                                            style="color:#305cde; font-size: 18px;"></i></button>
-                                    <button class="btn "><i class="fa-solid fa-edit"
-                                            style="color:#305cde; font-size: 18px;"></i></button>
-                                </td>
-                            </tr>
-                            <!-- Add more rows dynamically using PHP if needed -->
+                           
                         </tbody>
                     </table>
                 </div>

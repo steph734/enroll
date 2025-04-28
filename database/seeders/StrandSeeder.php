@@ -30,6 +30,13 @@ class StrandSeeder extends Seeder
                 'description' => 'Humanities and Social Sciences strand for social studies and humanities.',
                 'track' => 'Academic',
             ],
+
+            [
+                'strandname' => 'GAS',
+                'description' => 'General Academic Strand for a flexible curriculum combining various academic disciplines.',
+                'track' => 'Academic',
+            ],
+            
             [
                 'strandname' => 'TVL-ICT',
                 'description' => 'Technical-Vocational-Livelihood track specializing in Information and Communications Technology.',

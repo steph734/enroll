@@ -21,6 +21,7 @@
         <li class="nav-item m-1">
             <a class="nav-link p-1" href="#subject" data-bs-toggle="tab">Subject</a>
         </li>
+      
     </ul>
 
     <div class="tab-content">
@@ -254,7 +255,7 @@
                 </div>
             </div>
         </div>
-
+                 
         <!-- Subject Tab -->
         <div class="tab-pane fade" id="subject">
             <div class="card p-3">
@@ -308,7 +309,28 @@
     </div>
 </div>
 
+
+
 <script>
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const sectionSelect = document.getElementById('sectionSelect');
+    const sectionSlots = document.getElementById('sectionSlots');
+    const resetButton = document.querySelector('button[type="reset"]');
+
+    // Update slots when section changes
+    sectionSelect.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const slots = selectedOption.dataset.slots || '';
+        sectionSlots.value = slots;
+    });
+
+    // Clear slots when form is reset
+    resetButton.addEventListener('click', function() {
+        sectionSlots.value = '';
+    });
+});
 document.querySelector('#teacherSelect').addEventListener('change', function() {
     const selectedOption = this.options[this.selectedIndex];
     document.querySelector('#employmentStatus').value = selectedOption.getAttribute('data-employment-status') || '';
