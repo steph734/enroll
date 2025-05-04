@@ -320,4 +320,14 @@
             studentIDField.value = generateStudentID();
         }
     });
+
+    // Generate a random 6-digit number (e.g., 100000 to 999999)
+    function generateReceiptNumber() {
+        return Math.floor(100000 + Math.random() * 900000);
+    }
+
+    // Set the receipt number when the page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('receiptnumber').value = generateReceiptNumber();
+    });
 </script>
