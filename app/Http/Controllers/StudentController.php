@@ -17,7 +17,7 @@ class StudentController extends Controller
     public function index()
     {
         $student = Student::all();
-        return view('students.index', compact('students'));
+        return view('students.index', compact('student'));
     }
 
     public function store(Request $request)
@@ -56,6 +56,11 @@ class StudentController extends Controller
             'medical_info' => 'nullable|string',
             'special_accommodations' => 'nullable|string',
             'studentid' => 'required|numeric|digits:6',
+            'payment_date' => 'nullable|date',
+            'downpayment' => 'nullable|numeric|min:0',
+            'payment_method' => 'nullable|string|max:255',
+            'balance' => 'nullable|numeric|min:0', // Balance can be provided, but we'll set default later
+            'receiptnumber' => 'nullable|string|size:6', 
         ]);
 
         // Handle file uploads
@@ -100,9 +105,25 @@ class StudentController extends Controller
             'medical_info' => $request->medical_info,
             'special_accommodations' => $request->special_accommodations,
             'studentid' => $request->studentid,
+            'payment_date' => $request->payment_date,
+            'downpayment' => $request->downpayment,
+            'payment_method' => $request->payment_method,
+            'balance' => $request->balance ?? 30000, // Default to 30000 if not provided
+            'receiptnumber' => $request->receiptnumber ?? $this->generateReceiptNumber(),
+            
         ]);
 
         return redirect()->route('students.index')->with('success', 'Student enrolled successfully!');
+    }
+
+
+    private function generateReceiptNumber()
+    {
+        do {
+            $receiptNumber = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT); // Generate 6-digit number
+        } while (Student::where('receiptnumber', $receiptNumber)->exists()); // Ensure uniqueness
+
+        return $receiptNumber;
     }
 
     public function edit($id)
@@ -147,6 +168,11 @@ class StudentController extends Controller
             'special_accommodations' => 'nullable|string',
             'studentid' => 'required|numeric|digits:6|unique:students,studentid,' . $id,
             'status' => 'required|in:ongoing,graduated,dropped',
+            'payment_date' => 'nullable|date',
+            'downpayment' => 'nullable|numeric|min:0',
+            'payment_method' => 'nullable|string|max:255',
+            'balance' => 'nullable|numeric|min:0', // Balance can be provided, but we'll set default later
+            'receiptnumber' => 'nullable|string|size:6', 
         ]);
 
         $student = Student::findOrFail($id);

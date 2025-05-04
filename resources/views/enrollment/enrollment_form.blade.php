@@ -257,13 +257,45 @@
                 </div>
             </div>
         </div>
+               <!-- Payment Information -->
+        <h5 class="section-title">Payment Information</h5>
+        <div class="mb-3 shadow card form-section">
+            <div class="m-3 row">
+                <div class="p-1 mb-3 col-md-4">
+                    <label for="payment_date" class="form-label">Payment Date</label>
+                    <input type="date" class="form-control" id="payment_date" name="payment_date" required>
+                </div>
+                <div class="p-1 mb-3 col-md-4">
+                    <label for="downpayment" class="form-label">Downpayment</label>
+                    <input type="number" class="form-control" id="downpayment" name="downpayment" min="0" step="0.01" required>
+                </div>
+                <div class="p-1 mb-3 col-md-4">
+                    <label for="payment_method" class="form-label">Payment Method</label>
+                    <select class="form-select" id="payment_method" name="payment_method" required>
+                        <option value="">Select</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Credit Card">Credit Card</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                        <option value="Online Payment">Online Payment</option>
+                    </select>
+                </div>
+            </div>
+            <div class="m-3 row">
+                <div class="p-1 mb-3 col-md-4">
+                    <label for="balance" class="form-label">Balance</label>
+                    <input type="number" class="form-control" id="balance" name="balance" value="30000" readonly required>
+                </div>
+                <div class="p-1 mb-3 col-md-4">
+                    <label for="receiptnumber" class="form-label">Receipt Number</label>
+                    <input type="text" class="form-control" id="receiptnumber" name="receiptnumber" readonly required>
+                </div>
+            </div>
+        </div>
+
                 <div class="p-1 mb-3 col-md-4">
                     <label for="studentid" class="form-label">StudentID</label>
                     <input type="text" class="form-control" id="studentid" name="studentid" value="{{ $studentid ?? '' }}" readonly required>
                 </div>
-        </div>
-        </div>
-
         <!-- Submit Button -->
         <div class="p-3 card">
             <div class="gap-3 d-flex justify-content-center">

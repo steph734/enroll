@@ -42,6 +42,12 @@ class Student extends Model
         'parent_name',
         'parent_contact',
         'parent_email',
+        'payment_date',
+        'downpayment',
+        'payment_method',
+        'balance',
+        'receiptnumber'
+
     ];
     
     public function payments()
