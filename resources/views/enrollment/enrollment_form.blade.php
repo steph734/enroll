@@ -6,7 +6,7 @@
 @section('content')
 <div>
     <p class="mb-4 text-center h4 " style="color: var(--text-clr) !important;">Student Enrollment Form</p>
-    <form method="POST"action="{{ route('student.store') }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ route('student.store') }}" enctype="multipart/form-data">
         @csrf
         <!-- Personal Information -->
         <h5 class="section-title">Personal Information</h5>
@@ -172,75 +172,75 @@
                 </div>
             </div>
         </div>
-<!-- Program Enrollment -->
-<h5 class="section-title">Program Enrollment</h5>
-<div class="mb-3 shadow card form-section">
-    <div class="m-3 row">
-        <div class="p-1 mb-3 col-md-3">
-            <label class="form-label mb-1" for="track">Track</label>
-            <select class="form-select" name="track" id="track">
-                <option value="">Select a track</option>
-                @forelse(\App\Models\Strand::all() as $track)
-                    <option value="{{ $track->track }}" {{ old('track') == $track->track ? 'selected' : '' }}>
-                        {{ $track->track }}
-                    </option>
-                @empty
-                    <option value="">No tracks available</option>
-                @endforelse
-            </select>
-            @error('track')
-                <div class="text-danger">{{ $message }}</div>
-            @enderror
+        <!-- Program Enrollment -->
+        <h5 class="section-title">Program Enrollment</h5>
+        <div class="mb-3 shadow card form-section">
+            <div class="m-3 row">
+                <div class="p-1 mb-3 col-md-3">
+                    <label class="form-label mb-1" for="track">Track</label>
+                    <select class="form-select" name="track" id="track" onchange="loadStrands()">
+                        <option value="">Select a track</option>
+                        @foreach(\App\Models\Track::all() as $track)
+                        <option value="{{ $track->id }}" {{ old('track') == $track->id ? 'selected' : '' }}>
+                            {{ $track->trackname }}
+                        </option>
+                        @endforeach
+                    </select>
+                    @error('track')
+                    <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
+                <div class="p-1 mb-3 col-md-3">
+                    <label class="form-label" for="strand">Strand</label>
+                    <select class="form-select" id="strand" name="strand">
+                        <option value="">Select a strand</option>
+                        @if(old('track'))
+                        @foreach(\App\Models\Strand::where('track_id', old('track'))->get() as $strand)
+                        <option value="{{ $strand->strandname }}"
+                            {{ old('strand') == $strand->strandname ? 'selected' : '' }}>
+                            {{ $strand->strandname }}
+                        </option>
+                        @endforeach
+                        @endif
+                    </select>
+                    @error('strand')
+                    <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
+                <div class="p-1 mb-3 col-md-3">
+                    <label class="form-label" for="grade_level">Grade Level</label>
+                    <select class="form-select" id="grade_level" name="grade_level" required>
+                        <option value="">Select</option>
+                        <option value="Grade 11">Grade 11</option>
+                        <option value="Grade 12">Grade 12</option>
+                    </select>
+                    @error('grade_level')
+                    <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
+                <div class="p-1 mb-3 col-md-3">
+                    <label class="form-label" for="class_schedule">Preferred Class Schedule</label>
+                    <select class="form-select" id="class_schedule" name="class_schedule" required>
+                        <option value="">Select</option>
+                        <option value="Morning">Morning</option>
+                        <option value="Afternoon">Afternoon</option>
+                        <option value="Evening">Evening</option>
+                    </select>
+                    @error('class_schedule')
+                    <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+            <div class="m-3 row">
+                <div class="p-1 mb-3 col-md-12">
+                    <label class="form-label" for="additional_notes">Additional Notes</label>
+                    <textarea class="form-control" id="additional_notes" name="additional_notes" rows="3"></textarea>
+                    @error('additional_notes')
+                    <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
         </div>
-        <div class="p-1 mb-3 col-md-3">
-            <label class="form-label" for="strand">Strand</label>
-            <select class="form-select" id="strand" name="strand">
-                @forelse(\App\Models\Strand::all() as $strand)
-                    <option value="{{ $strand->strandname }}" {{ old('strand') == $strand->strandname ? 'selected' : '' }}>
-                        {{ $strand->strandname }}
-                    </option>
-                @empty
-                    <option value="">No strands available</option>
-                @endforelse
-            </select>
-            @error('strand')
-                <div class="text-danger">{{ $message }}</div>
-            @enderror
-        </div>
-        <div class="p-1 mb-3 col-md-3">
-            <label class="form-label" for="grade_level">Grade Level</label>
-            <select class="form-select" id="grade_level" name="grade_level" required>
-                <option value="">Select</option>
-                <option value="Grade 11">Grade 11</option>
-                <option value="Grade 12">Grade 12</option>
-            </select>
-            @error('grade_level')
-                <div class="text-danger">{{ $message }}</div>
-            @enderror
-        </div>
-        <div class="p-1 mb-3 col-md-3">
-            <label class="form-label" for="class_schedule">Preferred Class Schedule</label>
-            <select class="form-select" id="class_schedule" name="class_schedule" required>
-                <option value="">Select</option>
-                <option value="Morning">Morning</option>
-                <option value="Afternoon">Afternoon</option>
-                <option value="Evening">Evening</option>
-            </select>
-            @error('class_schedule')
-                <div class="text-danger">{{ $message }}</div>
-            @enderror
-        </div>
-    </div>
-    <div class="m-3 row">
-        <div class="p-1 mb-3 col-md-12">
-            <label class="form-label" for="additional_notes">Additional Notes</label>
-            <textarea class="form-control" id="additional_notes" name="additional_notes" rows="3"></textarea>
-            @error('additional_notes')
-                <div class="text-danger">{{ $message }}</div>
-            @enderror
-        </div>
-    </div>
-</div>
         <!-- Additional Information -->
         <h5 class="section-title">Additional Information</h5>
         <div class="mb-3 shadow card form-section">
@@ -257,7 +257,7 @@
                 </div>
             </div>
         </div>
-               <!-- Payment Information -->
+        <!-- Payment Information -->
         <h5 class="section-title">Payment Information</h5>
         <div class="mb-3 shadow card form-section">
             <div class="m-3 row">
@@ -267,7 +267,8 @@
                 </div>
                 <div class="p-1 mb-3 col-md-4">
                     <label for="downpayment" class="form-label">Downpayment</label>
-                    <input type="number" class="form-control" id="downpayment" name="downpayment" min="0" step="0.01" required>
+                    <input type="number" class="form-control" id="downpayment" name="downpayment" min="0" step="0.01"
+                        required>
                 </div>
                 <div class="p-1 mb-3 col-md-4">
                     <label for="payment_method" class="form-label">Payment Method</label>
@@ -283,7 +284,8 @@
             <div class="m-3 row">
                 <div class="p-1 mb-3 col-md-4">
                     <label for="balance" class="form-label">Balance</label>
-                    <input type="number" class="form-control" id="balance" name="balance" value="30000" readonly required>
+                    <input type="number" class="form-control" id="balance" name="balance" value="30000" readonly
+                        required>
                 </div>
                 <div class="p-1 mb-3 col-md-4">
                     <label for="receiptnumber" class="form-label">Receipt Number</label>
@@ -292,10 +294,11 @@
             </div>
         </div>
 
-                <div class="p-1 mb-3 col-md-4">
-                    <label for="studentid" class="form-label">StudentID</label>
-                    <input type="text" class="form-control" id="studentid" name="studentid" value="{{ $studentid ?? '' }}" readonly required>
-                </div>
+        <div class="p-1 mb-3 col-md-4">
+            <label for="studentid" class="form-label">StudentID</label>
+            <input type="text" class="form-control" id="studentid" name="studentid" value="{{ $studentid ?? '' }}"
+                readonly required>
+        </div>
         <!-- Submit Button -->
         <div class="p-3 card">
             <div class="gap-3 d-flex justify-content-center">
@@ -310,24 +313,24 @@
 <<script>
     // Function to generate a 6-digit student ID
     function generateStudentID() {
-        return Math.floor(100000 + Math.random() * 900000); // Generates number between 100000 and 999999
+    return Math.floor(100000 + Math.random() * 900000); // Generates number between 100000 and 999999
     }
 
     // Set the student ID value when the page loads
     document.addEventListener('DOMContentLoaded', () => {
-        const studentIDField = document.getElementById('studentid');
-        if (!studentIDField.value) { // Only set if the field is empty
-            studentIDField.value = generateStudentID();
-        }
+    const studentIDField = document.getElementById('studentid');
+    if (!studentIDField.value) { // Only set if the field is empty
+    studentIDField.value = generateStudentID();
+    }
     });
 
     // Generate a random 6-digit number (e.g., 100000 to 999999)
     function generateReceiptNumber() {
-        return Math.floor(100000 + Math.random() * 900000);
+    return Math.floor(100000 + Math.random() * 900000);
     }
 
     // Set the receipt number when the page loads
     document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('receiptnumber').value = generateReceiptNumber();
+    document.getElementById('receiptnumber').value = generateReceiptNumber();
     });
-</script>
+    </script>

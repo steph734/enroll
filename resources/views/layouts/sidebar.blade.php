@@ -19,8 +19,8 @@
                 <span>Students</span>
             </a>
         </li>
-        <li class="{{ in_array($page, ['teachers', 'teacher_form', 'teachers_edit']) ? 'active' : '' }}">
-            <a href="{{ route('enrollment.show', 'teachers', 'edit') }}">
+        <li class="{{ in_array($page, ['teachers', 'teacher_form', 'edit']) ? 'active' : '' }}">
+            <a href="{{ route('enrollment.show', 'teachers') }}">
                 <i class="fas fa-chalkboard-teacher"></i>
                 <span>Teachers</span>
             </a>

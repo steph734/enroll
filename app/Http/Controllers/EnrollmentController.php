@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 class EnrollmentController extends Controller
 {
-    
+
     public function show($page)
     {
         $allowedPages = [
@@ -20,7 +20,8 @@ class EnrollmentController extends Controller
             'reports',
             'accounts',
             'enrollment_form',
-            'teacher_form'
+            'teacher_form',
+            'edit',
         ];
 
         if (!in_array($page, $allowedPages)) {

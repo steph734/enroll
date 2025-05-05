@@ -11,14 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('strand', function (Blueprint $table) {
-            $table->id();
-            $table->string('strandname');
+        Schema::create('tracks', function (Blueprint $table) {
+            $table->id(); // unsignedBigInteger primary key
+            $table->string('trackname');
             $table->string('description');
-            $table->string('track');
-            $table->timestamps(); 
-
-           
+            $table->timestamps();
         });
     }
 
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('strand');
+        Schema::dropIfExists('tracks');
     }
 };

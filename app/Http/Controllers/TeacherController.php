@@ -2,6 +2,7 @@
 
 
 namespace App\Http\Controllers;
+
 use App\Models\Teacher;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
@@ -11,24 +12,25 @@ use Illuminate\Support\Facades\Validator;
 class TeacherController extends Controller
 {
 
-    public function index() {
+    public function index()
+    {
         $teacher = Teacher::all(); // Fetch all teachers from the database
         return view('enrollment.teachers', compact('teacher'));
     }
-    
+
     public function create()
     {
-        return view('enrollment.teacher_form'); 
+        return view('enrollment.teacher_form');
     }
-   
-    
+
+
     public function destroy($id)
     {
         $teacher = Teacher::findOrFail($id);
         $teacher->delete();
 
         return redirect()->route('teachers.index')
-                        ->with('success', 'Teacher deleted successfully');
+            ->with('success', 'Teacher deleted successfully');
     }
 
     public function store(Request $request)
@@ -59,7 +61,7 @@ class TeacherController extends Controller
             $paths
         ));
 
-        return redirect()->route('teachers.create')->with('success', 'Teacher registered successfully');
+        return redirect()->route('teachers.index')->with('success', 'Teacher registered successfully');
     }
 
 
@@ -68,7 +70,7 @@ class TeacherController extends Controller
         $teacher = Teacher::findOrFail($id);
         return view('enrollment.edit', compact('teacher'));
     }
-    
+
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
@@ -106,9 +108,9 @@ class TeacherController extends Controller
             'date_hired' => 'required|date',
             'employee_id' => 'required|string|max:255',
         ]);
-    
+
         $teacher = Teacher::findOrFail($id);
-    
+
         // Handle file uploads
         if ($request->hasFile('profile_picture')) {
             if ($teacher->profile_picture) {
@@ -134,11 +136,8 @@ class TeacherController extends Controller
             }
             $validated['transcript'] = $request->file('transcript')->store('teachers', 'public');
         }
-    
+
         $teacher->update($validated);
         return redirect()->route('teachers.index')->with('success', 'Teacher updated successfully.');
+    }
 }
-
-}
-
-?>

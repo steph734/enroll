@@ -51,13 +51,13 @@ return new class extends Migration
             $table->string('payment_method')->nullable();
             $table->decimal('balance', 10, 2)->default(30000.00);
             $table->string('receiptnumber', 6)->unique()->nullable();
-          
-          
+
+
             $table->timestamps();
         });
     }
     public function down(): void
     {
-        Schema::dropIfExists('student');
+        Schema::dropIfExists('students');
     }
 };
