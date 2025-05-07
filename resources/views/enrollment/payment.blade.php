@@ -118,7 +118,7 @@
                                     <td>{{ $student->first_name }} {{ $student->last_name }}</td>
                                     <td>{{ $student->grade_level }} - {{ $student->section ? $student->section->code : 'N/A' }}</td>
                                     <td>₱{{ number_format($student->amount_due, 2) }}</td>
-                                    <td>₱{{ number_format($student->payment_amount, 2) }}</td>
+                                    <td>₱{{ number_format($student->downpayment, 2) }}</td>
                                     <td>₱{{ number_format($student->balance, 2) }}</td>
                                     <td>{{ $student->status }}</td>
                                     <td>{{ $student->payment_date ? \Carbon\Carbon::parse($student->payment_date)->format('m/d/Y') : 'N/A' }}</td>

@@ -16,8 +16,6 @@ return new class extends Migration
             $table->string('sectioname');
             $table->string('gradelevel');
             $table->string('code', 50)->nullable(); // Added column for 'STEM-A1'
-            $table->unsignedBigInteger('strandid')->nullable()->index();
-            $table->foreign('strandid')->references('id')->on('strand'); // Fixed foreign key
             $table->unsignedInteger('max_slots')->default(30); // Maximum slots (e.g., 50)
             $table->unsignedInteger('current_slots')->default(30);
             $table->timestamps();

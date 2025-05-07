@@ -8,12 +8,16 @@ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
+    
    
     public function run(): void
     {
-        $this->call(SubjectSeeder::class);
-        $this->call(SectionSeeder::class);
-        $this->call(StrandSeeder::class);
+        $this->call([
+            SubjectSeeder::class,
+            SectionSeeder::class,
+            TrackSeeder::class,
+            StrandSeeder::class, // Added to seed Strands
+        ]);
 
         User::factory()->create([
             'name' => 'Test User',

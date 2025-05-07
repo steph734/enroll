@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('home_address');
             $table->string('zip_code');
             $table->string('contact_number');
-            $table->enum('status', ['ongoing', 'graduated', 'dropped']);
+            $table->enum('status', ['ongoing', 'graduated', 'dropped'])->default('ongoing')->change();
             $table->string('secondary_contact')->nullable();
             $table->string('email')->unique();
             $table->string('profile_picture')->nullable();
@@ -39,8 +39,8 @@ return new class extends Migration
             $table->string('school_year_completed');
             $table->string('gpa')->nullable();
             $table->string('transcript');
-            $table->string('track');
-            $table->string('strand');
+            $table->string('track')->nullable();
+            $table->string('strand')->nullable();
             $table->string('grade_level');
             $table->string('class_schedule');
             $table->text('additional_notes')->nullable();

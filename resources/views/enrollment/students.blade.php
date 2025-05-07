@@ -90,7 +90,7 @@
                                         <form action="{{ route('student.update', $student->id) }}" method="POST">
                                             @csrf
                                             @method('PUT')
-                                            <select name="status" class="status-dropdown" onchange="this.form.submit()">
+                                            <select name="status" class="status-dropdown">
                                                 <option value="ongoing" {{ $student->status == 'ongoing' ? 'selected' : '' }}>Ongoing</option>
                                                 <option value="graduated" {{ $student->status == 'graduated' ? 'selected' : '' }}>Graduated</option>
                                                 <option value="dropped" {{ $student->status == 'dropped' ? 'selected' : '' }}>Dropped</option>
@@ -191,5 +191,59 @@ document.addEventListener('DOMContentLoaded', function() {
         rows.forEach(row => tbody.appendChild(row));
     });
 });
+
+
+ // Status update functionality with validation
+ const validStatuses = ['ongoing', 'graduated', 'dropped'];
+
+document.querySelectorAll('.status-dropdown').forEach(dropdown => {
+    dropdown.addEventListener('change', function() {
+        const form = this.closest('.status-form');
+        const studentId = form.getAttribute('data-student-id');
+        const newStatus = this.value;
+        const token = document.querySelector('input[name="_token"]').value;
+
+        // Client-side validation
+        if (!validStatuses.includes(newStatus)) {
+            alert('Invalid status selected');
+            this.value = this.dataset.previousValue || 'ongoing'; // Revert to previous value
+            return;
+        }
+
+        // Store current value as previous
+        this.dataset.previousValue = newStatus;
+
+        // Show loading state
+        dropdown.disabled = true;
+
+        fetch(`/students/${studentId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': token
+            },
+            body: JSON.stringify({
+                status: newStatus
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            dropdown.disabled = false;
+            if (data.success) {
+                alert('Status updated successfully!');
+            } else {
+                alert('Error updating status: ' + (data.message || 'Unknown error'));
+                this.value = this.dataset.previousValue || 'ongoing'; // Revert on error
+            }
+        })
+        .catch(error => {
+            dropdown.disabled = false;
+            console.error('Error:', error);
+            alert('Error updating status');
+            this.value = this.dataset.previousValue || 'ongoing'; // Revert on error
+        });
+    });
+});
+
 </script>
 @endsection

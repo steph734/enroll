@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('first_name');
             $table->string('middle_name')->nullable();
             $table->string('last_name');
-            $table->date('date_of_birth');
+            $table->date('date_of_birth')->nullable();
             $table->string('gender');
             $table->integer('age');
             $table->string('nationality');
@@ -45,7 +45,7 @@ return new class extends Migration
             $table->string('resume');
             $table->string('transcript');
             $table->date('date_hired');
-            $table->string('employee_id')->unique();
+            $table->string('employee_id', 6)->unique()->nullable();
             $table->timestamps();
         });
     }

@@ -70,12 +70,13 @@
                            @enderror
                        </div>
                        <div class="p-1 mb-3 col-md-4">
-                           <label for="age" class="form-label">Age</label>
-                           <input type="number" class="form-control @error('age') is-invalid @enderror" id="age" name="age" min="1" value="{{ old('age') }}" required>
-                           @error('age')
-                               <div class="invalid-feedback">{{ $message }}</div>
-                           @enderror
-                       </div>
+                        <label for="age" class="form-label">Age</label>
+                        <input type="number" class="form-control @error('age') is-invalid @enderror" id="age" name="age" min="1" value="{{ old('age') }}" readonly required>
+                        <div id="age-error" class="invalid-feedback" style="display: none;">Age must be 20 or above.</div>
+                        @error('age')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
                    </div>
                    <div class="row">
                        <div class="p-1 mb-3 col-md-4">
@@ -178,9 +179,9 @@
                <div class="p-1 mb-3 col-md-6">
                    <label for="specialization" class="form-label">Teaching Specialization/Track</label>
                    <select class="form-select @error('specialization') is-invalid @enderror" id="specialization" name="specialization" required>
-                    @forelse(\App\Models\Strand::all() as $track)
-                    <option value="{{ $track->strandname }}" {{ old('track') == $track->strandname ? 'selected' : '' }}>
-                        {{ $track->strandname }}
+                    @forelse(\App\Models\Strand::all() as $tracks)
+                    <option value="{{ $tracks->name }}" {{ old('track') == $tracks->name ? 'selected' : '' }}>
+                        {{ $tracks->name }}
                     </option>
                 @empty
                     <option value="">No tracks available</option>
@@ -315,14 +316,12 @@
                        <div class="invalid-feedback">{{ $message }}</div>
                    @enderror
                </div>
-               <div class="p-1 mb-3 col-md-6">
-                   <label for="employee_id" class="form-label">Employee ID</label>
-                   <input type="text" class="form-control @error('employee_id') is-invalid @enderror" id="employee_id" name="employee_id" value="{{ old('employee_id') }}" required>
-                   @error('employee_id')
-                       <div class="invalid-feedback">{{ $message }}</div>
-                   @enderror
-               </div>
-           </div>
+               <div class="p-1 mb-3 col-md-4">
+                <label for="employee_id" class="form-label">Employee ID</label>
+                <input type="text" class="form-control" id="employee_id" name="employee_id" readonly required>
+            </div>
+            </div>
+           
        </div>
         <!-- Submit Button -->
         <div class="p-3 card">
@@ -334,3 +333,73 @@
     </form>
 </div>
 @endsection
+<script>
+    // Function to generate a 6-digit random number
+    function generateEmployeeID() {
+        return Math.floor(100000 + Math.random() * 900000); // Generates a number between 100000 and 999999
+    }
+
+    // Set the generated ID to the input field when the page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('employee_id').value = generateEmployeeID();
+    });
+
+    // Function to calculate age based on date of birth
+    function calculateAge(dob) {
+        const birthDate = new Date(dob);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
+    }
+
+    // Function to validate age and toggle error
+    function validateAge(age) {
+        const ageInput = document.getElementById('age');
+        const ageError = document.getElementById('age-error');
+        const submitBtn = document.getElementById('submit-btn');
+
+        if (age < 20) {
+            ageInput.classList.add('is-invalid');
+            ageError.style.display = 'block';
+            submitBtn.disabled = true;
+        } else {
+            ageInput.classList.remove('is-invalid');
+            ageError.style.display = 'none';
+            submitBtn.disabled = false;
+        }
+    }
+
+    // Set the generated ID to the input field and handle age calculation
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set employee ID
+        document.getElementById('employee_id').value = generateEmployeeID();
+
+        // Get DOM elements
+        const dobInput = document.getElementById('date_of_birth');
+        const ageInput = document.getElementById('age');
+
+        // Calculate age when date of birth changes
+        dobInput.addEventListener('change', function() {
+            const dob = dobInput.value;
+            if (dob) {
+                const age = calculateAge(dob);
+                ageInput.value = age;
+                validateAge(age);
+            } else {
+                ageInput.value = '';
+                validateAge(0);
+            }
+        });
+
+        // Validate age on form load if there's an old value
+        if (dobInput.value) {
+            const age = calculateAge(dobInput.value);
+            ageInput.value = age;
+            validateAge(age);
+        }
+    });
+    </script>

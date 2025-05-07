@@ -2,59 +2,46 @@
 
 namespace Database\Seeders;
 
-use App\Models\Strand;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Strand; 
+use App\Models\Tracks;
 use Illuminate\Database\Seeder;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class StrandSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void
+   public function run(): void
     {
-        $strands = [
-            [
-                'strandname' => 'STEM',
-                'description' => 'Science, Technology, Engineering, and Mathematics strand for technical fields.',
-                'track' => 'Academic',
-            ],
-            [
-                'strandname' => 'ABM',
-                'description' => 'Accountancy, Business, and Management strand for business-related careers.',
-                'track' => 'Academic',
-            ],
-            [
-                'strandname' => 'HUMSS',
-                'description' => 'Humanities and Social Sciences strand for social studies and humanities.',
-                'track' => 'Academic',
-            ],
+        $stem = Tracks::firstOrCreate(
+            ['trackname' => 'STEM'],
+            ['description' => 'Science, Technology, Engineering, and Mathematics']
+        );
+        $humss = Tracks::firstOrCreate(
+            ['trackname' => 'HUMSS'],
+            ['description' => 'Humanities and Social Sciences']
+        );
+        $abm = Tracks::firstOrCreate(
+            ['trackname' => 'ABM'],
+            ['description' => 'Accountancy, Business, and Management']
+        );
 
-            [
-                'strandname' => 'GAS',
-                'description' => 'General Academic Strand for a flexible curriculum combining various academic disciplines.',
-                'track' => 'Academic',
-            ],
-            
-            [
-                'strandname' => 'TVL-ICT',
-                'description' => 'Technical-Vocational-Livelihood track specializing in Information and Communications Technology.',
-                'track' => 'Vocational',
-            ],
-            [
-                'strandname' => 'TVL-HE',
-                'description' => 'Technical-Vocational-Livelihood track specializing in Home Economics.',
-                'track' => 'Vocational',
-            ],
-        ];
+        $science = Strand::create([
+            'name' => 'Science Strand',
+            'description' => 'Science-focused strand',
+        ]);
+        $science->tracks()->attach([$stem->id, $abm->id]);
 
-        foreach ($strands as $strand) {
-            Strand::create(array_merge($strand, [
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ]));
-        }
-    
+        $humanities = Strand::create([
+            'name' => 'Humanities Strand',
+            'description' => 'Humanities-focused strand',
+        ]);
+        $humanities->tracks()->attach([$humss->id, $stem->id]);
+
+        $business = Strand::create([
+            'name' => 'Business Strand',
+            'description' => 'Business-focused strand',
+        ]);
+        $business->tracks()->attach([$abm->id, $stem->id]);
     }
 }
+
+

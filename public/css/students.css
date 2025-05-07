@@ -171,3 +171,12 @@ tr {
 td .status-dropdown {
     vertical-align: middle;
 }
+
+.error-border {
+    border: 2px solid red !important;
+}
+.error-message {
+    color: red;
+    font-size: 0.875em;
+    margin-top: 0.25rem;
+}

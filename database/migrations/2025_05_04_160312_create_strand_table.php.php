@@ -13,6 +13,17 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (!Schema::hasTable('strand')) {
+            Log::error('Migration failed: Table "strand" does not exist.');
+            throw new \Exception('Table "strand" does not exist.');
+        }
+
+        // Check if tracks table exists
+        if (!Schema::hasTable('tracks')) {
+            Log::error('Migration failed: Table "tracks" does not exist in the database.');
+            throw new \Exception('Table "tracks" does not exist.');
+        }
+
         Schema::table('strand', function (Blueprint $table) {
             // Add track_id column if it doesn't exist
             if (!Schema::hasColumn('strand', 'track_id')) {
@@ -44,6 +55,7 @@ return new class extends Migration
                     ');
                 } catch (\Exception $e) {
                     Log::error('Failed to migrate strand.track to track_id: ' . $e->getMessage());
+                    throw $e; // Rethrow to halt migration if data migration fails
                 }
 
                 // Drop track column
@@ -57,17 +69,31 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('strand', function (Blueprint $table) {
-            // Restore 'track' column
-            if (!Schema::hasColumn('strand', 'track')) {
-                $table->string('track')->after('description')->nullable();
-            }
+        if (Schema::hasTable('strand')) {
+            Schema::table('strand', function (Blueprint $table) {
+                // Restore 'track' column
+                if (!Schema::hasColumn('strand', 'track')) {
+                    $table->string('track')->after('description')->nullable();
+                }
 
-            // Drop foreign key and track_id column
-            if (Schema::hasColumn('strand', 'track_id')) {
-                $table->dropForeign(['track_id']);
-                $table->dropColumn('track_id');
-            }
-        });
+                // Migrate data back to track column if track_id exists
+                if (Schema::hasColumn('strand', 'track_id')) {
+                    try {
+                        DB::statement('
+                            UPDATE strand s
+                            INNER JOIN tracks t ON s.track_id = t.id
+                            SET s.track = t.trackname
+                            WHERE s.track_id IS NOT NULL
+                        ');
+                    } catch (\Exception $e) {
+                        Log::error('Failed to migrate track_id back to track: ' . $e->getMessage());
+                    }
+
+                    // Drop foreign key and track_id column
+                    $table->dropForeign(['track_id']);
+                    $table->dropColumn('track_id');
+                }
+            });
+        }
     }
 };

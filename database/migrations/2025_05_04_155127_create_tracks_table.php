@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('tracks', function (Blueprint $table) {
             $table->id(); // unsignedBigInteger primary key
-            $table->string('trackname');
+            $table->string('trackname')->unique();
             $table->string('description');
             $table->timestamps();
         });

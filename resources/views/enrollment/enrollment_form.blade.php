@@ -53,7 +53,11 @@
                         </div>
                         <div class="p-1 mb-3 col-md-4">
                             <label for="age" class="form-label">Age</label>
-                            <input type="number" class="form-control" id="age" name="age" m in="1" required>
+                            <input type="number" class="form-control @error('age') is-invalid @enderror" id="age" name="age" min="17" max="99" value="{{ old('age') }}" readonly required>
+                            <div id="age-error" class="invalid-feedback" style="display: none;">Age must be between 17 and 99.</div>
+                            @error('age')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
                     <div class="row">
@@ -180,8 +184,8 @@
                     <label class="form-label mb-1" for="track">Track</label>
                     <select class="form-select" name="track" id="track" onchange="loadStrands()">
                         <option value="">Select a track</option>
-                        @foreach(\App\Models\Track::all() as $track)
-                        <option value="{{ $track->id }}" {{ old('track') == $track->id ? 'selected' : '' }}>
+                        @foreach(\App\Models\Tracks::all() as $track)
+                        <option value="{{ $track->trackname }}" {{ old('track') == $track->trackname ? 'selected' : '' }}>
                             {{ $track->trackname }}
                         </option>
                         @endforeach
@@ -195,10 +199,10 @@
                     <select class="form-select" id="strand" name="strand">
                         <option value="">Select a strand</option>
                         @if(old('track'))
-                        @foreach(\App\Models\Strand::where('track_id', old('track'))->get() as $strand)
-                        <option value="{{ $strand->strandname }}"
-                            {{ old('strand') == $strand->strandname ? 'selected' : '' }}>
-                            {{ $strand->strandname }}
+                        @foreach(\App\Models\Strand::where('track_id', old('tracks'))->get() as $strand)
+                        <option value="{{ $strand->name }}"
+                            {{ old('strand') == $strand->name ? 'selected' : '' }}>
+                            {{ $strand->name }}
                         </option>
                         @endforeach
                         @endif
@@ -313,24 +317,107 @@
 <<script>
     // Function to generate a 6-digit student ID
     function generateStudentID() {
-    return Math.floor(100000 + Math.random() * 900000); // Generates number between 100000 and 999999
+        return Math.floor(100000 + Math.random() * 900000); // Generates number between 100000 and 999999
     }
 
-    // Set the student ID value when the page loads
-    document.addEventListener('DOMContentLoaded', () => {
-    const studentIDField = document.getElementById('studentid');
-    if (!studentIDField.value) { // Only set if the field is empty
-    studentIDField.value = generateStudentID();
-    }
-    });
-
-    // Generate a random 6-digit number (e.g., 100000 to 999999)
+    // Function to generate a 6-digit receipt number
     function generateReceiptNumber() {
-    return Math.floor(100000 + Math.random() * 900000);
+        return Math.floor(100000 + Math.random() * 900000);
     }
 
-    // Set the receipt number when the page loads
+    // Function to calculate age based on date of birth
+    function calculateAge(dob) {
+        const birthDate = new Date(dob);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
+    }
+
+    // Function to validate age and toggle error
+    function validateAge(age) {
+        const ageInput = document.getElementById('age');
+        const ageError = document.getElementById('age-error');
+        const submitBtn = document.getElementById('submit-btn');
+
+        if (isNaN(age) || age < 17 || age > 99) {
+            ageInput.classList.add('is-invalid');
+            ageError.style.display = 'block';
+            submitBtn.disabled = true;
+        } else {
+            ageInput.classList.remove('is-invalid');
+            ageError.style.display = 'none';
+            submitBtn.disabled = false;
+        }
+    }
+
+    // Handle dynamic strand loading (existing functionality)
+    function loadStrands() {
+        const trackId = document.getElementById('track').value;
+        const strandSelect = document.getElementById('strand');
+        strandSelect.innerHTML = '<option value="">Select a strand</option>';
+
+        if (trackId) {
+            fetch(`/strands/${trackId}`)
+                .then(response => response.json())
+                .then(strands => {
+                    strands.forEach(strand => {
+                        const option = document.createElement('option');
+                        option.value = strand.strandname;
+                        option.text = strand.strandname;
+                        strandSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error loading strands:', error));
+        }
+    }
+
+    // Initialize form on page load
     document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('receiptnumber').value = generateReceiptNumber();
+        // Set student ID
+        const studentIDField = document.getElementById('studentid');
+        if (!studentIDField.value) {
+            studentIDField.value = generateStudentID();
+        }
+
+        // Set receipt number
+        const receiptField = document.getElementById('receiptnumber');
+        if (!receiptField.value) {
+            receiptField.value = generateReceiptNumber();
+        }
+
+        // Get DOM elements for age calculation
+        const dobInput = document.getElementById('date_of_birth');
+        const ageInput = document.getElementById('age');
+
+        // Calculate age when date of birth changes
+        dobInput.addEventListener('change', function() {
+            const dob = dobInput.value;
+            if (dob) {
+                const age = calculateAge(dob);
+                ageInput.value = age;
+                validateAge(age);
+            } else {
+                ageInput.value = '';
+                validateAge(0);
+            }
+        });
+
+        // Validate age on form load if there's an old value
+        if (dobInput.value) {
+            const age = calculateAge(dobInput.value);
+            ageInput.value = age;
+            validateAge(age);
+        }
+
+        // Log form data on submit for debugging
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(event) {
+            const formData = new FormData(form);
+            console.log('Form Data:', Object.fromEntries(formData));
+        });
     });
     </script>
