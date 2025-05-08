@@ -41,9 +41,9 @@ Route::delete('/enrollment/students/{id}', [StudentController::class, 'destroy']
 Route::resource('/enrollment/students', StudentController::class);
 
 
-Route::get('/enrollment/payment_form', [PaymentController::class, 'index'])->name('payment.index');
+Route::get('/enrollment/payment', [PaymentController::class, 'index'])->name('payments.index');
 Route::get('/enrollment/payment', [PaymentController::class, 'create'])->name('payment.create');
-Route::post('/enrollment/payment_form', [PaymentController::class, 'store'])->name('payment.store');
+Route::post('/enrollment/payment', [PaymentController::class, 'store'])->name('payment.store');
 
 Route::resource('teachers', TeacherController::class);
 

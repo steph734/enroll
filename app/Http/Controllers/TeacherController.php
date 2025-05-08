@@ -129,16 +129,13 @@ class TeacherController extends Controller
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
+            'employee_id' => 'required|string|max:255|unique:teachers,employee_id',
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'email' => 'required|email|unique:teachers,email,' . $id,
-            'age' => 'required|integer|min:1',
-            'specialization' => 'required|in:Academic,TVL,Sports,Arts',
-            'employment_status' => 'required|in:Full-time,Part-time',
-            'subjects' => 'required|string',
-            'profile_picture' => 'nullable|image|max:2048',
             'middle_name' => 'nullable|string|max:255',
+            'email' => 'required|email|unique:teachers,email',
             'date_of_birth' => 'required|date',
+            'age' => 'required|integer|min:20',
             'gender' => 'required|in:Male,Female',
             'nationality' => 'required|string|max:255',
             'address' => 'required|string|max:255',
@@ -150,19 +147,23 @@ class TeacherController extends Controller
             'prc_license' => 'required|string|max:255',
             'license_validity' => 'required|date',
             'let_date' => 'required|date',
-            'prc_copy' => 'nullable|file|mimes:pdf,jpg,png|max:2048',
+            'specialization' => 'required|string', // Adjust based on Strand model
             'previous_school' => 'nullable|string|max:255',
             'position' => 'nullable|string|max:255',
             'years_experience' => 'nullable|integer|min:0',
+            'employment_status' => 'required|in:Full-time,Part-time',
             'teaching_schedule' => 'required|in:Morning,Afternoon,Evening',
+            'subjects' => 'required|string',
             'certifications' => 'nullable|string',
             'medical_info' => 'nullable|string',
             'accommodations' => 'nullable|string',
-            'resume' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
-            'transcript' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
             'date_hired' => 'required|date',
-            'employee_id' => 'required|string|max:255',
+            'profile_picture' => 'nullable|image|max:2048',
+            'prc_copy' => 'required|file|mimes:pdf,jpg,png|max:2048',
+            'resume' => 'required|file|mimes:pdf,doc,docx|max:2048',
+            'transcript' => 'required|file|mimes:pdf,doc,docx|max:2048',
         ]);
+    
 
         $teacher = Teacher::findOrFail($id);
 

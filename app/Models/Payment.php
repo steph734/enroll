@@ -14,6 +14,7 @@ class Payment extends Model
         'amountdue',
         'balance',
         'status',
+        
     ];
     protected static function booted()
     {
