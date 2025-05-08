@@ -30,28 +30,48 @@
                     <!-- Filters Section -->
                     <div class="mt-3 filters d-flex justify-content-between align-items-center">
                         <div class="gap-3 tabs d-flex">
-                            <button class="tab active" data-filter="all">ALL Students</button>
-                            <button class="tab" data-filter="STEM">STEM</button>
-                            <button class="tab" data-filter="ABM">ABM</button>
-                            <button class="tab" data-filter="HUMSS">HUMSS</button>
+                            <button class="tab active" data-filter="all">All Students</button>
+                            <button class="tab" data-filter="Academic">Academic</button>
+                            <button class="tab" data-filter="Non-Academic">Non-Academic</button>
                         </div>
 
+                        <!-- Filter Form (Date and Status) -->
+                        <form method="GET" action="{{ route('students.index') }}" class="gap-2 d-flex align-items-center">
+                            <div class="col-md-3">
+                                <label for="date" class="form-label">Filter by Date:</label>
+                                <input type="date" name="date" value="{{ request('date', $todayDate) }}" class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="status" class="form-label">Filter by Status:</label>
+                                <select name="status" class="form-select">
+                                    <option value="">Select Status</option>
+                                    <option value="ongoing" {{ request('status') == 'ongoing' ? 'selected' : '' }}>Ongoing</option>
+                                    <option value="graduated" {{ request('status') == 'graduated' ? 'selected' : '' }}>Graduated</option>
+                                    <option value="dropped" {{ request('status') == 'dropped' ? 'selected' : '' }}>Dropped</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 align-self-end">
+                                <button type="submit" class="btn btn-primary">Filter</button>
+                            </div>
+                        </form>
+
+                        <!-- Existing Dropdowns for Grade and Sorting -->
                         <div class="gap-2 dropdowns d-flex">
-                            <select class="form-select" style="width: 150px;">
+                            <select class="form-select" style="width: 150px;" onchange="this.form.submit()" name="grade" form="filterForm">
                                 <option>Filter by</option>
-                                <option value="grade">Grade</option>
-                                <option value="age">Age</option>
+                                <option value="grade" {{ request('grade') == 'grade' ? 'selected' : '' }}>Grade</option>
+                                <option value="age" {{ request('age') == 'age' ? 'selected' : '' }}>Age</option>
                             </select>
-                            <select class="form-select" style="width: 150px;">
+                            <select class="form-select" style="width: 150px;" onchange="this.form.submit()" name="sort" form="filterForm">
                                 <option>Sort by</option>
-                                <option value="name-asc">Name (A-Z)</option>
-                                <option value="name-desc">Name (Z-A)</option>
-                                <option value="grade-asc">Grade (Low to High)</option>
-                                <option value="grade-desc">Grade (High to Low)</option>
+                                <option value="name-asc" {{ request('sort') == 'name-asc' ? 'selected' : '' }}>Name (A-Z)</option>
+                                <option value="name-desc" {{ request('sort') == 'name-desc' ? 'selected' : '' }}>Name (Z-A)</option>
+                                <option value="grade-asc" {{ request('sort') == 'grade-asc' ? 'selected' : '' }}>Grade (Low to High)</option>
+                                <option value="grade-desc" {{ request('sort') == 'grade-desc' ? 'selected' : '' }}>Grade (High to Low)</option>
                             </select>
                         </div>
 
-                        <a href="{{ route('student.create') }}">
+                        <a href="{{ route('enrollment.show', 'enrollment_form') }}">
                             <button class="btn btn-primary add-student">Add Student</button>
                         </a>
                     </div>
@@ -64,79 +84,62 @@
         <div class="p-3 card card-table">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-hover table-striped" style="cursor: pointer;">
+                    <table class="table table-hover table-striped table-bordered" style="cursor: pointer;">
                         <thead>
                             <tr>
-                                <th scope="col" class="align-middle text-center">ID</th>
-                                <th scope="col" class="align-middle text-center">First Name</th>
-                                <th scope="col" class="align-middle text-center">Last Name</th>
-                                <th scope="col" class="align-middle text-center">Email</th>
-                                <th scope="col" class="align-middle text-center">Age</th>
-                                <th scope="col" class="align-middle text-center">Track</th>
-                                <th scope="col" class="align-middle text-center">Strand</th>
-                                <th scope="col" class="align-middle text-center">Grade Level</th>
-                                <th scope="col" class="align-middle text-center">Status</th>
-                                <th scope="col" class="align-middle text-center">Action</th>
+                                <th scope="col" class="p-1 text-center align-middle">ID</th>
+                                <th scope="col" class="p-1 text-center align-middle">First Name</th>
+                                <th scope="col" class="p-1 text-center align-middle">Last Name</th>
+                                <th scope="col" class="p-1 text-center align-middle">Email</th>
+                                <th scope="col" class="p-1 text-center align-middle">Age</th>
+                                <th scope="col" class="p-1 text-center align-middle">Track</th>
+                                <th scope="col" class="p-1 text-center align-middle">Strand</th>
+                                <th scope="col" class="p-1 text-center align-middle">Grade Level</th>
+                                <th scope="col" class="p-1 text-center align-middle">Status</th>
+                                <th scope="col" class="p-1 text-center align-middle">Action</th>
                             </tr>
                         </thead>
                         <tbody id="studentsTable">
-                            @forelse(\App\Models\Student::all() as $student)
+                            @forelse($students as $student)
                             <tr class="student-row" data-grade-level="{{ $student->grade_level }}">
-                                <td class="p-3">{{ $student->studentid }}</td>
-                                <td class="p-3">{{ $student->first_name }}</td>
-                                <td class="p-3">{{ $student->last_name }}</td>
-                                <td class="p-3">{{ $student->email }}</td>
-                                <td class="p-3">{{ $student->age }}</td>
-                                <td class="p-3">{{ $student->track->track_name }}</td>
-                                <td class="p-3">{{ $student->strand->strand_name }}</td>
-                                <td class="p-3">{{ $student->grade_level }}</td>
-                                <td class="p-3">
+                                <td class="p-1">{{ $student->studentid }}</td>
+                                <td class="p-1">{{ $student->first_name }}</td>
+                                <td class="p-1">{{ $student->last_name }}</td>
+                                <td class="p-1">{{ $student->email }}</td>
+                                <td class="p-1">{{ $student->age }}</td>
+                                <td class="p-1">{{ $student->track->track_name }}</td>
+                                <td class="p-1">{{ $student->strand->strand_name }}</td>
+                                <td class="p-1">{{ $student->grade_level }}</td>
+                                <td class="p-1">
                                     <form action="{{ route('student.update', $student->id) }}" method="POST">
                                         @csrf
                                         @method('PUT')
                                         <select name="status" class="status-dropdown" onchange="this.form.submit()">
-                                            <option value="ongoing"
-                                                {{ $student->status == 'ongoing' ? 'selected' : '' }}>Ongoing</option>
-                                            <option value="graduated"
-                                                {{ $student->status == 'graduated' ? 'selected' : '' }}>Graduated
-                                            </option>
-                                            <option value="dropped"
-                                                {{ $student->status == 'dropped' ? 'selected' : '' }}>Dropped</option>
+                                            <option value="ongoing" {{ $student->status == 'ongoing' ? 'selected' : '' }}>Ongoing</option>
+                                            <option value="graduated" {{ $student->status == 'graduated' ? 'selected' : '' }}>Graduated</option>
+                                            <option value="dropped" {{ $student->status == 'dropped' ? 'selected' : '' }}>Dropped</option>
                                         </select>
                                     </form>
                                 </td>
                                 <td class="p-3">
-                                    <div class="dropdown">
-                                        <button class="btn btn-link" type="button"
-                                            id="dropdownMenuButton-{{ $student->id }}" data-bs-toggle="dropdown"
-                                            aria-expanded="false">
-                                            <i class="fa-solid fa-ellipsis" style="color: #000; font-size: 18px;"></i>
+                                    <div class="gap-2 d-flex justify-content-center">
+                                        <button class="btn" title="View">
+                                            <i class="fa-solid fa-eye" style="color:#305cde;"></i>
                                         </button>
-                                        <ul class="dropdown-menu"
-                                            aria-labelledby="dropdownMenuButton-{{ $student->id }}">
-                                            <li>
-                                                <a class="dropdown-item" href="" title="View">
-                                                    <i class="fa-solid fa-eye"
-                                                        style="color:#305cde; margin-right: 8px;"></i> View
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item" href="" title="Edit">
-                                                    <i class="fa-solid fa-pen-to-square"
-                                                        style="color:#ffc107; margin-right: 8px;"></i> Edit
-                                                </a>
-                                            </li>
-                                        </ul>
                                     </div>
                                 </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="10" class="text-center p-3">No students found.</td>
+                                <td colspan="10" class="p-3 text-center">No students found.</td>
                             </tr>
                             @endforelse
                         </tbody>
                     </table>
+                    <!-- Pagination Links -->
+                    <div class="d-flex justify-content-center">
+                        {{ $students->links() }}
+                    </div>
                 </div>
             </div>
         </div>
@@ -186,29 +189,6 @@
                     }
                 });
             });
-        });
-
-        // Sort functionality
-        const sortSelect = document.querySelectorAll('.form-select')[1]; // Second select is for sorting
-        sortSelect.addEventListener('change', function() {
-            const sortValue = this.value;
-            const tbody = document.getElementById('studentsTable');
-            const rows = Array.from(studentRows);
-
-            rows.sort((a, b) => {
-                if (sortValue === 'name-asc') {
-                    return a.cells[1].textContent.localeCompare(b.cells[1].textContent);
-                } else if (sortValue === 'name-desc') {
-                    return b.cells[1].textContent.localeCompare(a.cells[1].textContent);
-                } else if (sortValue === 'grade-asc') {
-                    return a.cells[7].textContent.localeCompare(b.cells[7].textContent);
-                } else if (sortValue === 'grade-desc') {
-                    return b.cells[7].textContent.localeCompare(a.cells[7].textContent);
-                }
-                return 0;
-            });
-
-            rows.forEach(row => tbody.appendChild(row));
         });
     });
 </script>

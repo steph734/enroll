@@ -183,8 +183,7 @@
                         <option value="">Select</option>
                         <option value="Mother" {{ old('relationship') == 'Mother' ? 'selected' : '' }}>Mother</option>
                         <option value="Father" {{ old('relationship') == 'Father' ? 'selected' : '' }}>Father</option>
-                        <option value="Guardian" {{ old('relationship') == 'Guardian' ? 'selected' : '' }}>Guardian
-                        </option>
+                        <option value="Guardian" {{ old('relationship') == 'Guardian' ? 'selected' : '' }}>Guardian</option>
                         <option value="Other" {{ old('relationship') == 'Other' ? 'selected' : '' }}>Other</option>
                     </select>
                     @error('relationship')
@@ -226,8 +225,7 @@
                     <label for="grade_completed" class="form-label">Grade Level Completed</label>
                     <select class="form-select" id="grade_completed" name="grade_completed" required>
                         <option value="">Select</option>
-                        @foreach (['Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6', 'Grade 7', 'Grade
-                        8', 'Grade 9', 'Grade 10'] as $grade)
+                        @foreach (['Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6', 'Grade 7', 'Grade 8', 'Grade 9', 'Grade 10'] as $grade)
                         <option value="{{ $grade }}" {{ old('grade_completed') == $grade ? 'selected' : '' }}>
                             {{ $grade }}
                         </option>
@@ -270,7 +268,7 @@
         <div class="mb-3 shadow-sm card form-section">
             <div class="m-3 row">
                 <div class="p-1 mb-3 col-md-3">
-                    <label class="form-label mb-1" for="track">Track</label>
+                    <label class="mb-1 form-label" for="track">Track</label>
                     <select class="form-select" name="track_id" id="track" onchange="loadStrands()" required>
                         <option value="">Select a track</option>
                         @if($tracks = App\Models\Tracks::all())
@@ -279,7 +277,7 @@
                             {{ $track->track_name }}
                         </option>
                         @endforeach
-                        @elseelseelseel
+                        @else
                         <option value="">No tracks available</option>
                         @endif
                     </select>
@@ -300,10 +298,8 @@
                     <label class="form-label" for="grade_level">Grade Level</label>
                     <select class="form-select" id="grade_level" name="grade_level" required>
                         <option value="">Select</option>
-                        <option value="Grade 11" {{ old('grade_level') == 'Grade 11' ? 'selected' : '' }}>Grade 11
-                        </option>
-                        <option value="Grade 12" {{ old('grade_level') == 'Grade 12' ? 'selected' : '' }}>Grade 12
-                        </option>
+                        <option value="Grade 11" {{ old('grade_level') == 'Grade 11' ? 'selected' : '' }}>Grade 11</option>
+                        <option value="Grade 12" {{ old('grade_level') == 'Grade 12' ? 'selected' : '' }}>Grade 12</option>
                     </select>
                     @error('grade_level')
                     <div class="text-danger">{{ $message }}</div>
@@ -313,12 +309,9 @@
                     <label class="form-label" for="class_schedule">Preferred Class Schedule</label>
                     <select class="form-select" id="class_schedule" name="class_schedule" required>
                         <option value="">Select</option>
-                        <option value="Morning" {{ old('class_schedule') == 'Morning' ? 'selected' : '' }}>Morning
-                        </option>
-                        <option value="Afternoon" {{ old('class_schedule') == 'Afternoon' ? 'selected' : '' }}>Afternoon
-                        </option>
-                        <option value="Evening" {{ old('class_schedule') == 'Evening' ? 'selected' : '' }}>Evening
-                        </option>
+                        <option value="Morning" {{ old('class_schedule') == 'Morning' ? 'selected' : '' }}>Morning</option>
+                        <option value="Afternoon" {{ old('class_schedule') == 'Afternoon' ? 'selected' : '' }}>Afternoon</option>
+                        <option value="Evening" {{ old('class_schedule') == 'Evening' ? 'selected' : '' }}>Evening</option>
                     </select>
                     @error('class_schedule')
                     <div class="text-danger">{{ $message }}</div>
@@ -385,12 +378,9 @@
                     <select class="form-select" id="payment_method" name="payment_method" required>
                         <option value="">Select</option>
                         <option value="Cash" {{ old('payment_method') == 'Cash' ? 'selected' : '' }}>Cash</option>
-                        <option value="Credit Card" {{ old('payment_method') == 'Credit Card' ? 'selected' : '' }}>
-                            Credit Card</option>
-                        <option value="Bank Transfer" {{ old('payment_method') == 'Bank Transfer' ? 'selected' : '' }}>
-                            Bank Transfer</option>
-                        <option value="Online Payment"
-                            {{ old('payment_method') == 'Online Payment' ? 'selected' : '' }}>Online Payment</option>
+                        <option value="Credit Card" {{ old('payment_method') == 'Credit Card' ? 'selected' : '' }}>Credit Card</option>
+                        <option value="Bank Transfer" {{ old('payment_method') == 'Bank Transfer' ? 'selected' : '' }}>Bank Transfer</option>
+                        <option value="Online Payment" {{ old('payment_method') == 'Online Payment' ? 'selected' : '' }}>Online Payment</option>
                     </select>
                     @error('payment_method')
                     <div class="text-danger">{{ $message }}</div>
@@ -454,7 +444,7 @@
         return Math.floor(100000 + Math.random() * 900000);
     }
 
-    // Set student ID and receipt number on page load
+    // Set student ID and receipt number on page load, respecting old() values
     document.addEventListener('DOMContentLoaded', () => {
         const studentIDField = document.getElementById('studentid');
         if (!studentIDField.value) {
@@ -465,12 +455,19 @@
         if (!receiptNumberField.value) {
             receiptNumberField.value = generateReceiptNumber();
         }
+
+        // Trigger loadStrands if a track is already selected (e.g., from old input)
+        const trackSelect = document.getElementById('track');
+        if (trackSelect.value) {
+            loadStrands();
+        }
     });
 
     // Function to load strands based on selected track
     function loadStrands() {
         const trackId = $('#track').val();
         const strandSelect = $('#strand');
+        const oldStrandId = '{{ old('strand_id') }}'; // Get old strand_id
 
         // Clear existing strand options except the default
         strandSelect.find('option:not(:first)').remove();
@@ -501,8 +498,9 @@
                     } else {
                         // Populate strands
                         data.forEach(strand => {
+                            const selected = oldStrandId == strand.id ? 'selected' : '';
                             strandSelect.append(
-                                `<option value="${strand.id}">${strand.strand_name}</option>`
+                                `<option value="${strand.id}" ${selected}>${strand.strand_name}</option>`
                             );
                         });
                     }

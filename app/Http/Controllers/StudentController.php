@@ -16,12 +16,13 @@ class StudentController extends Controller
         return view('enrollment.enrollment_form', compact('tracks'));
     }
 
+    // Display the students list
     public function index()
     {
-        $student = Student::all();
-        return view('enrollment.students', compact('student'));
+        return route('enrollment.show','students');
     }
 
+    // Store a new student
     public function store(Request $request)
     {
         // Validate the request
@@ -117,6 +118,7 @@ class StudentController extends Controller
         return redirect()->route('students.index')->with('success', 'Student enrolled successfully!');
     }
 
+    // Generate unique receipt number
     private function generateReceiptNumber()
     {
         do {
@@ -126,13 +128,15 @@ class StudentController extends Controller
         return $receiptNumber;
     }
 
-    public function edit($id)
+    // Edit student form
+    public function edit( Request $request,  $id)
     {
         $student = Student::findOrFail($id);
         $tracks = Tracks::all();
         return view('enrollment.studentedit', compact('student', 'tracks'));
     }
 
+    // Update student
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
@@ -196,11 +200,81 @@ class StudentController extends Controller
         return redirect()->route('students.index')->with('success', 'Student updated successfully.');
     }
 
+    // Delete student
     public function destroy($id)
     {
         $student = Student::findOrFail($id);
+        if ($student->profile_picture) {
+            Storage::disk('public')->delete($student->profile_picture);
+        }
+        if ($student->transcript) {
+            Storage::disk('public')->delete($student->transcript);
+        }
         $student->delete();
 
         return redirect()->route('students.index')->with('success', 'Student deleted successfully.');
     }
+
+    // Filter students
+    public function filter(Request $request)
+    {
+        $query = Student::with(['track', 'strand']);
+
+        // Search
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                  ->orWhere('last_name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        // Strand filter
+        if ($request->has('strand') && $request->strand !== 'all') {
+            $query->whereHas('strand', function ($q) use ($request) {
+                $q->where('strand_name', $request->strand);
+            });
+        }
+
+        // Grade filter
+        if ($request->has('grade') && $request->grade !== 'all') {
+            $query->where('grade_level', $request->grade);
+        }
+
+        // Sorting
+        if ($request->has('sort')) {
+            switch ($request->sort) {
+                case 'name-asc':
+                    $query->orderBy('first_name', 'asc');
+                    break;
+                case 'name-desc':
+                    $query->orderBy('first_name', 'desc');
+                    break;
+                case 'grade-asc':
+                    $query->orderBy('grade_level', 'asc');
+                    break;
+                case 'grade-desc':
+                    $query->orderBy('grade_level', 'desc');
+                    break;
+            }
+        }
+
+        $students = $query->get();
+
+        return response()->json(['students' => $students]);
+    }
+
+    // Search for autocomplete suggestions
+    public function search(Request $request)
+    {
+        $search = $request->search;
+        $students = Student::where('first_name', 'like', "%{$search}%")
+            ->orWhere('last_name', 'like', "%{$search}%")
+            ->take(5)
+            ->get(['id', 'first_name', 'last_name']);
+
+        return response()->json($students);
+    }
 }
+?>
