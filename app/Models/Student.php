@@ -28,9 +28,9 @@ class Student extends Model
         'grade_completed',
         'school_year_completed',
         'transcript',
-        'track',
+        'track_id',
         'studentid',
-        'strand',
+        'strand_id',
         'status',
         'class_schedule',
         'home_address',
@@ -49,8 +49,13 @@ class Student extends Model
         'receiptnumber'
 
     ];
+    public function strand()
+    {
+        return $this->belongsTo(Strands::class, 'strand_id');
+    }
+
     public function track()
     {
-        return $this->belongsTo(Tracks::class, 'track');
+        return $this->belongsTo(Tracks::class, 'track_id');
     }
 }

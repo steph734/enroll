@@ -1,10 +1,12 @@
 @extends('layouts.app')
+
 @section('title', 'Students')
+
 @section('styles')
 <link rel="stylesheet" href="{{ asset('css/students.css') }}">
 @endsection
-@section('content')
 
+@section('content')
 <div class="students-content">
     <div class="mb-3 row">
         <div class="row row-header-student">
@@ -65,30 +67,30 @@
                     <table class="table table-hover table-striped" style="cursor: pointer;">
                         <thead>
                             <tr>
-                                <th scope="col" class="align-middle">ID</th>
-                                <th scope="col" class="align-middle">First Name</th>
-                                <th scope="col" class="align-middle">Last Name</th>
-                                <th scope="col" class="align-middle">Email</th>
-                                <th scope="col" class="align-middle">Age</th>
-                                <th scope="col" class="align-middle">Strand</th>
-                                <th scope="col" class="align-middle">Track</th>
-                                <th scope="col" class="align-middle">Grade Level</th>
-                                <th scope="col" class="align-middle">Status</th>
-                                <th scope="col" class="align-middle">Action</th>
+                                <th scope="col" class="align-middle text-center">ID</th>
+                                <th scope="col" class="align-middle text-center">First Name</th>
+                                <th scope="col" class="align-middle text-center">Last Name</th>
+                                <th scope="col" class="align-middle text-center">Email</th>
+                                <th scope="col" class="align-middle text-center">Age</th>
+                                <th scope="col" class="align-middle text-center">Track</th>
+                                <th scope="col" class="align-middle text-center">Strand</th>
+                                <th scope="col" class="align-middle text-center">Grade Level</th>
+                                <th scope="col" class="align-middle text-center">Status</th>
+                                <th scope="col" class="align-middle text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody id="studentsTable">
                             @forelse(\App\Models\Student::all() as $student)
                             <tr class="student-row" data-grade-level="{{ $student->grade_level }}">
-                                <td>{{ $student->studentid }}</td>
-                                <td>{{ $student->first_name }}</td>
-                                <td>{{ $student->last_name }}</td>
-                                <td>{{ $student->email }}</td>
-                                <td>{{ $student->age }}</td>
-                                <td>{{ $student->strand }}</td>
-                                <td>{{ $student->track }}</td>
-                                <td>{{ $student->grade_level }}</td>
-                                <td>
+                                <td class="p-3">{{ $student->studentid }}</td>
+                                <td class="p-3">{{ $student->first_name }}</td>
+                                <td class="p-3">{{ $student->last_name }}</td>
+                                <td class="p-3">{{ $student->email }}</td>
+                                <td class="p-3">{{ $student->age }}</td>
+                                <td class="p-3">{{ $student->track->track_name }}</td>
+                                <td class="p-3">{{ $student->strand->strand_name }}</td>
+                                <td class="p-3">{{ $student->grade_level }}</td>
+                                <td class="p-3">
                                     <form action="{{ route('student.update', $student->id) }}" method="POST">
                                         @csrf
                                         @method('PUT')
@@ -103,15 +105,29 @@
                                         </select>
                                     </form>
                                 </td>
-                                <td>
-                                    <a href="" class="btn" title="View">
-                                        <i class="fa-solid fa-eye" style="color:#305cde; font-size: 18px;"></i>
-                                    </a>
-                                    <a href="{{ route('student.edit', $student->id) }}"
-                                        style="color: #ffc107; text-decoration: none; margin-right: 20px;" title="Edit">
-                                        <i class="fa-solid fa-pen-to-square" onmouseover="this.style.color='#e0a800'"
-                                            onmouseout="this.style.color='#ffc107'"></i>
-                                    </a>
+                                <td class="p-3">
+                                    <div class="dropdown">
+                                        <button class="btn btn-link" type="button"
+                                            id="dropdownMenuButton-{{ $student->id }}" data-bs-toggle="dropdown"
+                                            aria-expanded="false">
+                                            <i class="fa-solid fa-ellipsis" style="color: #000; font-size: 18px;"></i>
+                                        </button>
+                                        <ul class="dropdown-menu"
+                                            aria-labelledby="dropdownMenuButton-{{ $student->id }}">
+                                            <li>
+                                                <a class="dropdown-item" href="" title="View">
+                                                    <i class="fa-solid fa-eye"
+                                                        style="color:#305cde; margin-right: 8px;"></i> View
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="" title="Edit">
+                                                    <i class="fa-solid fa-pen-to-square"
+                                                        style="color:#ffc107; margin-right: 8px;"></i> Edit
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </td>
                             </tr>
                             @empty
@@ -140,8 +156,7 @@
                 const firstName = row.cells[1].textContent.toLowerCase();
                 const lastName = row.cells[2].textContent.toLowerCase();
                 const email = row.cells[3].textContent.toLowerCase();
-                const gradeLevel = row.cells[7].textContent
-                    .toLowerCase(); // Updated to correct column
+                const gradeLevel = row.cells[7].textContent.toLowerCase();
 
                 if (firstName.includes(searchTerm) ||
                     lastName.includes(searchTerm) ||
@@ -163,7 +178,7 @@
                 const filter = this.getAttribute('data-filter');
 
                 studentRows.forEach(row => {
-                    const strand = row.cells[5].textContent; // Strand column
+                    const strand = row.cells[6].textContent; // Strand column (index 6)
                     if (filter === 'all' || strand === filter) {
                         row.style.display = '';
                     } else {

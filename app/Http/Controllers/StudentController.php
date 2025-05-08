@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Student;
+use App\Models\Tracks;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -11,13 +12,14 @@ class StudentController extends Controller
     // Display the student enrollment form
     public function create()
     {
-
-        return view('enrollment.enrollment_form');
+        $tracks = Tracks::all();
+        return view('enrollment.enrollment_form', compact('tracks'));
     }
+
     public function index()
     {
         $student = Student::all();
-        return view('students.index', compact('student'));
+        return view('enrollment.students', compact('student'));
     }
 
     public function store(Request $request)
@@ -40,27 +42,27 @@ class StudentController extends Controller
             'guardian_first_name' => 'required|string|max:255',
             'guardian_middle_name' => 'nullable|string|max:255',
             'guardian_last_name' => 'required|string|max:255',
-            'relationship' => 'required|string|max:255',
+            'relationship' => 'required|string|in:Mother,Father,Guardian,Other',
             'guardian_contact' => 'required|string|max:20',
             'guardian_email' => 'nullable|email|max:255',
             'previous_school' => 'required|string|max:255',
-            'grade_completed' => 'required|string|max:255',
-            'school_year_completed' => 'required|string|max:255',
+            'grade_completed' => 'required|string|in:Grade 1,Grade 2,Grade 3,Grade 4,Grade 5,Grade 6,Grade 7,Grade 8,Grade 9,Grade 10',
+            'school_year_completed' => 'required|string|regex:/^\d{4}-\d{4}$/',
             'gpa' => 'nullable|string|max:10',
             'transcript' => 'required|file|mimes:pdf,doc,docx|max:2048',
-            'track' => 'required|string|max:255',
-            'strand' => 'nullable|string|max:255',
-            'grade_level' => 'required|string|max:255',
-            'class_schedule' => 'required|string|max:255',
+            'track_id' => 'required|exists:tracks,id',
+            'strand_id' => 'required|exists:strands,id',
+            'grade_level' => 'required|string|in:Grade 11,Grade 12',
+            'class_schedule' => 'required|string|in:Morning,Afternoon,Evening',
             'additional_notes' => 'nullable|string',
             'medical_info' => 'nullable|string',
             'special_accommodations' => 'nullable|string',
-            'studentid' => 'required|numeric|digits:6',
-            'payment_date' => 'nullable|date',
-            'downpayment' => 'nullable|numeric|min:0',
-            'payment_method' => 'nullable|string|max:255',
-            'balance' => 'nullable|numeric|min:0', // Balance can be provided, but we'll set default later
-            'receiptnumber' => 'nullable|string|size:6',
+            'studentid' => 'required|numeric|digits:6|unique:students,studentid',
+            'payment_date' => 'required|date',
+            'downpayment' => 'required|numeric|min:0',
+            'payment_method' => 'required|string|in:Cash,Credit Card,Bank Transfer,Online Payment',
+            'balance' => 'required|numeric|min:0',
+            'receiptnumber' => 'required|string|size:6|unique:students,receiptnumber',
         ]);
 
         // Handle file uploads
@@ -97,8 +99,8 @@ class StudentController extends Controller
             'school_year_completed' => $request->school_year_completed,
             'gpa' => $request->gpa,
             'transcript' => $transcriptPath,
-            'track' => $request->track,
-            'strand' => $request->strand,
+            'track_id' => $request->track_id,
+            'strand_id' => $request->strand_id,
             'grade_level' => $request->grade_level,
             'class_schedule' => $request->class_schedule,
             'additional_notes' => $request->additional_notes,
@@ -108,20 +110,18 @@ class StudentController extends Controller
             'payment_date' => $request->payment_date,
             'downpayment' => $request->downpayment,
             'payment_method' => $request->payment_method,
-            'balance' => $request->balance ?? 30000, // Default to 30000 if not provided
-            'receiptnumber' => $request->receiptnumber ?? $this->generateReceiptNumber(),
-
+            'balance' => $request->balance,
+            'receiptnumber' => $request->receiptnumber,
         ]);
 
         return redirect()->route('students.index')->with('success', 'Student enrolled successfully!');
     }
 
-
     private function generateReceiptNumber()
     {
         do {
-            $receiptNumber = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT); // Generate 6-digit number
-        } while (Student::where('receiptnumber', $receiptNumber)->exists()); // Ensure uniqueness
+            $receiptNumber = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+        } while (Student::where('receiptnumber', $receiptNumber)->exists());
 
         return $receiptNumber;
     }
@@ -129,7 +129,8 @@ class StudentController extends Controller
     public function edit($id)
     {
         $student = Student::findOrFail($id);
-        return view('enrollment.studentedit', compact('student'));
+        $tracks = Tracks::all();
+        return view('enrollment.studentedit', compact('student', 'tracks'));
     }
 
     public function update(Request $request, $id)
@@ -151,28 +152,28 @@ class StudentController extends Controller
             'guardian_first_name' => 'required|string|max:255',
             'guardian_middle_name' => 'nullable|string|max:255',
             'guardian_last_name' => 'required|string|max:255',
-            'relationship' => 'required|string|max:255',
+            'relationship' => 'required|string|in:Mother,Father,Guardian,Other',
             'guardian_contact' => 'required|string|max:20',
             'guardian_email' => 'nullable|email|max:255',
             'previous_school' => 'required|string|max:255',
-            'grade_completed' => 'required|string|max:255',
-            'school_year_completed' => 'required|string|max:255',
+            'grade_completed' => 'required|string|in:Grade 1,Grade 2,Grade 3,Grade 4,Grade 5,Grade 6,Grade 7,Grade 8,Grade 9,Grade 10',
+            'school_year_completed' => 'required|string|regex:/^\d{4}-\d{4}$/',
             'gpa' => 'nullable|string|max:10',
             'transcript' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
-            'track' => 'required|string|max:255',
-            'strand' => 'nullable|string|max:255',
-            'grade_level' => 'required|string|max:255',
-            'class_schedule' => 'required|string|max:255',
+            'track_id' => 'required|exists:tracks,id',
+            'strand_id' => 'required|exists:strands,id',
+            'grade_level' => 'required|string|in:Grade 11,Grade 12',
+            'class_schedule' => 'required|string|in:Morning,Afternoon,Evening',
             'additional_notes' => 'nullable|string',
             'medical_info' => 'nullable|string',
             'special_accommodations' => 'nullable|string',
             'studentid' => 'required|numeric|digits:6|unique:students,studentid,' . $id,
             'status' => 'required|in:ongoing,graduated,dropped',
-            'payment_date' => 'nullable|date',
-            'downpayment' => 'nullable|numeric|min:0',
-            'payment_method' => 'nullable|string|max:255',
-            'balance' => 'nullable|numeric|min:0', // Balance can be provided, but we'll set default later
-            'receiptnumber' => 'nullable|string|size:6',
+            'payment_date' => 'required|date',
+            'downpayment' => 'required|numeric|min:0',
+            'payment_method' => 'required|string|in:Cash,Credit Card,Bank Transfer,Online Payment',
+            'balance' => 'required|numeric|min:0',
+            'receiptnumber' => 'required|string|size:6|unique:students,receiptnumber,' . $id,
         ]);
 
         $student = Student::findOrFail($id);
@@ -194,6 +195,7 @@ class StudentController extends Controller
         $student->update($validated);
         return redirect()->route('students.index')->with('success', 'Student updated successfully.');
     }
+
     public function destroy($id)
     {
         $student = Student::findOrFail($id);
