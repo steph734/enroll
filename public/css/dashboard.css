@@ -12,19 +12,19 @@
 
 .dashboard-content .card {
     border-radius: 15px !important;
-    box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
+    /* box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
     -webkit-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
     -moz-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
-    background-color: white !important;
+    background-color: white !important; */
     margin: 10px !important;
 }
 
-.card{
+.card {
     transition: transform 0.2s ease;
 }
 .card:hover {
     transform: translateY(-2px);
-  }
+}
 .first-row {
     min-height: 400px !important;
 }

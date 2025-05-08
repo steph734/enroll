@@ -49,21 +49,8 @@ class Student extends Model
         'receiptnumber'
 
     ];
-    
-    public function payments()
+    public function track()
     {
-        return $this->hasMany(Payment::class);
-    }
-
-    // Relationship to fetch the latest payment
-    public function latestPayment()
-    {
-        return $this->hasOne(Payment::class)->latestOfMany();
-    }
-
-    public function section()
-    {
-        return $this->belongsTo(Section::class);
-        return $this->belongsToMany(Student::class, 'section_student');
+        return $this->belongsTo(Tracks::class, 'track');
     }
 }

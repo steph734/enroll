@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tracks', function (Blueprint $table) {
-            $table->id(); // unsignedBigInteger primary key
-            $table->string('trackname');
-            $table->string('description');
+        Schema::create('strands', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('track_id')->constrained('tracks')->onDelete('cascade');
+            $table->string('strand_name')->unique();
+            $table->string('description')->nullable();
             $table->timestamps();
         });
     }
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tracks');
+        Schema::dropIfExists('strands');
     }
 };

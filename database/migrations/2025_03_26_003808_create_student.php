@@ -39,8 +39,8 @@ return new class extends Migration
             $table->string('school_year_completed');
             $table->string('gpa')->nullable();
             $table->string('transcript');
-            $table->string('track');
-            $table->string('strand');
+            $table->foreignId('track_id')->constrained('tracks')->onDelete('cascade');
+            $table->foreignId('strand_id')->constrained('strands')->onDelete('cascade');
             $table->string('grade_level');
             $table->string('class_schedule');
             $table->text('additional_notes')->nullable();
@@ -51,7 +51,6 @@ return new class extends Migration
             $table->string('payment_method')->nullable();
             $table->decimal('balance', 10, 2)->default(30000.00);
             $table->string('receiptnumber', 6)->unique()->nullable();
-
 
             $table->timestamps();
         });

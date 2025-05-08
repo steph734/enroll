@@ -11,7 +11,7 @@ class StudentController extends Controller
     // Display the student enrollment form
     public function create()
     {
-         
+
         return view('enrollment.enrollment_form');
     }
     public function index()
@@ -60,12 +60,12 @@ class StudentController extends Controller
             'downpayment' => 'nullable|numeric|min:0',
             'payment_method' => 'nullable|string|max:255',
             'balance' => 'nullable|numeric|min:0', // Balance can be provided, but we'll set default later
-            'receiptnumber' => 'nullable|string|size:6', 
+            'receiptnumber' => 'nullable|string|size:6',
         ]);
 
         // Handle file uploads
-        $profilePicturePath = $request->file('profile_picture') 
-            ? $request->file('profile_picture')->store('profile_pictures', 'public') 
+        $profilePicturePath = $request->file('profile_picture')
+            ? $request->file('profile_picture')->store('profile_pictures', 'public')
             : null;
         $transcriptPath = $request->file('transcript')
             ? $request->file('transcript')->store('transcripts', 'public')
@@ -110,7 +110,7 @@ class StudentController extends Controller
             'payment_method' => $request->payment_method,
             'balance' => $request->balance ?? 30000, // Default to 30000 if not provided
             'receiptnumber' => $request->receiptnumber ?? $this->generateReceiptNumber(),
-            
+
         ]);
 
         return redirect()->route('students.index')->with('success', 'Student enrolled successfully!');
@@ -172,7 +172,7 @@ class StudentController extends Controller
             'downpayment' => 'nullable|numeric|min:0',
             'payment_method' => 'nullable|string|max:255',
             'balance' => 'nullable|numeric|min:0', // Balance can be provided, but we'll set default later
-            'receiptnumber' => 'nullable|string|size:6', 
+            'receiptnumber' => 'nullable|string|size:6',
         ]);
 
         $student = Student::findOrFail($id);
@@ -202,5 +202,3 @@ class StudentController extends Controller
         return redirect()->route('students.index')->with('success', 'Student deleted successfully.');
     }
 }
-
-?>

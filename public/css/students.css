@@ -5,25 +5,25 @@
     min-height: 100vh !important;
     /* border: 1px solid var(--line-clr) !important; */
     border-radius: 1em !important;
-    box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
+    /* box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
     -webkit-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
-    -moz-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
+    -moz-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26); */
 }
 .card-header-student {
     /* border: 1px solid var(--line-clr) !important; */
     position: sticky !important;
     top: 0 !important;
     border-radius: 1em 1em !important;
-    box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
+    /* box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
     -webkit-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
-    -moz-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
+    -moz-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26); */
 }
-.card{
+.card {
     transition: transform 0.2s ease;
 }
 .card:hover {
     transform: translateY(-2px);
-  }
+}
 .row-header-student {
     position: sticky !important;
     top: 0 !important;
