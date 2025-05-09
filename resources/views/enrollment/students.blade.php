@@ -33,41 +33,21 @@
                             <button class="tab active" data-filter="all">All Students</button>
                             <button class="tab" data-filter="Academic">Academic</button>
                             <button class="tab" data-filter="Non-Academic">Non-Academic</button>
+
                         </div>
 
-                        <!-- Filter Form (Date and Status) -->
-                        <form method="GET" action="{{ route('students.index') }}" class="gap-2 d-flex align-items-center">
-                            <div class="col-md-3">
-                                <label for="date" class="form-label">Filter by Date:</label>
-                                <input type="date" name="date" value="{{ request('date', $todayDate) }}" class="form-control">
-                            </div>
-                            <div class="col-md-3">
-                                <label for="status" class="form-label">Filter by Status:</label>
-                                <select name="status" class="form-select">
-                                    <option value="">Select Status</option>
-                                    <option value="ongoing" {{ request('status') == 'ongoing' ? 'selected' : '' }}>Ongoing</option>
-                                    <option value="graduated" {{ request('status') == 'graduated' ? 'selected' : '' }}>Graduated</option>
-                                    <option value="dropped" {{ request('status') == 'dropped' ? 'selected' : '' }}>Dropped</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3 align-self-end">
-                                <button type="submit" class="btn btn-primary">Filter</button>
-                            </div>
-                        </form>
-
-                        <!-- Existing Dropdowns for Grade and Sorting -->
                         <div class="gap-2 dropdowns d-flex">
-                            <select class="form-select" style="width: 150px;" onchange="this.form.submit()" name="grade" form="filterForm">
+                            <select class="form-select" style="width: 150px;">
                                 <option>Filter by</option>
-                                <option value="grade" {{ request('grade') == 'grade' ? 'selected' : '' }}>Grade</option>
-                                <option value="age" {{ request('age') == 'age' ? 'selected' : '' }}>Age</option>
+                                <option value="grade">Grade</option>
+                                <option value="age">Age</option>
                             </select>
-                            <select class="form-select" style="width: 150px;" onchange="this.form.submit()" name="sort" form="filterForm">
+                            <select class="form-select" style="width: 150px;">
                                 <option>Sort by</option>
-                                <option value="name-asc" {{ request('sort') == 'name-asc' ? 'selected' : '' }}>Name (A-Z)</option>
-                                <option value="name-desc" {{ request('sort') == 'name-desc' ? 'selected' : '' }}>Name (Z-A)</option>
-                                <option value="grade-asc" {{ request('sort') == 'grade-asc' ? 'selected' : '' }}>Grade (Low to High)</option>
-                                <option value="grade-desc" {{ request('sort') == 'grade-desc' ? 'selected' : '' }}>Grade (High to Low)</option>
+                                <option value="name-asc">Name (A-Z)</option>
+                                <option value="name-desc">Name (Z-A)</option>
+                                <option value="grade-asc">Grade (Low to High)</option>
+                                <option value="grade-desc">Grade (High to Low)</option>
                             </select>
                         </div>
 
@@ -100,7 +80,7 @@
                             </tr>
                         </thead>
                         <tbody id="studentsTable">
-                            @forelse($students as $student)
+                            @forelse(\App\Models\Student::all() as $student)
                             <tr class="student-row" data-grade-level="{{ $student->grade_level }}">
                                 <td class="p-1">{{ $student->studentid }}</td>
                                 <td class="p-1">{{ $student->first_name }}</td>
@@ -115,9 +95,13 @@
                                         @csrf
                                         @method('PUT')
                                         <select name="status" class="status-dropdown" onchange="this.form.submit()">
-                                            <option value="ongoing" {{ $student->status == 'ongoing' ? 'selected' : '' }}>Ongoing</option>
-                                            <option value="graduated" {{ $student->status == 'graduated' ? 'selected' : '' }}>Graduated</option>
-                                            <option value="dropped" {{ $student->status == 'dropped' ? 'selected' : '' }}>Dropped</option>
+                                            <option value="ongoing"
+                                                {{ $student->status == 'ongoing' ? 'selected' : '' }}>Ongoing</option>
+                                            <option value="graduated"
+                                                {{ $student->status == 'graduated' ? 'selected' : '' }}>Graduated
+                                            </option>
+                                            <option value="dropped"
+                                                {{ $student->status == 'dropped' ? 'selected' : '' }}>Dropped</option>
                                         </select>
                                     </form>
                                 </td>
@@ -126,6 +110,9 @@
                                         <button class="btn" title="View">
                                             <i class="fa-solid fa-eye" style="color:#305cde;"></i>
                                         </button>
+                                        {{-- <button class="btn " title="Edit">
+                                            <i class="fa-solid fa-pen-to-square" style="color: #305cde; text-decoration: none;"></i>
+                                        </button> --}}
                                     </div>
                                 </td>
                             </tr>
@@ -136,10 +123,6 @@
                             @endforelse
                         </tbody>
                     </table>
-                    <!-- Pagination Links -->
-                    <div class="d-flex justify-content-center">
-                        {{ $students->links() }}
-                    </div>
                 </div>
             </div>
         </div>
@@ -190,6 +173,8 @@
                 });
             });
         });
+
+
     });
 </script>
 @endsection

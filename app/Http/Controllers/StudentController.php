@@ -19,9 +19,13 @@ class StudentController extends Controller
     // Display the students list
     public function index()
     {
-        return route('enrollment.show','students');
+        return route('enrollment.show', 'students');
     }
-
+    public function show($id)
+    {
+        $student = Student::findOrFail($id);
+        return view('admin.students.show', compact('student'));
+    }
     // Store a new student
     public function store(Request $request)
     {
@@ -129,7 +133,7 @@ class StudentController extends Controller
     }
 
     // Edit student form
-    public function edit( Request $request,  $id)
+    public function edit(Request $request,  $id)
     {
         $student = Student::findOrFail($id);
         $tracks = Tracks::all();
@@ -225,8 +229,8 @@ class StudentController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('first_name', 'like', "%{$search}%")
-                  ->orWhere('last_name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('last_name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
@@ -277,4 +281,3 @@ class StudentController extends Controller
         return response()->json($students);
     }
 }
-?>
