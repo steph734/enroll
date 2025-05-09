@@ -19,12 +19,7 @@ class StudentController extends Controller
     // Display the students list
     public function index()
     {
-        return route('enrollment.show', 'students');
-    }
-    public function show($id)
-    {
-        $student = Student::findOrFail($id);
-        return view('admin.students.show', compact('student'));
+        return redirect()->route('enrollment.show', 'students');
     }
     // Store a new student
     public function store(Request $request)
@@ -119,7 +114,7 @@ class StudentController extends Controller
             'receiptnumber' => $request->receiptnumber,
         ]);
 
-        return redirect()->route('students.index')->with('success', 'Student enrolled successfully!');
+        return redirect()->route('student.index')->with('success', 'Student enrolled successfully!');
     }
 
     // Generate unique receipt number
@@ -137,7 +132,11 @@ class StudentController extends Controller
     {
         $student = Student::findOrFail($id);
         $tracks = Tracks::all();
-        return view('enrollment.studentedit', compact('student', 'tracks'));
+        $studentedit = Student::where('id', $id)->first();
+        if (!$studentedit) {
+            return redirect()->route('student.index')->with('error', 'Student not found.');
+        }
+        return view('enrollment.studentedit', compact('student', 'tracks', 'studentedit'));
     }
 
     // Update student

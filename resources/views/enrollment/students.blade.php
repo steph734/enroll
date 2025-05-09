@@ -107,9 +107,11 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="gap-2 d-flex justify-content-center">
-                                        <button class="btn" title="View">
-                                            <i class="fa-solid fa-eye" style="color:#305cde;"></i>
-                                        </button>
+                                        <a href="{{ route('student.edit', $student->id)}}">
+                                            <button class="btn" title="View">
+                                                <i class="fa-solid fa-eye" style="color:#305cde;"></i>
+                                            </button>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
