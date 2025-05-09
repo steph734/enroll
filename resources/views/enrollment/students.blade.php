@@ -33,7 +33,6 @@
                             <button class="tab active" data-filter="all">All Students</button>
                             <button class="tab" data-filter="Academic">Academic</button>
                             <button class="tab" data-filter="Non-Academic">Non-Academic</button>
-
                         </div>
 
                         <div class="gap-2 dropdowns d-flex">
@@ -64,7 +63,7 @@
         <div class="p-3 card card-table">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-hover table-striped table-bordered" style="cursor: pointer;">
+                    <table class="table table-hover table-striped" style="cursor: pointer;">
                         <thead>
                             <tr>
                                 <th scope="col" class="p-1 text-center align-middle">ID</th>
@@ -81,16 +80,17 @@
                         </thead>
                         <tbody id="studentsTable">
                             @forelse(\App\Models\Student::all() as $student)
-                            <tr class="student-row" data-grade-level="{{ $student->grade_level }}">
-                                <td class="p-1">{{ $student->studentid }}</td>
-                                <td class="p-1">{{ $student->first_name }}</td>
-                                <td class="p-1">{{ $student->last_name }}</td>
-                                <td class="p-1">{{ $student->email }}</td>
-                                <td class="p-1">{{ $student->age }}</td>
-                                <td class="p-1">{{ $student->track->track_name }}</td>
-                                <td class="p-1">{{ $student->strand->strand_name }}</td>
-                                <td class="p-1">{{ $student->grade_level }}</td>
-                                <td class="p-1">
+                            <tr class="student-row" data-track="{{ $student->track->track_name }}"
+                                data-grade-level="{{ $student->grade_level }}">
+                                <td class="text-center">{{ $student->studentid }}</td>
+                                <td class="text-center">{{ $student->first_name }}</td>
+                                <td class="text-center">{{ $student->last_name }}</td>
+                                <td class="text-center">{{ $student->email }}</td>
+                                <td class="text-center">{{ $student->age }}</td>
+                                <td class="text-center">{{ $student->track->track_name }}</td>
+                                <td class="text-center">{{ $student->strand->strand_name }}</td>
+                                <td class="text-center">{{ $student->grade_level }}</td>
+                                <td class="text-center">
                                     <form action="{{ route('student.update', $student->id) }}" method="POST">
                                         @csrf
                                         @method('PUT')
@@ -105,14 +105,11 @@
                                         </select>
                                     </form>
                                 </td>
-                                <td class="p-3">
+                                <td class="text-center">
                                     <div class="gap-2 d-flex justify-content-center">
                                         <button class="btn" title="View">
                                             <i class="fa-solid fa-eye" style="color:#305cde;"></i>
                                         </button>
-                                        {{-- <button class="btn " title="Edit">
-                                            <i class="fa-solid fa-pen-to-square" style="color: #305cde; text-decoration: none;"></i>
-                                        </button> --}}
                                     </div>
                                 </td>
                             </tr>
@@ -164,8 +161,12 @@
                 const filter = this.getAttribute('data-filter');
 
                 studentRows.forEach(row => {
-                    const strand = row.cells[6].textContent; // Strand column (index 6)
-                    if (filter === 'all' || strand === filter) {
+                    const track = row.getAttribute('data-track');
+                    if (filter === 'all') {
+                        row.style.display = '';
+                    } else if (filter === 'Academic' && track === 'Academic') {
+                        row.style.display = '';
+                    } else if (filter === 'Non-Academic' && track !== 'Academic') {
                         row.style.display = '';
                     } else {
                         row.style.display = 'none';
@@ -173,8 +174,6 @@
                 });
             });
         });
-
-
     });
 </script>
 @endsection

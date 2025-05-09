@@ -67,12 +67,12 @@ class TeacherSeeder extends Seeder
                 'certifications' => $faker->boolean(40) ? $faker->sentence(5) : null,
                 'medical_info' => $faker->boolean(30) ? $faker->sentence(10) : null,
                 'accommodations' => $faker->boolean(20) ? $faker->sentence(8) : null,
-              'resume' => 'storage/documents/resume_' . $faker->uuid . '.pdf',
-                 'transcript' => 'storage/documents/transcript_' . $faker->uuid . '.pdf',
+                'resume' => 'storage/documents/resume_' . $faker->uuid . '.pdf',
+                'transcript' => 'storage/documents/transcript_' . $faker->uuid . '.pdf',
                 'date_hired' => $faker->dateTimeBetween('-20 years', 'now')->format('Y-m-d'),
                 'employee_id' => $faker->unique()->numberBetween(100000, 999999),
                 'status' => $faker->randomElement(['Active', 'Inactive', 'On Leave']),
-                
+
             ]);
         }
     }
