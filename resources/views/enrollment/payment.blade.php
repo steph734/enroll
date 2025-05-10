@@ -21,7 +21,7 @@
             <div class="p-3 m-1 text-center card">
                 <div class="card-body">
                     <i class="fa-solid fa-money-bill-wave fa-2x text-success"></i>
-                    <h5 class="mt-2 card-title">{{ $totalDownpayments }}</h5>
+                    <h5 class="mt-2 card-title">₱ {{ number_format($totalDownpayments, 2) }}</h5>
                     <p class="card-text">Total Payments Collected</p>
                 </div>
             </div>
@@ -33,16 +33,19 @@
             <div class="p-3 m-1 text-center card">
                 <div class="card-body">
                     <i class="fa-solid fa-balance-scale fa-2x text-warning"></i>
-                    <h5 class="mt-2 card-title">{{ $totalBalance }}</h5>
+                    <h5 class="mt-2 card-title">₱ {{ number_format($totalBalance, 2) }}</h5>
                     <p class="card-text">Total Outstanding Balance</p>
                 </div>
             </div>
         </div>
+          @php
+        $totalstudent = \App\Models\Student::count('paymentstatus');
+        @endphp
         <div class="col-md-4">
             <div class="p-3 m-1 text-center card">
                 <div class="card-body">
                     <i class="fa-solid fa-user-times fa-2x text-danger"></i>
-                    <h5 class="mt-2 card-title">2109</h5>
+                      <h5 class="mt-2 card-title">{{ $totalstudent }}</h5>
                     <p class="card-text">Unpaid Student Count</p>
                 </div>
             </div>
@@ -95,7 +98,7 @@
                             </select>
                         </div>
 
-                        <a href="{{ route('payments.create' , 'payment_form') }}">
+                        <a href="{{ route('payments.create') }}">
                             <button class="btn btn-primary add-payment">Add Payment</button>
                         </a>
                     </div>
@@ -134,7 +137,7 @@
                                 <td>{{($student->payment_method) }}</td>
                                 <td>₱{{ number_format($student->downpayment, 2) }}</td>
                                 <td>₱{{ number_format($student->balance, 2) }}</td>
-                                <td>{{ $student->status }}</td>
+                                <td>{{ $student->paymentstatus }}</td>
                                 <td>{{ $student->payment_date ? \Carbon\Carbon::parse($student->payment_date)->format('m/d/Y') : 'N/A' }}
                                 </td>
                                 <td>

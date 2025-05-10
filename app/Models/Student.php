@@ -45,6 +45,7 @@ class Student extends Model
         'payment_date',
         'downpayment',
         'payment_method',
+        'paymentstatus',
         'balance',
         'receiptnumber'
 

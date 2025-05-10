@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('zip_code');
             $table->string('contact_number');
             $table->enum('status', ['ongoing', 'graduated', 'dropped']);
+            $table->enum('paymentstatus', ['paid', 'balance', 'unpaid']);
             $table->string('secondary_contact')->nullable();
             $table->string('email')->unique();
             $table->string('profile_picture')->nullable();
