@@ -9,7 +9,8 @@ class PaymentController extends Controller
 {
     public function index()
     {
-        return view('payments.index');
+        
+        return redirect()->route('enrollment.show', 'payment');
     }
 
     public function create()
