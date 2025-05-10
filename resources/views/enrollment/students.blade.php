@@ -10,11 +10,14 @@
 <div class="students-content">
     <div class="mb-3 row">
         <div class="row row-header-student">
+            <h2>List of Students</h2>
+            <p style="font-size: 18px; color:#555 !important;">For 1st Semester, Class of 2024-2025</p>
             <div class="p-3 card card-header-student sticky-card">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="card-title">
-                            <h5>List of Students</h5>
+
+                            <!-- <p style="font-size: 14px;">Total Students: {{ \App\Models\Student::count() }}</p> -->
                         </div>
                         <form action="" id="searchForm">
                             <div class="search-container-dash">
@@ -59,7 +62,8 @@
                         </div>
 
                         <a href="{{ route('enrollment.show', 'enrollment_form') }}">
-                            <button class="btn btn-primary add-student">Add Student</button>
+                            <button class="btn btn-primary add-student"><i class="fa-solid fa-plus"></i> Add
+                                Student</button>
                         </a>
                     </div>
                 </div>
@@ -103,7 +107,8 @@
                                     <form action="{{ route('student.update', $student->id) }}" method="POST">
                                         @csrf
                                         @method('PUT')
-                                        <select name="status" class="status-dropdown" onchange="this.form.submit()">
+                                        <select name="status" class="status-dropdown d-flex"
+                                            onchange="this.form.submit()">
                                             <option value="ongoing"
                                                 {{ $student->status == 'ongoing' ? 'selected' : '' }}>Ongoing</option>
                                             <option value="graduated"

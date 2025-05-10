@@ -42,18 +42,24 @@ Route::middleware('auth')->group(function () {
     Route::get('/students/filter', [StudentController::class, 'filter'])->name('student.filter');
     Route::get('/students/search', [StudentController::class, 'search'])->name('student.search');
 
+
     // Teacher routes
     Route::get('/teachers', [TeacherController::class, 'index'])->name('teachers.index');
-    Route::get('/teachers/create', [TeacherController::class, 'create'])->name('teachers.create');
+    Route::get('/teachers/create', [StudentController::class, 'create'])->name('student.create');
+    Route::get('/teachers/{formtype}', [EnrollmentController::class, 'show'])->name('enrollment.show');
+    Route::get('/teachers/{id}/{formtype?}', [TeacherController::class, 'edit'])
+        ->name('teachers.edit')
+        ->where('formtype', 'view|teacheredit');
     Route::post('/teachers', [TeacherController::class, 'store'])->name('teachers.store');
-    Route::get('/teachers/{id}/edit', [TeacherController::class, 'edit'])->name('teachers.edit');
     Route::put('/teachers/{id}', [TeacherController::class, 'update'])->name('teachers.update');
     Route::delete('/teachers/{id}', [TeacherController::class, 'destroy'])->name('teachers.destroy');
 
-
-    // Track-Strand AJAX
-    Route::get('/strands', [TrackStrandController::class, 'getStrands'])->name('strands.get');
-
+    Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
+    Route::get('/payments/create', [PaymentController::class, 'create'])->name('payments.create');
+    Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');
+    Route::get('/payments/{payment}', [PaymentController::class, 'show'])->name('payments.show');
+    Route::get('/payments/{payment}/edit', [PaymentController::class, 'edit'])->name('payments.edit');
+    Route::put('/payments/{payment}', [PaymentController::class, 'update'])->name('payments.update');
     // Enrollment page (dynamic) - placed last to avoid conflicts
     Route::get('/enrollment/{page}', [EnrollmentController::class, 'show'])->name('enrollment.show');
 });

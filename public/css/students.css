@@ -51,7 +51,17 @@
     font-size: 18px;
     pointer-events: none;
 }
-
+th {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: #333 !important;
+    border-bottom: 2px solid #e0e0e0 !important;
+    padding: 10px !important;
+}
+td {
+    font-size: 14px !important;
+    padding: 10px !important;
+}
 tr {
     cursor: pointer;
     height: 50px !important;
@@ -149,7 +159,7 @@ tr {
     font-family: Arial, sans-serif;
     cursor: pointer;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    width: 120px;
+    width: 80px;
 }
 
 .status-dropdown:hover {

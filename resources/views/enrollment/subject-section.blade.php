@@ -1,465 +1,207 @@
 @extends('layouts.app')
-
-@section('title', 'Subject and Section Assignment')
-
 @section('styles')
-<link rel="stylesheet" href="{{ asset('css/subject_section.css') }}">
+<style>
+    .subject-content {
+        margin: 10px !important;
+    }
+
+    .card-table {
+        min-height: 100vh !important;
+        border: 1px solid var(--line-clr) !important;
+        border-radius: 1em !important;
+        box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
+        -webkit-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
+        -moz-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
+    }
+
+    .card {
+        /* border: 1px solid var(--line-clr) !important; */
+        position: sticky !important;
+        top: 0 !important;
+        border-radius: 1em 1em !important;
+        height: 100vh !important;
+        /* box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
+    -webkit-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26);
+    -moz-box-shadow: 1px 7px 5px 0px rgba(0, 0, 0, 0.26); */
+    }
+
+    .search-container-dash {
+        /* margin-top: 10px !important; */
+        position: relative !important;
+    }
+
+    .search-container-dash input {
+        width: 300px !important;
+        height: 40px !important;
+        font-size: 16px !important;
+        padding: 10px 20px 10px 40px !important;
+        border-radius: 30px !important;
+        border: 1px solid var(--line-clr) !important;
+    }
+
+    .search-container-dash i {
+        position: absolute;
+        top: 50%;
+        left: 10px;
+        transform: translateY(-50%);
+        color: #bbc0c9 !important;
+        font-size: 18px;
+        pointer-events: none;
+    }
+
+    td {
+        cursor: pointer;
+    }
+
+    tr {
+        height: 50px !important;
+    }
+
+    th {
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        color: #333 !important;
+        border-bottom: 2px solid #e0e0e0 !important;
+        padding: 10px !important;
+    }
+
+    td {
+        font-size: 14px !important;
+        padding: 10px !important;
+    }
+</style>
 @endsection
-
 @section('content')
-<div class="assignment-content">
-    <p class="h4 mb-4" style="color: var(--text-clr) !important;">Subject and Section Management</p>
+<div class="subject-content">
+    <div class="container">
+        <div class="d-flex justify-content-between mb-1">
+            <div>
+                <h2>List of Subjects</h2>
+                <p style="font-size:18px; color:#555 !important;">For 1st Semester, Class of 2024-2025</p>
+            </div>
+            <div>
+                <button class="btn-sm btn-primary p-1 text-primary" style="font-size: 14px !important;"><i
+                        class="fa-solid fa-book"></i>
+                    Subjects</button>
+                <button class="btn-sm btn-dark p-1 " style="font-size: 14px !important;"><i
+                        class="fa-solid fa-school"></i>
+                    Sections</button>
+            </div>
+        </div>
 
-    <!-- Navigation Tabs -->
-    <ul class="nav nav-tabs mb-4">
-        <li class="nav-item m-1">
-            <a class="nav-link active p-1" href="#assign" data-bs-toggle="tab">Assign</a>
-        </li>
-        <li class="nav-item m-1">
-            <a class="nav-link p-1" href="#section" data-bs-toggle="tab">Section</a>
-        </li>
-        <li class="nav-item m-1">
-            <a class="nav-link p-1" href="#subject" data-bs-toggle="tab">Subject</a>
-        </li>
-      
-    </ul>
+        <div class="card p-3">
+            <div class="d-flex justify-content-between">
+                <div class="d-flex gap-2">
+                    <a href="{{ route('enrollment.show', 'subjectform') }}">
+                        <button class="btn btn-primary p-1"
+                            style="font-size: 14px !important; text-decoration: none !important;"><i
+                                class="fa fa-solid fa-plus"></i> Add Subject</button>
+                    </a>
+                    <div class="dropdown">
+                        <a class="btn btn-outline-dark p-1 btn-sm" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <i class="fa-solid fa-filter"></i>
+                        </a>
 
-    <div class="tab-content">
-        <!-- Assign Tab -->
-        <div class="tab-pane fade show active" id="assign">
-            <div class="card mb-4 p-3">
-                <div class="card-body">
-                    @if (session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
-                    @endif
-                    <form action="{{ route('assign.store') }}" method="POST">
-                        @csrf
-                        <div class="row mb-3">
-                            <div class="col-md-3 p-1 profile d-flex justify-content-center">
-                                <i class="fa-solid fa-image" style="font-size: 100px; color:gray;"></i>
-                            </div>
-                            <div class="col-md-9 p-1 d-flex">
-                                <div class="col-md-4 p-1">
-                                    <label class="form-label mb-1">Teacher</label>
-                                    <select class="form-select" name="teacher" id="teacherSelect">
-                                        <option value="">Select a teacher</option>
-                                        @forelse(\App\Models\Teacher::all() as $teacher)
-                                            <option value="{{ $teacher->id }}"
-                                                    data-employment-status="{{ $teacher->employment_status }}"
-                                                    data-email="{{ $teacher->email }}">
-                                                {{ $teacher->first_name }} {{ $teacher->last_name }}
-                                            </option>
-                                        @empty
-                                            <option value="">No teachers available</option>
-                                        @endforelse
-                                    </select>
-                                    @error('teacher')
-                                        <div class="text-danger">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-md-4 p-1">
-                                    <label class="form-label mb-1">Employment</label>
-                                    <input type="text" class="form-control" id="employmentStatus" readonly>
-                                </div>
-                                <div class="col-md-4 p-1">
-                                    <label class="form-label mb-1">Email</label>
-                                    <input type="email" class="form-control" id="email" readonly>
-                                </div>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <form action="" id="searchForm">
+                        <div class="search-container-dash">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" placeholder="Search..." id="searchInput" class="form-control">
+                            <div id="suggestions"
+                                style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ddd; border-radius: 4px; max-height: 200px; overflow-y: auto; z-index: 1000;">
                             </div>
                         </div>
-                        <hr>
-                        <div id="assignmentFields">
-                            <div class="row mb-3 mt-1 d-flex justify-content-center assignment-field-set">
-                                <div class="col-md-4 p-1">
-                                    <label class="form-label mb-1">Section</label>
-                                    <select class="form-select" name="assignments[0][section]">
-                                        <option value="">Select a section</option>
-                                        @forelse(\App\Models\Section::whereNotNull('sectioname')->whereNotNull('code')->get() as $section)
-                                            <option value="{{ $section->id }}">
-                                                {{ $section->sectioname }} - {{ $section->code }}
-                                            </option>
-                                        @empty
-                                            <option value="">No sections available</option>
-                                        @endforelse
-                                    </select>
-                                    @error('assignments.0.section')
-                                        <div class="text-danger">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-md-4 p-1">
-                                    <label class="form-label mb-1">Subject</label>
-                                    <select class="form-select" name="assignments[0][subject]">
-                                        <option value="">Select a subject</option>
-                                        @forelse(\App\Models\Subject::all() as $subject)
-                                            <option value="{{ $subject->id }}">
-                                                {{ $subject->subjectname }}
-                                            </option>
-                                        @empty
-                                            <option value="">No subjects available</option>
-                                        @endforelse
-                                    </select>
-                                    @error('assignments.0.subject')
-                                        <div class="text-danger">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-md-4 p-1">
-                                    <label class="form-label mb-1">Time</label>
-                                    <select class="form-select" name="assignments[0][time]">
-                                        <option value="">Select a time</option>
-                                        @forelse(\App\Models\Subject::whereNotNull('start_time')->whereNotNull('end_time')->get() as $subject)
-                                            <option value="{{ $subject->id }}"
-                                                    data-start-time="{{ $subject->start_time }}"
-                                                    data-end-time="{{ $subject->end_time }}">
-                                                {{ \Carbon\Carbon::parse($subject->start_time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($subject->end_time)->format('h:i A') }}
-                                            </option>
-                                        @empty
-                                            <option value="">No times available</option>
-                                        @endforelse
-                                    </select>
-                                    @error('assignments.0.time')
-                                        <div class="text-danger">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row d-flex justify-content-center mt-2 mb-3">
-                            <div class="col-md-3">
-                                <button type="button" class="btn btn-outline-primary w-100" id="addFieldsBtn">+</button>
-                            </div>
-                        </div>
-                        <div class="row d-flex justify-content-center gap-1">
-                            <div class="col-md-3">
-                                <button type="submit" class="btn btn-primary w-100">Assign</button>
-                            </div>
-                            <div class="col-md-3">
-                                <button type="reset" class="btn btn-outline-secondary w-100">Clear</button>
-                            </div>
-                        </div>
-                        
                     </form>
                 </div>
             </div>
+            <div class="d-flex justify-content-between mb-2 gap-2">
 
-            <!-- Table -->
-            <div class="card p-3">
-                <div class="card-body">
-                    <div class="mb-3 d-flex justify-content-between">
-                        <div class="search-container">
-                            <input type="text" id="assignmentSearch" class="p-1 form-control w-100"
-                                   placeholder="Search here...">
-                        </div>
-                        <div class="filter-container">
-                            <select class="form-select" style="width: 150px;">
-                                <option>Filter by</option>
-                                <option value="teacher">Teacher</option>
-                                <option value="subject">Subject</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-hover table-striped" style="cursor: pointer;">
-                            <thead>
-                                <tr>
-                                    <th>Teacher</th>
-                                    <th>Subject Name</th>
-                                    <th>Section</th>
-                                    <th>Time</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="assignmentTable">
-                                @forelse(\App\Models\Assign::all() as $assignment)
-                                    <tr class="assignment-row">
-                                        <td>{{ $assignment->teachername }}</td>
-                                        <td>{{ $assignment->subject }}</td>
-                                        <td>{{ $assignment->section }}</td>
-                                        <td>
-                                            {{ \Carbon\Carbon::parse($assignment->start_time)->format('h:i A') }} -
-                                            {{ \Carbon\Carbon::parse($assignment->end_time)->format('h:i A') }}
-                                        </td>
-                                        <td>
-                                            <span class="p-1 badge {{ $assignment->status == 'ongoing' ? 'bg-blue' : ($assignment->status == 'completed' ? 'bg-green' : 'bg-red') }}">
-                                                {{ ucfirst($assignment->status) }}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <form action="{{ route('assign.destroy', $assignment->id) }}" method="POST" style="display:inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger remove-btn">Remove</button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="6" class="text-center">No assign available</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Section Tab -->
-        <div class="tab-pane fade" id="section">
-            <div class="card p-3">
-                <div class="card-body">
-                    <div class="mb-3 d-flex justify-content-between">
-                        <div class="search-container">
-                            <input type="text" id="sectionSearch" class="p-1 form-control w-100"
-                                   placeholder="Search...">
-                        </div>
-                        <div class="filter-container">
-                            <select class="form-select" style="width: 150px;">
-                                <option>Filter by</option>
-                                <option value="strand">Strand</option>
-                                <option value="grade_level">Grade Level</option>
-                            </select>
-                        </div>
-                    </div>
-                    <table class="table table-hover table-striped" style="cursor: pointer;">
-                        <thead>
-                            <tr>
-                                <th>Section Name</th>
-                                <th>Gradelevel</th>
-                                <th>Code</th>
-                                <th>Slots</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="sectionTable">
-                            @forelse (\App\Models\Section::all() as $section)
-                                <tr class="section-row">
-                                    <td>{{ $section->sectioname }}</td>
-                                    <td>{{ $section->gradelevel }}</td>
-                                    <td>{{ $section->code }}</td>
-                                    <td style="{{ $section->current_slots == 30 ? 'color: green;' : ($section->current_slots == 0 ? 'color: red;' : '') }}">
-                                        {{ $section->current_slots }}/{{ $section->max_slots }}
-                                    </td>
-                                    <td class="text">
-                                        <button class="btn" title="View">
-                                            <i class="fa-solid fa-eye" style="color:#305cde; font-size: 18px;"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="5" class="text-center">No sections available</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
             </div>
-        </div>
-                 
-        <!-- Subject Tab -->
-        <div class="tab-pane fade" id="subject">
-            <div class="card p-3">
-                <div class="card-body">
-                    <div class="mb-3 d-flex justify-content-between">
-                        <div class="search-container">
-                            <input type="text" id="subjectSearch" class="p-1 form-control w-100"
-                                   placeholder="Search...">
-                        </div>
-                        <div class="filter-container">
-                            <select class="form-select" style="width: 150px;">
-                                <option>Filter by</option>
-                                <option value="strand">Strand</option>
-                                <option value="grade_level">Grade Level</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-striped table-hover" style="cursor: pointer;">
-                            <thead>
-                                <tr>
-                                    <th>Subject Name</th>
-                                    <th>Description</th>
-                                    <th>Grade Level</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="subjectTable">
-                                @forelse(\App\Models\Subject::all() as $subject)
-                                    <tr class="subject-row">
-                                        <td>{{ $subject->subjectname }}</td>
-                                        <td>{{ $subject->description }}</td>
-                                        <td>{{ $subject->gradelevel }}</td>
-                                        <td>
-                                            <button class="btn" title="View">
-                                                <i class="fa-solid fa-eye" style="color:#305cde; font-size: 18px;"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="4" class="text-center">No subjects available</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+            <hr>
+            <table class="table mt-3 table-responsive table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col p-1  text-center align-middle">Subject Code</th>
+                        <th scope="col p-1  text-center align-middle">Subject Name</th>
+                        <th scope="col p-1  text-center align-middle">Description</th>
+                        <th scope="col p-1  text-center align-middle">Strand</th>
+                        <th scope="col p-1  text-center align-middle">Track</th>
+                        <th scope="col p-1  text-center align-middle">Status</th>
+                        <th scope="col p-1  text-center align-middle">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td scope="row">1</td>
+                        <td>Mark</td>
+                        <td>Otto</td>
+                        <td>@mdo</td>
+                        <td>STEM</td>
+                        <td>Active</td>
+                        <td>
+                            <button class="btn text-primary"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button class="btn text-danger"><i class="fa-solid fa-ban"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td scope="row">2</td>
+                        <td>Jacob</td>
+                        <td>Thornton</td>
+                        <td>@fat</td>
+                        <td>ABM</td>
+                        <td>Inactive</td>
+                        <td>
+                            <button class="btn text-primary"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button class="btn text-danger"><i class="fa-solid fa-ban"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td scope="row">3</td>
+                        <td>Larry</td>
+                        <td>the Bird</td>
+                        <td>@twitter</td>
+                        <td>HUMMS</td>
+                        <td>Active</td>
+                        <td>
+                            <button class="btn text-primary"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button class="btn text-danger"><i class="fa-solid fa-ban"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td scope="row">4</td>
+                        <td>Jacob</td>
+                        <td>Thornton</td>
+                        <td>@fat</td>
+                        <td>ABM</td>
+                        <td>Inactive</td>
+                        <td>
+                            <button class="btn text-primary"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button class="btn text-danger"><i class="fa-solid fa-ban"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td scope="row">5</td>
+                        <td>Larry</td>
+                        <td>the Bird</td>
+                        <td>@twitter</td>
+                        <td>HUMMS</td>
+                        <td>Active</td>
+                        <td>
+                            <button class="btn text-primary"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button class="btn text-danger"><i class="fa-solid fa-ban"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
-
-
-
-<script>
-
-
-document.addEventListener('DOMContentLoaded', function() {
-    const sectionSelect = document.getElementById('sectionSelect');
-    const sectionSlots = document.getElementById('sectionSlots');
-    const resetButton = document.querySelector('button[type="reset"]');
-
-    // Update slots when section changes
-    sectionSelect.addEventListener('change', function() {
-        const selectedOption = this.options[this.selectedIndex];
-        const slots = selectedOption.dataset.slots || '';
-        sectionSlots.value = slots;
-    });
-
-    // Clear slots when form is reset
-    resetButton.addEventListener('click', function() {
-        sectionSlots.value = '';
-    });
-});
-document.querySelector('#teacherSelect').addEventListener('change', function() {
-    const selectedOption = this.options[this.selectedIndex];
-    document.querySelector('#employmentStatus').value = selectedOption.getAttribute('data-employment-status') || '';
-    document.querySelector('#email').value = selectedOption.getAttribute('data-email') || '';
-});
-
-// Function to add new assignment fields
-document.getElementById('addFieldsBtn').addEventListener('click', function() {
-    const container = document.getElementById('assignmentFields');
-    const fieldSets = container.querySelectorAll('.assignment-field-set');
-    const index = fieldSets.length;
-
-    const newFieldSet = document.createElement('div');
-    newFieldSet.className = 'row mb-3 mt-1 d-flex justify-content-center assignment-field-set';
-    newFieldSet.innerHTML = `
-        <div class="col-md-4 p-1">
-            <label class="form-label mb-1">Section</label>
-            <select class="form-select" name="assignments[${index}][section]">
-                <option value="">Select a section</option>
-                @forelse(\App\Models\Section::whereNotNull('sectioname')->whereNotNull('code')->get() as $section)
-                    <option value="{{ $section->id }}">
-                        {{ $section->sectioname }} - {{ $section->code }}
-                    </option>
-                @empty
-                    <option value="">No sections available</option>
-                @endforelse
-            </select>
-        </div>
-        <div class="col-md-4 p-1">
-            <label class="form-label mb-1">Subject</label>
-            <select class="form-select" name="assignments[${index}][subject]">
-                <option value="">Select a subject</option>
-                @forelse(\App\Models\Subject::all() as $subject)
-                    <option value="{{ $subject->id }}">
-                        {{ $subject->subjectname }}
-                    </option>
-                @empty
-                    <option value="">No subjects available</option>
-                @endforelse
-            </select>
-        </div>
-        <div class="col-md-4 p-1">
-            <label class="form-label mb-1">Time</label>
-            <select class="form-select" name="assignments[${index}][time]">
-                <option value="">Select a time</option>
-                @forelse(\App\Models\Subject::whereNotNull('start_time')->whereNotNull('end_time')->get() as $subject)
-                    <option value="{{ $subject->id }}"
-                            data-start-time="{{ $subject->start_time }}"
-                            data-end-time="{{ $subject->end_time }}">
-                        {{ \Carbon\Carbon::parse($subject->start_time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($subject->end_time)->format('h:i A') }}
-                    </option>
-                @empty
-                    <option value="">No times available</option>
-                @endforelse
-            </select>
-        </div>
-        <div class="col-md-1 p-1">
-            <button type="button" class="btn btn-danger btn-sm remove-field-set w-100 mt-4">Remove</button>
-        </div>
-    `;
-
-    container.appendChild(newFieldSet);
-
-    // Add event listener for the remove button
-    newFieldSet.querySelector('.remove-field-set').addEventListener('click', function() {
-        newFieldSet.remove();
-    });
-});
-
-// Update the reset button to clear dynamically added fields
-document.querySelector('button[type="reset"]').addEventListener('click', function() {
-    document.querySelector('#employmentStatus').value = '';
-    document.querySelector('#email').value = '';
-    document.querySelector('#teacherSelect').value = '';
-    const container = document.getElementById('assignmentFields');
-    const fieldSets = container.querySelectorAll('.assignment-field-set');
-    for (let i = 1; i < fieldSets.length; i++) {
-        fieldSets[i].remove();
-    }
-});
-
-const assignmentSearch = document.getElementById('assignmentSearch');
-const assignmentRows = document.querySelectorAll('.assignment-row');
-
-assignmentSearch.addEventListener('input', () => {
-    const searchTerm = assignmentSearch.value.toLowerCase();
-    assignmentRows.forEach(row => {
-        const teacher = row.cells[0].textContent.toLowerCase();
-        const subject = row.cells[1].textContent.toLowerCase();
-        const section = row.cells[2].textContent.toLowerCase();
-        if (teacher.includes(searchTerm) || subject.includes(searchTerm) || section.includes(searchTerm)) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
-    });
-});
-
-const sectionSearch = document.getElementById('sectionSearch');
-const sectionRows = document.querySelectorAll('.section-row');
-
-sectionSearch.addEventListener('input', () => {
-    const searchTerm = sectionSearch.value.toLowerCase();
-    sectionRows.forEach(row => {
-        const sectionName = row.cells[0].textContent.toLowerCase();
-        const code = row.cells[1].textContent.toLowerCase();
-        if (sectionName.includes(searchTerm) || code.includes(searchTerm)) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
-    });
-});
-
-const subjectSearch = document.getElementById('subjectSearch');
-const subjectRows = document.querySelectorAll('.subject-row');
-
-subjectSearch.addEventListener('input', () => {
-    const searchTerm = subjectSearch.value.toLowerCase();
-    subjectRows.forEach(row => {
-        const subjectName = row.cells[0].textContent.toLowerCase();
-        const description = row.cells[1].textContent.toLowerCase();
-        const gradeLevel = row.cells[2].textContent.toLowerCase();
-        if (subjectName.includes(searchTerm) || description.includes(searchTerm) || gradeLevel.includes(searchTerm)) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
-    });
-});
-</script>
 @endsection

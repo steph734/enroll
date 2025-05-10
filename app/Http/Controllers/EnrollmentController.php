@@ -23,6 +23,8 @@ class EnrollmentController extends Controller
             'teacher_form',
             'edit',
             'studentedit',
+            'subjectform',
+            'subjectedit',
         ];
 
         if (!in_array($page, $allowedPages)) {

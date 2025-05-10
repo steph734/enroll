@@ -10,11 +10,13 @@
 <div class="teachers-content">
     <div class="mb-3 row">
         <div class="row">
+            <h2>List of Teachers</h2>
+            <p style="font-size: 18px; color:#555 !important;">For 1st Semester, Class of 2024-2025</p>
             <div class="p-3 card card-header-teacher">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="card-title">
-                            <h5>List of Teachers</h5>
+
                         </div>
                         <form action="teachers" id="searchForm">
                             <div class="search-container-dash">
@@ -38,23 +40,26 @@
                         </div>
 
                         <div class="gap-2 dropdowns d-flex">
-                            <select class="form-select" style="width: 150px;">
-                                <option>Filter by</option>
-                                <option value="grade">Grade</option>
-                                <option value="age">Age</option>
-                                <option value="status">Status</option>
+                            <select class="form-select" id="statusFilter" style="width: 150px;">
+                                <option value="">Filter by Status</option>
+                                <option value="ongoing">Ongoing</option>
+                                <option value="graduated">Graduated</option>
+                                <option value="dropped">Dropped</option>
                             </select>
-                            <select class="form-select" style="width: 150px;">
-                                <option>Sort by</option>
-                                <option value="name-asc">Name (A-Z)</option>
-                                <option value="name-desc">Name (Z-A)</option>
-                                <option value="years-asc">Years (Low to High)</option>
-                                <option value="years-desc">Years (High to Low)</option>
+                            <select class="form-select" id="employmentStatusFilter" style="width: 150px;">
+                                <option value="">Filter by Employment Status</option>
+                                <option value="Full-time">Full-Time</option>
+                                <option value="Part-time">Part-Time</option>
+                                <option value="Contractual">Contractual</option>
                             </select>
+                            <button class="btn btn-outline-dark btn-sm p-1" id="clearFilters">
+                                <i class="fa-solid fa-eraser"></i> Clear Filters
+                            </button>
                         </div>
 
                         <a href="{{ route('enrollment.show', 'teacher_form') }}">
-                            <button class="p-1 btn btn-primary add-teacher rounded-5">Add Teacher</button>
+                            <button class="p-1 btn btn-primary add-teacher rounded-5"><i class="fa-solid fa-plus"></i>
+                                Add Teacher</button>
                         </a>
                     </div>
                 </div>
@@ -86,7 +91,8 @@
                         </thead>
                         <tbody id="teachersTable">
                             @forelse(\App\Models\Teacher::all() as $teacher)
-                            <tr class="teacher-row" data-specialization="{{ $teacher->specialization }}">
+                            <tr class="teacher-row" data-specialization="{{ $teacher->specialization }}"
+                                data-employment-status="{{ $teacher->employment_status }}">
                                 <td>{{ $teacher->id }}</td>
                                 <td>{{ $teacher->first_name }}</td>
                                 <td>{{ $teacher->last_name }}</td>
@@ -102,15 +108,14 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <a href="" class="btn" title="View">
-                                        <i class="fa-solid fa-eye" style="color:#305cde; font-size: 18px;"></i>
-                                    </a>
-                                    <a href="{{ route('teachers.edit', $teacher->id) }}"
-                                        style="color: #ffc107; text-decoration: none; margin-right: 20px;" title="Edit">
-                                        <i class="fa-solid fa-pen-to-square" onmouseover="this.style.color='#e0a800'"
-                                            onmouseout="this.style.color='#ffc107'"></i>
-                                    </a>
-
+                                    <div class="gap-2 d-flex justify-content-center">
+                                        <a
+                                            href="{{ route('teachers.edit', ['id' => $teacher->id, 'formtype' => 'view']) }}">
+                                            <button class="btn" title="View">
+                                                <i class="fa-solid fa-eye" style="color:#305cde;"></i>
+                                            </button>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                             @empty
@@ -128,70 +133,122 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Search functionality
         const searchInput = document.getElementById('searchInput');
+        const suggestionsDiv = document.getElementById('suggestions');
         const teacherRows = document.querySelectorAll('.teacher-row');
+        const statusFilter = document.getElementById('statusFilter');
+        const employmentStatusFilter = document.getElementById('employmentStatusFilter');
+        const clearFiltersBtn = document.getElementById('clearFilters');
+        const tabs = document.querySelectorAll('.tab');
 
-        searchInput.addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
+        // Debounce function for search
+        const debounce = (func, wait) => {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        };
+
+        // Apply all filters
+        const applyFilters = () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            const selectedSpecialization = document.querySelector('.tab.active').getAttribute('data-filter');
+            const selectedStatus = statusFilter.value;
+            const selectedEmploymentStatus = employmentStatusFilter.value;
 
             teacherRows.forEach(row => {
                 const firstName = row.cells[1].textContent.toLowerCase();
                 const lastName = row.cells[2].textContent.toLowerCase();
                 const email = row.cells[3].textContent.toLowerCase();
-                const specialization = row.cells[5].textContent.toLowerCase();
+                const specialization = row.getAttribute('data-specialization');
+                const status = row.getAttribute('data-status');
+                const employmentStatus = row.getAttribute('data-employment-status');
 
-                if (firstName.includes(searchTerm) ||
+                const matchesSearch = !searchTerm ||
+                    firstName.includes(searchTerm) ||
                     lastName.includes(searchTerm) ||
-                    email.includes(searchTerm) ||
-                    specialization.includes(searchTerm)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
+                    email.includes(searchTerm);
+
+                const matchesSpecialization = selectedSpecialization === 'all' ||
+                    (selectedSpecialization === 'Academic' && specialization === 'Academic') ||
+                    (selectedSpecialization === 'TVL' && specialization === 'TVL') ||
+                    (selectedSpecialization === 'Sports' && specialization === 'Sports') ||
+                    (selectedSpecialization === 'Arts and Design' && specialization ===
+                        'Arts and Design');
+
+                const matchesStatus = !selectedStatus || status === selectedStatus;
+                const matchesEmploymentStatus = !selectedEmploymentStatus || employmentStatus ===
+                    selectedEmploymentStatus;
+
+                row.style.display = matchesSearch && matchesSpecialization && matchesStatus &&
+                    matchesEmploymentStatus ? '' : 'none';
             });
-        });
+        };
 
-        // Tab filtering
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
+        // Search suggestions
+        const updateSuggestions = debounce(() => {
+            const searchTerm = searchInput.value.toLowerCase();
+            suggestionsDiv.innerHTML = '';
+            if (searchTerm.length < 2) {
+                suggestionsDiv.style.display = 'none';
+                return;
+            }
 
-                const filter = this.getAttribute('data-filter');
+            const matches = Array.from(teacherRows).filter(row => {
+                const firstName = row.cells[1].textContent.toLowerCase();
+                const lastName = row.cells[2].textContent.toLowerCase();
+                return firstName.includes(searchTerm) || lastName.includes(searchTerm);
+            });
 
-                teacherRows.forEach(row => {
-                    const specialization = row.getAttribute('data-specialization');
-                    if (filter === 'all' || specialization === filter) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
+            if (matches.length) {
+                matches.slice(0, 5).forEach(row => {
+                    const suggestion = document.createElement('div');
+                    suggestion.classList.add('p-2');
+                    suggestion.textContent =
+                        `${row.cells[1].textContent} ${row.cells[2].textContent}`;
+                    suggestion.addEventListener('click', () => {
+                        searchInput.value = suggestion.textContent;
+                        suggestionsDiv.style.display = 'none';
+                        applyFilters();
+                    });
+                    suggestionsDiv.appendChild(suggestion);
                 });
+                suggestionsDiv.style.display = 'block';
+            } else {
+                suggestionsDiv.style.display = 'none';
+            }
+        }, 300);
+
+        // Event listeners
+        searchInput.addEventListener('input', () => {
+            updateSuggestions();
+            applyFilters();
+        });
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                tabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                applyFilters();
             });
         });
 
-        // Sort functionality
-        const sortSelect = document.querySelector('.form-select');
-        sortSelect.addEventListener('change', function() {
-            const sortValue = this.value;
-            const tbody = document.getElementById('teachersTable');
-            const rows = Array.from(teacherRows);
+        statusFilter.addEventListener('change', applyFilters);
+        employmentStatusFilter.addEventListener('change', applyFilters);
 
-            rows.sort((a, b) => {
-                if (sortValue === 'name-asc') {
-                    return a.cells[1].textContent.localeCompare(b.cells[1].textContent);
-                } else if (sortValue === 'name-desc') {
-                    return b.cells[1].textContent.localeCompare(a.cells[1].textContent);
-                } else if (sortValue === 'years-asc') {
-                    return parseInt(a.cells[4].textContent) - parseInt(b.cells[4].textContent);
-                } else if (sortValue === 'years-desc') {
-                    return parseInt(b.cells[4].textContent) - parseInt(a.cells[4].textContent);
-                }
-                return 0;
-            });
-
-            rows.forEach(row => tbody.appendChild(row));
+        clearFiltersBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            statusFilter.value = '';
+            employmentStatusFilter.value = '';
+            tabs.forEach(t => t.classList.remove('active'));
+            document.querySelector('.tab[data-filter="all"]').classList.add('active');
+            suggestionsDiv.style.display = 'none';
+            applyFilters();
         });
     });
 </script>

@@ -429,8 +429,8 @@
         <!-- Submit Button -->
         <div class="p-3 card">
             <div class="gap-3 d-flex justify-content-center">
-                <button type="submit" class="btn btn-outline-primary btn-lg w-25">Enroll</button>
-                <a href="{{ route('student.index') }}" class="btn btn-primary btn-lg w-25">Cancel</a>
+                <button type="submit" class="btn btn-primary btn-sm w-25">Enroll</button>
+                <a href="{{ route('student.index') }}" class="btn btn-outline-primary btn-sm w-25">Cancel</a>
             </div>
         </div>
     </form>
@@ -478,7 +478,7 @@
         const trackId = $('#track').val();
         const strandSelect = $('#strand');
         const oldStrandId = '{{ old('
-        strand_id ') }}'; // Get old strand_id
+        strand_id ') }}';
 
         // Clear existing strand options except the default
         strandSelect.find('option:not(:first)').remove();

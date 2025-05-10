@@ -8,7 +8,8 @@
 
 @section('content')
 <div class="dashboard-content my-auto">
-    <p><span class="h5">Welcome back, {{ ucfirst(auth()->user()->username) }}!</span><br><span class="h2"
+    <p><span class="h5" style="color:#555 !important;">Welcome back,
+            {{ ucfirst(auth()->user()->username) }}!</span><br><span class="h2"
             style="color: var(--text-clr) !important;">
             Dashboard
         </span></p>
