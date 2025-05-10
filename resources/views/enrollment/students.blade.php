@@ -36,18 +36,26 @@
                         </div>
 
                         <div class="gap-2 dropdowns d-flex">
-                            <select class="form-select" style="width: 150px;">
-                                <option>Filter by</option>
-                                <option value="grade">Grade</option>
-                                <option value="age">Age</option>
+                            <select class="form-select filter-select" id="gradeLevelFilter" style="width: 150px;">
+                                <option value="">All Grade Levels</option>
+                                <option value="Grade 11">Grade 11</option>
+                                <option value="Grade 12">Grade 12</option>
                             </select>
-                            <select class="form-select" style="width: 150px;">
-                                <option>Sort by</option>
-                                <option value="name-asc">Name (A-Z)</option>
-                                <option value="name-desc">Name (Z-A)</option>
-                                <option value="grade-asc">Grade (Low to High)</option>
-                                <option value="grade-desc">Grade (High to Low)</option>
+                            <select class="form-select filter-select" id="statusFilter" style="width: 150px;">
+                                <option value="">All Statuses</option>
+                                <option value="ongoing">Ongoing</option>
+                                <option value="graduated">Graduated</option>
+                                <option value="dropped">Dropped</option>
                             </select>
+                            <select class="form-select filter-select" id="strandFilter" style="width: 150px;">
+                                <option value="">All Strands</option>
+                                @foreach(\App\Models\Strands::all() as $strand)
+                                <option value="{{ $strand->strand_name }}">{{ $strand->strand_name }}</option>
+                                @endforeach
+                            </select>
+                            <button class="btn btn-outline-dark btn-sm p-1" id="clearFilters"><i
+                                    class="fa-solid fa-eraser"></i> Clear
+                                Filters</button>
                         </div>
 
                         <a href="{{ route('enrollment.show', 'enrollment_form') }}">
@@ -81,7 +89,8 @@
                         <tbody id="studentsTable">
                             @forelse(\App\Models\Student::all() as $student)
                             <tr class="student-row" data-track="{{ $student->track->track_name }}"
-                                data-grade-level="{{ $student->grade_level }}">
+                                data-grade-level="{{ $student->grade_level }}" data-status="{{ $student->status }}"
+                                data-strand="{{ $student->strand->strand_name }}">
                                 <td class="text-center">{{ $student->studentid }}</td>
                                 <td class="text-center">{{ $student->first_name }}</td>
                                 <td class="text-center">{{ $student->last_name }}</td>
@@ -107,7 +116,8 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="gap-2 d-flex justify-content-center">
-                                        <a href="{{ route('student.edit', $student->id)}}">
+                                        <a
+                                            href="{{ route('student.edit', ['id' => $student->id, 'formtype' => 'view']) }}">
                                             <button class="btn" title="View">
                                                 <i class="fa-solid fa-eye" style="color:#305cde;"></i>
                                             </button>
@@ -130,51 +140,124 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Search functionality
         const searchInput = document.getElementById('searchInput');
+        const suggestionsDiv = document.getElementById('suggestions');
         const studentRows = document.querySelectorAll('.student-row');
+        const gradeLevelFilter = document.getElementById('gradeLevelFilter');
+        const statusFilter = document.getElementById('statusFilter');
+        const strandFilter = document.getElementById('strandFilter');
+        const clearFiltersBtn = document.getElementById('clearFilters');
+        const tabs = document.querySelectorAll('.tab');
 
-        searchInput.addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
+        // Debounce function for search
+        const debounce = (func, wait) => {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        };
+
+        // Apply all filters
+        const applyFilters = () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            const selectedTrack = document.querySelector('.tab.active').getAttribute('data-filter');
+            const selectedGradeLevel = gradeLevelFilter.value;
+            const selectedStatus = statusFilter.value;
+            const selectedStrand = strandFilter.value;
 
             studentRows.forEach(row => {
                 const firstName = row.cells[1].textContent.toLowerCase();
                 const lastName = row.cells[2].textContent.toLowerCase();
                 const email = row.cells[3].textContent.toLowerCase();
-                const gradeLevel = row.cells[7].textContent.toLowerCase();
+                const track = row.getAttribute('data-track');
+                const gradeLevel = row.getAttribute('data-grade-level');
+                const status = row.getAttribute('data-status');
+                const strand = row.getAttribute('data-strand');
 
-                if (firstName.includes(searchTerm) ||
+                const matchesSearch = !searchTerm ||
+                    firstName.includes(searchTerm) ||
                     lastName.includes(searchTerm) ||
-                    email.includes(searchTerm) ||
-                    gradeLevel.includes(searchTerm)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
+                    email.includes(searchTerm);
+
+                const matchesTrack = selectedTrack === 'all' ||
+                    (selectedTrack === 'Academic' && track === 'Academic') ||
+                    (selectedTrack === 'Non-Academic' && track !== 'Academic');
+
+                const matchesGradeLevel = !selectedGradeLevel || gradeLevel === selectedGradeLevel;
+                const matchesStatus = !selectedStatus || status === selectedStatus;
+                const matchesStrand = !selectedStrand || strand === selectedStrand;
+
+                row.style.display = matchesSearch && matchesTrack && matchesGradeLevel &&
+                    matchesStatus && matchesStrand ? '' : 'none';
+            });
+        };
+
+        // Search suggestions
+        const updateSuggestions = debounce(() => {
+            const searchTerm = searchInput.value.toLowerCase();
+            suggestionsDiv.innerHTML = '';
+            if (searchTerm.length < 2) {
+                suggestionsDiv.style.display = 'none';
+                return;
+            }
+
+            const matches = Array.from(studentRows).filter(row => {
+                const firstName = row.cells[1].textContent.toLowerCase();
+                const lastName = row.cells[2].textContent.toLowerCase();
+                return firstName.includes(searchTerm) || lastName.includes(searchTerm);
+            });
+
+            if (matches.length) {
+                matches.slice(0, 5).forEach(row => {
+                    const suggestion = document.createElement('div');
+                    suggestion.classList.add('p-2');
+                    suggestion.textContent =
+                        `${row.cells[1].textContent} ${row.cells[2].textContent}`;
+                    suggestion.addEventListener('click', () => {
+                        searchInput.value = suggestion.textContent;
+                        suggestionsDiv.style.display = 'none';
+                        applyFilters();
+                    });
+                    suggestionsDiv.appendChild(suggestion);
+                });
+                suggestionsDiv.style.display = 'block';
+            } else {
+                suggestionsDiv.style.display = 'none';
+            }
+        }, 300);
+
+        // Event listeners
+        searchInput.addEventListener('input', () => {
+            updateSuggestions();
+            applyFilters();
+        });
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                tabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                applyFilters();
             });
         });
 
-        // Tab filtering
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
+        gradeLevelFilter.addEventListener('change', applyFilters);
+        statusFilter.addEventListener('change', applyFilters);
+        strandFilter.addEventListener('change', applyFilters);
 
-                const filter = this.getAttribute('data-filter');
-
-                studentRows.forEach(row => {
-                    const track = row.getAttribute('data-track');
-                    if (filter === 'all') {
-                        row.style.display = '';
-                    } else if (filter === 'Academic' && track === 'Academic') {
-                        row.style.display = '';
-                    } else if (filter === 'Non-Academic' && track !== 'Academic') {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
-            });
+        clearFiltersBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            gradeLevelFilter.value = '';
+            statusFilter.value = '';
+            strandFilter.value = '';
+            tabs.forEach(t => t.classList.remove('active'));
+            document.querySelector('.tab[data-filter="all"]').classList.add('active');
+            suggestionsDiv.style.display = 'none';
+            applyFilters();
         });
     });
 </script>

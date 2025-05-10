@@ -13,11 +13,8 @@
     <link rel="stylesheet" href="{{ asset('css/layout.css') }}">
     <link rel="stylesheet" href="{{ asset('statics/css/bootstrap.min.css') }}">
     @yield('styles')
-    <!-- Add this for page-specific styles -->
     <style>
         body {
-            /* background: rgb(155, 182, 243);
-        background: linear-gradient(137deg, rgba(155, 182, 243, 1) 0%, rgba(203, 220, 255, 1) 21%, rgba(237, 243, 255, 0.999964951801033) 52%, rgba(184, 206, 25 5, 1) 100%, rgba(184, 206, 255, 1) 100%); */
             background: whitesmoke;
         }
     </style>
@@ -25,7 +22,6 @@
 
 <body>
     <header id="navbar" class="shadow-sm">
-        <!-- Header content remains the same -->
         <div class="logo-container">
             <img src="{{ asset('img/logo.png') }}" alt="logo" class="logo" />
         </div>
@@ -66,14 +62,10 @@
     </main>
 
 
-
-
     @vite(['resources/js/app.js'])
     <script src="{{ asset('statics/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('js/app.js') }}"></script>
     @yield('scripts')
-    <!-- Add this for page-specific scripts -->
-
 </body>
 
 </html>

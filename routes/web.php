@@ -34,9 +34,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/students/create', [StudentController::class, 'create'])->name('student.create');
     Route::post('/students', [StudentController::class, 'store'])->name('student.store');
     Route::get('/students', [StudentController::class, 'index'])->name('student.index');
-    Route::get('/students/{id}/edit', [StudentController::class, 'edit'])->name('student.edit');
+    Route::get('/students/{id}/{formtype}', [StudentController::class, 'edit'])
+        ->name('student.edit')
+        ->where('formtype', 'view|studentedit');
     Route::put('/students/{id}', [StudentController::class, 'update'])->name('student.update');
     Route::delete('/students/{id}', [StudentController::class, 'destroy'])->name('student.destroy');
+    Route::get('/students/filter', [StudentController::class, 'filter'])->name('student.filter');
+    Route::get('/students/search', [StudentController::class, 'search'])->name('student.search');
 
     // Teacher routes
     Route::get('/teachers', [TeacherController::class, 'index'])->name('teachers.index');
