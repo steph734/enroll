@@ -23,7 +23,7 @@ class Section extends Model
         return $this->belongsTo(Tracks::class, 'track_id');
     }
 
-    public function strand()
+    public function strands()
     {
         return $this->belongsTo(Strands::class, 'strand_id');
     }

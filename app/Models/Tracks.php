@@ -27,4 +27,12 @@ class Tracks extends Model
     {
         return $this->hasMany(Teacher::class);
     }
+    public function subjects()
+    {
+        return $this->hasMany(Subject::class);
+    }
+     public function sections()
+    {
+        return $this->belongsTo(Tracks::class);
+    }
 }

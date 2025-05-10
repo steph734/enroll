@@ -21,6 +21,10 @@ class Strands extends Model
 
     public function students()
     {
-        return $this->hasMany(Student::class);
+        return $this->belongsTo(Student::class);
+    }
+     public function teachers()
+    {
+        return $this->hasMany(Teacher::class);
     }
 }

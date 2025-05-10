@@ -25,8 +25,4 @@ class Payment extends Model
         return $this->belongsTo(Student::class, 'student_id');
     }
 
-    public function section()
-    {
-        return $this->belongsTo(Section::class, 'section_id');
-    }
 }

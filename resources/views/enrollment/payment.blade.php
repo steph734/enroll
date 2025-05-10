@@ -38,19 +38,18 @@
                 </div>
             </div>
         </div>
-          @php
-        $totalstudent = \App\Models\Student::count('paymentstatus');
-        @endphp
-        <div class="col-md-4">
-            <div class="p-3 m-1 text-center card">
-                <div class="card-body">
-                    <i class="fa-solid fa-user-times fa-2x text-danger"></i>
-                      <h5 class="mt-2 card-title">{{ $totalstudent }}</h5>
-                    <p class="card-text">Unpaid Student Count</p>
-                </div>
-            </div>
+         @php
+    $totalstudent = \App\Models\Student::where('paymentstatus', 'unpaid')->count();
+@endphp
+<div class="col-md-4">
+    <div class="p-3 m-1 text-center card">
+        <div class="card-body">
+            <i class="fa-solid fa-user-times fa-2x text-danger"></i>
+            <h5 class="mt-2 card-title">{{ $totalstudent }}</h5>
+            <p class="card-text">Unpaid Student Count</p>
         </div>
     </div>
+</div>
 
     <!-- Header Section with Search -->
     <div class="mb-3 row">
@@ -98,7 +97,7 @@
                             </select>
                         </div>
 
-                        <a href="{{ route('payments.create') }}">
+                            <a href="{{ route('payments.create') }}">
                             <button class="btn btn-primary add-payment">Add Payment</button>
                         </a>
                     </div>
@@ -170,25 +169,25 @@
         const searchInput = document.getElementById('searchInput');
         const paymentRows = document.querySelectorAll('.payment-row');
 
-        searchInput.addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
+      searchInput.addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
 
-            paymentRows.forEach(row => {
-                const studentId = row.cells[0].textContent.toLowerCase();
-                const fullName = row.cells[1].textContent.toLowerCase();
-                const gradeSection = row.cells[2].textContent.toLowerCase();
-                const status = row.cells[6].textContent.toLowerCase();
+    paymentRows.forEach(row => {
+        const studentId = row.cells[0].textContent.toLowerCase();
+        const fullName = row.cells[1].textContent.toLowerCase();
+        const gradeSection = row.cells[2].textContent.toLowerCase();
+        const status = row.cells[6].textContent.toLowerCase();
 
-                if (studentId.includes(searchTerm) ||
-                    fullName.includes(searchTerm) ||
-                    gradeSection.includes(searchTerm) ||
-                    status.includes(searchTerm)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        });
+        if (studentId.includes(searchTerm) ||
+            fullName.includes(searchTerm) ||
+            gradeSection.includes(searchTerm) ||
+            status.includes(searchTerm)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+});
 
         // Tab filtering
         document.querySelectorAll('.tab').forEach(tab => {
