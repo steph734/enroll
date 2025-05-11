@@ -1,23 +1,48 @@
 @extends('layouts.app')
 
-@section('title', 'Accounts')
+@section('title', 'Account Management')
 
 @section('styles')
 <link rel="stylesheet" href="{{ asset('css/students.css') }}">
+<style>
+    .tab-content {
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+    }
+    .tab-content.active {
+        display: block;
+        opacity: 1;
+    }
+    .tab-button {
+        padding: 10px 20px;
+        margin-right: 5px;
+        cursor: pointer;
+        background-color: #f8f9fa;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    .tab-button.active {
+        background-color: #007bff;
+        color: white;
+    }
+</style>
 @endsection
 
 @section('content')
 <div class="accounts-content">
     <div class="mb-3 row">
         <div class="row row-header-account">
-            <h2>Accounts</h2>
-            <p style="font-size: 18px; color:#555 !important;">Manage Admin Accounts</p>
+            <h2>Account Management</h2>
+            <p style="font-size: 18px; color:#555 !important;">Manage Admin Accounts and Audit Logs</p>
             <div class="p-3 card card-header-account sticky-card">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="card-title">
-                            <!-- Optional: Add total accounts count if needed -->
-                            <!-- <p style="font-size: 14px;">Total Accounts: {{ \App\Models\User::count() }}</p> -->
+                            <div class="tab-buttons">
+                                <button class="tab-button active" data-tab="accounts">Accounts</button>
+                                <button class="tab-button" data-tab="audit-log">Audit Log</button>
+                            </div>
                         </div>
                         <form action="" id="searchForm">
                             <div class="search-container-dash">
@@ -37,7 +62,6 @@
                             <button class="tab" data-filter="Active">Active</button>
                             <button class="tab" data-filter="Inactive">Inactive</button>
                         </div>
-
                         <div class="gap-2 dropdowns d-flex">
                             <input type="text" class="form-control filter-input" id="adminIdFilter" placeholder="Admin ID" style="width: 150px;">
                             <input type="text" class="form-control filter-input" id="usernameFilter" placeholder="Username" style="width: 150px;">
@@ -50,7 +74,6 @@
                                 <i class="fa-solid fa-eraser"></i> Clear Filters
                             </button>
                         </div>
-
                         <a href="{{ route('accounts.create') }}">
                             <button class="btn btn-primary add-account"><i class="fa-solid fa-plus"></i> Add Account</button>
                         </a>
@@ -60,7 +83,8 @@
         </div>
     </div>
 
-    <div class="mb-3 row">
+    <!-- Accounts Content -->
+    <div class="mb-3 row tab-content active" id="accounts-content">
         <div class="p-3 card card-table">
             <div class="card-body">
                 <div class="table-responsive">
@@ -102,6 +126,36 @@
         </div>
     </div>
 
+    <!-- Audit Log Content (Placeholder) -->
+    <div class="mb-3 row tab-content" id="audit-log-content">
+        <div class="p-3 card card-table">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="p-1 text-center align-middle">Log ID</th>
+                                <th scope="col" class="p-1 text-center align-middle">Action</th>
+                                <th scope="col" class="p-1 text-center align-middle">Timestamp</th>
+                                <th scope="col" class="p-1 text-center align-middle">Admin</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Add your audit log data here, e.g., from \App\Models\AuditLog::all() -->
+                            <tr>
+                                <td class="text-center">1</td>
+                                <td class="text-center">Account Created</td>
+                                <td class="text-center">{{ now()->subHours(2) }}</td>
+                                <td class="text-center">admin</td>
+                            </tr>
+                            <!-- Add more rows as needed -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @if(session('success'))
     <div class="alert alert-success">
         {{ session('success') }}
@@ -112,6 +166,24 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const tab = this.getAttribute('data-tab');
+
+                // Remove active class from all buttons and contents
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+
+                // Add active class to the clicked button and corresponding content
+                this.classList.add('active');
+                document.getElementById(`${tab}-content`).classList.add('active');
+            });
+        });
+
+        // Initial filter and search logic (unchanged)
         const searchInput = document.getElementById('searchInput');
         const suggestionsDiv = document.getElementById('suggestions');
         const accountRows = document.querySelectorAll('.account-row');
@@ -121,7 +193,6 @@
         const clearFiltersBtn = document.getElementById('clearFilters');
         const tabs = document.querySelectorAll('.tab');
 
-        // Debounce function for search
         const debounce = (func, wait) => {
             let timeout;
             return function executedFunction(...args) {
@@ -134,7 +205,6 @@
             };
         };
 
-        // Apply client-side filters
         const applyFilters = () => {
             const searchTerm = searchInput.value.toLowerCase();
             const selectedStatus = document.querySelector('.tab.active').getAttribute('data-filter');
@@ -157,7 +227,6 @@
             });
         };
 
-        // Search suggestions
         const updateSuggestions = debounce(() => {
             const searchTerm = searchInput.value.toLowerCase();
             suggestionsDiv.innerHTML = '';
@@ -190,7 +259,6 @@
             }
         }, 300);
 
-        // AJAX table update
         const updateTable = () => {
             const adminId = adminIdFilter.value;
             const username = usernameFilter.value;
@@ -208,7 +276,6 @@
                 },
                 success: function(data) {
                     $('#accountsTable').html($(data).find('#accountsTable').html());
-                    // Re-attach event listeners to new rows
                     accountRows = document.querySelectorAll('.account-row');
                     applyFilters();
                 },
@@ -218,7 +285,6 @@
             });
         };
 
-        // Event listeners
         searchInput.addEventListener('input', () => {
             updateSuggestions();
             applyFilters();
