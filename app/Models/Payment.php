@@ -9,15 +9,12 @@ class Payment extends Model
     protected $table = 'payment';
 
     protected $fillable = [
-        'studentid',
-        'first_name',
-        'last_name',
-        'grade_level',
-        'amount_due',
-        'payment_amount',
-        'balance',
-        'status',
+      'studentid',
         'payment_date',
+        'downpayment',
+        'payment_method',
+        'balance',
+        'receiptnumber',
     ];
 
     public function student()

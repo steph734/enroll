@@ -13,7 +13,6 @@
 <div class="payments-content">
     <!-- Summary Cards -->
     <div class="mb-3 row">
-
         @php
         $totalDownpayments = \App\Models\Student::sum('downpayment');
         @endphp
@@ -38,18 +37,19 @@
                 </div>
             </div>
         </div>
-         @php
-    $totalstudent = \App\Models\Student::where('paymentstatus', 'unpaid')->count();
-@endphp
-<div class="col-md-4">
-    <div class="p-3 m-1 text-center card">
-        <div class="card-body">
-            <i class="fa-solid fa-user-times fa-2x text-danger"></i>
-            <h5 class="mt-2 card-title">{{ $totalstudent }}</h5>
-            <p class="card-text">Unpaid Student Count</p>
+        @php
+        $totalstudent = \App\Models\Student::where('balance', 0)->count();
+        @endphp
+        <div class="col-md-4">
+            <div class="p-3 m-1 text-center card">
+                <div class="card-body">
+                    <i class="fa-solid fa-user-check fa-2x text-success"></i>
+                    <h5 class="mt-2 card-title">{{ $totalstudent }}</h5>
+                    <p class="card-text">Fully Paid Student Count</p>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
     <!-- Header Section with Search -->
     <div class="mb-3 row">
@@ -77,7 +77,7 @@
                         <div class="gap-3 tabs d-flex">
                             <button class="tab active" data-filter="all">ALL Students</button>
                             <button class="tab" data-filter="paid">Paid</button>
-                            <button class="tab" data-filter="unpaid">Unpaid</button>
+                            <button class="tab" data-filter="fullypaid">Fully Paid</button>
                         </div>
 
                         <!-- Dropdowns for Filter by and Sort by -->
@@ -97,7 +97,7 @@
                             </select>
                         </div>
 
-                            <a href="{{ route('payments.create') }}">
+                        <a href="{{ route('payments.create') }}">
                             <button class="btn btn-primary add-payment">Add Payment</button>
                         </a>
                     </div>
@@ -117,7 +117,7 @@
                                 <th scope="col" class="align-middle">Student ID</th>
                                 <th scope="col" class="align-middle">Full Name</th>
                                 <th scope="col" class="align-middle">Grade & Section</th>
-                                <th scope="col" class="align-middle">PaymentMethod</th>
+                                <th scope="col" class="align-middle">Payment Method</th>
                                 <th scope="col" class="align-middle">Amount Paid</th>
                                 <th scope="col" class="align-middle">Balance</th>
                                 <th scope="col" class="align-middle">Status</th>
@@ -127,26 +127,27 @@
                         </thead>
                         <tbody id="paymentsTable">
                             @forelse(\App\Models\Student::all() as $student)
-                            <tr class="payment-row" data-status="{{ $student->status }}">
+                            <tr class="payment-row" data-status="{{ $student->balance == 0 ? 'fullypaid' : 'paid' }}">
                                 <td>{{ $student->studentid }}</td>
                                 <td>{{ $student->first_name }} {{ $student->last_name }}</td>
-                                <td>{{ $student->grade_level }} -
-                                    {{ $student->section ? $student->section->code : 'N/A' }}
-                                </td>
-                                <td>{{($student->payment_method) }}</td>
+                                <td>{{ $student->grade_level }} - {{ $student->section ? $student->section->code : 'N/A' }}</td>
+                                <td>{{ $student->payment_method ?? 'N/A' }}</td>
                                 <td>₱{{ number_format($student->downpayment, 2) }}</td>
                                 <td>₱{{ number_format($student->balance, 2) }}</td>
-                                <td>{{ $student->paymentstatus }}</td>
-                                <td>{{ $student->payment_date ? \Carbon\Carbon::parse($student->payment_date)->format('m/d/Y') : 'N/A' }}
-                                </td>
                                 <td>
-                                    <a href="{{ route('payments.show', $student) }}" class="btn" title="View">
+                                    @if($student->balance == 0)
+                                        Fully Paid
+                                    @else
+                                        Paid
+                                    @endif
+                                </td>
+                                <td>{{ $student->payment_date ? \Carbon\Carbon::parse($student->payment_date)->format('m/d/Y') : 'N/A' }}</td>
+                                <td>
+                                    <button class="btn view-transactions" data-student-id="{{ $student->studentid }}" data-bs-toggle="modal" data-bs-target="#transactionModal" title="View Transactions">
                                         <i class="fa-solid fa-eye" style="color:#305cde; font-size: 18px;"></i>
-                                    </a>
+                                    </button>
                                     <a href="{{ route('payments.edit', $student) }}" class="btn" title="Edit">
-                                        <i class="fa-solid fa-pen-to-square" style="color:#ffc107; font-size: 18px;"
-                                            onmouseover="this.style.color='#e0a800'"
-                                            onmouseout="this.style.color='#ffc107'"></i>
+                                        <i class="fa-solid fa-pen-to-square" style="color:#ffc107; font-size: 18px;" onmouseover="this.style.color='#e0a800'" onmouseout="this.style.color='#ffc107'"></i>
                                     </a>
                                 </td>
                             </tr>
@@ -169,25 +170,25 @@
         const searchInput = document.getElementById('searchInput');
         const paymentRows = document.querySelectorAll('.payment-row');
 
-      searchInput.addEventListener('input', function(e) {
-    const searchTerm = e.target.value.toLowerCase();
+        searchInput.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
 
-    paymentRows.forEach(row => {
-        const studentId = row.cells[0].textContent.toLowerCase();
-        const fullName = row.cells[1].textContent.toLowerCase();
-        const gradeSection = row.cells[2].textContent.toLowerCase();
-        const status = row.cells[6].textContent.toLowerCase();
+            paymentRows.forEach(row => {
+                const studentId = row.cells[0].textContent.toLowerCase();
+                const fullName = row.cells[1].textContent.toLowerCase();
+                const gradeSection = row.cells[2].textContent.toLowerCase();
+                const status = row.cells[6].textContent.toLowerCase();
 
-        if (studentId.includes(searchTerm) ||
-            fullName.includes(searchTerm) ||
-            gradeSection.includes(searchTerm) ||
-            status.includes(searchTerm)) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
-    });
-});
+                if (studentId.includes(searchTerm) ||
+                    fullName.includes(searchTerm) ||
+                    gradeSection.includes(searchTerm) ||
+                    status.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
 
         // Tab filtering
         document.querySelectorAll('.tab').forEach(tab => {
@@ -221,16 +222,12 @@
                 } else if (sortValue === 'name-desc') {
                     return b.cells[1].textContent.localeCompare(a.cells[1].textContent);
                 } else if (sortValue === 'amount-due-asc') {
-                    const aAmount = parseFloat(a.cells[3].textContent.replace('₱', '').replace(',',
-                        ''));
-                    const bAmount = parseFloat(b.cells[3].textContent.replace('₱', '').replace(',',
-                        ''));
+                    const aAmount = parseFloat(a.cells[5].textContent.replace('₱', '').replace(',', ''));
+                    const bAmount = parseFloat(b.cells[5].textContent.replace('₱', '').replace(',', ''));
                     return aAmount - bAmount;
                 } else if (sortValue === 'amount-due-desc') {
-                    const aAmount = parseFloat(a.cells[3].textContent.replace('₱', '').replace(',',
-                        ''));
-                    const bAmount = parseFloat(b.cells[3].textContent.replace('₱', '').replace(',',
-                        ''));
+                    const aAmount = parseFloat(a.cells[5].textContent.replace('₱', '').replace(',', ''));
+                    const bAmount = parseFloat(b.cells[5].textContent.replace('₱', '').replace(',', ''));
                     return bAmount - aAmount;
                 }
                 return 0;
