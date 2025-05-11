@@ -13,15 +13,13 @@ return new class extends Migration
     {
         Schema::create('payment', function (Blueprint $table) {
             $table->id();
-            $table->string('first_name');
-            $table->string('last_name');
-            $table->string('grade_level');
-            $table->unsignedBigInteger('section_id')->nullable();
-            $table->decimal('amount_due', 10, 2);
             $table->decimal('payment_amount', 10, 2)->default(0);
-            $table->decimal('balance', 10, 2)->default(0);
-            $table->string('status')->default('unpaid');
+             $table->enum('paymentstatus', ['FullyPaid', 'Paid', 'Unpaid'])->default('Unpaid');
             $table->date('payment_date')->nullable();
+            $table->string('receiptnumber')->unique();
+              $table->string('description')->unique();
+               $table->string('payment_method')->nullable();
+                  $table->string('studentid');
             $table->foreignId('student_id')->constrained('students')->onDelete('cascade');
             $table->timestamps();
         });
