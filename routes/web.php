@@ -8,7 +8,9 @@ use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\AssignController;
 use App\Http\Controllers\TrackStrandController;
  use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\AccountController;
+use App\Http\Controllers\AccountsController;
+use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\TransactionController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -28,11 +30,11 @@ Route::middleware('auth')->group(function () {
     })->name('dashboard');
 
 
-    Route::get('/accounts', [AccountController::class, 'index'])->name('accounts.index');
-    Route::get('/accounts/create', [AccountController::class, 'create'])->name('accounts.create');
-    Route::post('/accounts', [AccountController::class, 'store'])->name('accounts.store');
-    Route::put('/accounts/{id}/status', [AccountController::class, 'updateStatus'])->name('accounts.updateStatus');
-    Route::delete('/accounts/{id}', [AccountController::class, 'destroy'])->name('accounts.destroy');
+    Route::prefix('enrollment')->group(function () {
+    Route::get('/accounts', [AccountsController::class, 'index'])->name('accounts.index');
+    Route::get('/accounts/create', [AccountsController::class, 'create'])->name('accounts.create');
+    Route::patch('/accounts/{id}', [AccountsController::class, 'update'])->name('accounts.update');
+});
 
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -55,7 +57,7 @@ Route::middleware('auth')->group(function () {
 
     // Teacher routes
     Route::get('/teachers', [TeacherController::class, 'index'])->name('teachers.index');
-     Route::get('/teachers/create', [StudentController::class, 'create'])->name('student.create');
+     Route::get('/teachers/create', [StudentController::class, 'create'])->name('teachers.create');
     Route::get('/teachers/{formtype}', [EnrollmentController::class, 'show'])->name('enrollment.show');
     Route::get('/teachers/{id}/{formtype?}', [TeacherController::class, 'edit'])
     ->name('teachers.edit')
@@ -72,6 +74,21 @@ Route::get('/payments/{student}', [PaymentController::class, 'show'])->name('pay
 Route::get('/payments/{student}/edit', [PaymentController::class, 'edit'])->name('payments.edit');
 Route::post('/payments/check-student', [PaymentController::class, 'checkStudent'])->name('payments.check-student');
 Route::post('/payments/search-students', [PaymentController::class, 'searchStudents'])->name('payments.search-students');
+Route::get('/payments/transactions/{studentid}', [PaymentController::class, 'transactions'])->name('payments.transactions');
+Route::get('/payments/{id}', [PaymentController::class, 'view'])->name('payments.view');
+Route::get('/payments/history/all', [PaymentController::class, 'allPaymentHistory'])->name('payments.history.all');
+
+Route::get('/transactions', [TransactionController::class, 'index'])->name('transaction.index');
+Route::post('/transactions', [TransactionController::class, 'store'])->name('transaction.store');
+Route::post('/transactions/check-student', [TransactionController::class, 'checkStudent'])->name('transaction.check-student');
+
+
+
+Route::get('/schedules', [ScheduleController::class, 'index'])->name('schedules.index');
+Route::get('/schedules/search', [ScheduleController::class, 'search'])->name('schedules.search');
+Route::get('/schedules/{id}/edit', [ScheduleController::class, 'edit'])->name('schedules.edit');
+Route::put('/schedules/{id}', [ScheduleController::class, 'update'])->name('schedules.update');
+Route::delete('/schedules/{id}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
 
     // Track-Strand AJAX
     Route::get('/strands', [TrackStrandController::class, 'getStrands'])->name('strands.get');

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Student;
+use App\Models\Payment;
 use App\Models\Tracks;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -10,7 +11,7 @@ use Illuminate\Support\Facades\Storage;
 class StudentController extends Controller
 {
     // Display the student enrollment form
-    public function create()
+public function create()
     {
         $tracks = Tracks::all();
         return view('enrollment.enrollment_form', compact('tracks'));
@@ -19,7 +20,7 @@ class StudentController extends Controller
     // Display the students list
     public function index()
     {
-        return redirect()->route('enrollment.show', 'students');
+        return redirect()->route('enrollment.show', 'students', 'payment');
     }
 
     // Store a new student
@@ -62,7 +63,7 @@ class StudentController extends Controller
             'downpayment' => 'required|numeric|min:0',
             'payment_method' => 'required|string|in:Cash,Credit Card,Bank Transfer,Online Payment',
             'balance' => 'required|numeric|min:0',
-            'receiptnumber' => 'required|string|size:6|unique:students,receiptnumber',
+            'receiptnumber' => 'required|string|size:6|unique:payments,receiptnumber',
         ]);
 
         $profilePicturePath = $request->file('profile_picture')
@@ -72,7 +73,8 @@ class StudentController extends Controller
             ? $request->file('transcript')->store('transcripts', 'public')
             : null;
 
-        Student::create([
+        // Create Student
+        $student = Student::create([
             'profile_picture' => $profilePicturePath,
             'first_name' => $request->first_name,
             'middle_name' => $request->middle_name,
@@ -105,6 +107,11 @@ class StudentController extends Controller
             'medical_info' => $request->medical_info,
             'special_accommodations' => $request->special_accommodations,
             'studentid' => $request->studentid,
+        ]);
+
+        // Create Payment
+        Payment::create([
+            'student_id' => $student->id,
             'payment_date' => $request->payment_date,
             'downpayment' => $request->downpayment,
             'payment_method' => $request->payment_method,
@@ -120,7 +127,7 @@ class StudentController extends Controller
     {
         do {
             $receiptNumber = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
-        } while (Student::where('receiptnumber', $receiptNumber)->exists());
+        } while (Payment::where('receiptnumber', $receiptNumber)->exists());
 
         return $receiptNumber;
     }
@@ -128,7 +135,7 @@ class StudentController extends Controller
     // Edit student form
     public function edit(Request $request, $id, $formtype)
     {
-        $student = Student::findOrFail($id);
+        $student = Student::with('payment')->findOrFail($id);
         $tracks = Tracks::all();
         if ($formtype == 'view') {
             return view('enrollment.studentedit', compact('student', 'tracks', 'formtype'));
@@ -178,7 +185,7 @@ class StudentController extends Controller
             'downpayment' => 'required|numeric|min:0',
             'payment_method' => 'required|string|in:Cash,Credit Card,Bank Transfer,Online Payment',
             'balance' => 'required|numeric|min:0',
-            'receiptnumber' => 'required|string|size:6|unique:students,receiptnumber,' . $id,
+            'receiptnumber' => 'required|string|size:6|unique:payments,receiptnumber,' . ($request->payment_id ?? 0),
         ]);
 
         $student = Student::findOrFail($id);
@@ -190,7 +197,53 @@ class StudentController extends Controller
             $validated['profile_picture'] = $request->file('profile_picture')->store('profile_pictures', 'public');
         }
 
-        $student->update($validated);
+        // Update Student
+        $student->update([
+            'profile_picture' => $validated['profile_picture'] ?? $student->profile_picture,
+            'first_name' => $validated['first_name'],
+            'middle_name' => $validated['middle_name'],
+            'last_name' => $validated['last_name'],
+            'date_of_birth' => $validated['date_of_birth'],
+            'gender' => $validated['gender'],
+            'age' => $validated['age'],
+            'nationality' => $validated['nationality'],
+            'home_address' => $validated['home_address'],
+            'zip_code' => $validated['zip_code'],
+            'contact_number' => $validated['contact_number'],
+            'secondary_contact' => $validated['secondary_contact'],
+            'email' => $validated['email'],
+            'guardian_first_name' => $validated['guardian_first_name'],
+            'guardian_middle_name' => $validated['guardian_middle_name'],
+            'guardian_last_name' => $validated['guardian_last_name'],
+            'relationship' => $validated['relationship'],
+            'guardian_contact' => $validated['guardian_contact'],
+            'guardian_email' => $validated['guardian_email'],
+            'previous_school' => $validated['previous_school'],
+            'grade_completed' => $validated['grade_completed'],
+            'school_year_completed' => $validated['school_year_completed'],
+            'gpa' => $validated['gpa'],
+            'track_id' => $validated['track_id'],
+            'strand_id' => $validated['strand_id'],
+            'grade_level' => $validated['grade_level'],
+            'class_schedule' => $validated['class_schedule'],
+            'additional_notes' => $validated['additional_notes'],
+            'medical_info' => $validated['medical_info'],
+            'special_accommodations' => $validated['special_accommodations'],
+            'studentid' => $validated['studentid'],
+            'status' => $validated['status'],
+        ]);
+
+        // Update or Create Payment
+        Payment::updateOrCreate(
+            ['student_id' => $student->id],
+            [
+                'payment_date' => $validated['payment_date'],
+                'downpayment' => $validated['downpayment'],
+                'payment_method' => $validated['payment_method'],
+                'balance' => $validated['balance'],
+                'receiptnumber' => $validated['receiptnumber'],
+            ]
+        );
 
         return redirect()->route('student.edit', ['id' => $id, 'formtype' => 'view'])
             ->with('success', 'Student updated successfully.');
@@ -206,7 +259,7 @@ class StudentController extends Controller
         if ($student->transcript) {
             Storage::disk('public')->delete($student->transcript);
         }
-        $student->delete();
+        $student->delete(); // Cascades to delete related payment due to onDelete('cascade')
 
         return redirect()->route('enrollment.show', 'students')->with('success', 'Student deleted successfully.');
     }
@@ -214,7 +267,7 @@ class StudentController extends Controller
     // Filter students
     public function filter(Request $request)
     {
-        $query = Student::with(['track', 'strand']);
+        $query = Student::with(['track', 'strand', 'payment']);
 
         // Input validation
         $search = $request->input('search', '');
@@ -244,7 +297,7 @@ class StudentController extends Controller
             $query->where('grade_level', $grade);
         }
 
-        // Track filter (based on tab selection)
+        // Track filter
         if ($track !== 'all') {
             $query->whereHas('track', function ($q) use ($track) {
                 $q->where('track_name', $track);
@@ -266,16 +319,15 @@ class StudentController extends Controller
                 $query->orderBy('grade_level', 'desc');
                 break;
             default:
-                $query->orderBy('id', 'asc'); // Default sorting
+                $query->orderBy('id', 'asc');
                 break;
         }
 
         // Pagination
-        $perPage = 10; // Adjust as needed
+        $perPage = 10;
         $page = $request->input('page', 1);
         $students = $query->paginate($perPage, ['*'], 'page', $page);
 
-        // Return JSON response with students and pagination metadata
         return response()->json([
             'students' => $students->items(),
             'current_page' => $students->currentPage(),
@@ -283,6 +335,7 @@ class StudentController extends Controller
             'total' => $students->total(),
         ]);
     }
+
     // Search for autocomplete suggestions
     public function search(Request $request)
     {

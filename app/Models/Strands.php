@@ -27,4 +27,8 @@ class Strands extends Model
     {
         return $this->hasMany(Teacher::class);
     }
+     public function section()
+    {
+        return $this->belongsTo(Section::class);
+    }
 }

@@ -9,9 +9,10 @@ class Subject extends Model
     protected $table = 'subjects';
 
     protected $fillable = [
-        'subject_name',
+       'subject_name',
         'description',
         'track_id',
+        'strand_id',
 
     ];
 
@@ -19,6 +20,12 @@ class Subject extends Model
     {
         return $this->belongsTo(Tracks::class, 'track_id');
     }
+
+    public function strand()
+    {
+        return $this->belongsTo(Strands::class, 'strand_id'); // Add relationship for strand
+    }
+
     public function students()
     {
         return $this->belongsToMany(Student::class, 'student_subject', 'subject_id', 'student_id');

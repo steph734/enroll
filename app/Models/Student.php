@@ -63,8 +63,9 @@ class Student extends Model
     {
         return $this->belongsToMany(Subject::class);
     }
-    public function payments()
+  
+    public function payment()
     {
-        return $this->hasMany(Payment::class);
+        return $this->hasOne(Payment::class, 'studentid', 'id');
     }
 }

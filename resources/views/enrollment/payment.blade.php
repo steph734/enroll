@@ -1,12 +1,17 @@
-<?php
-// File: resources/views/payments/index.blade.php
-?>
 @extends('layouts.app')
 
 @section('title', 'Payments')
 
 @section('styles')
 <link rel="stylesheet" href="{{ asset('css/payments.css') }}">
+<style>
+    .invalid-feedback { display: none; }
+    .is-invalid ~ .invalid-feedback { display: block; }
+    .student-info { color: green; font-weight: bold; }
+    .error-message { color: red; font-weight: bold; }
+    .nav-tabs .nav-link.active { background-color: #007bff; color: white; }
+    .nav-tabs .nav-link { cursor: pointer; }
+</style>
 @endsection
 
 @section('content')
@@ -97,9 +102,7 @@
                             </select>
                         </div>
 
-                        <a href="{{ route('payments.create') }}">
-                            <button class="btn btn-primary add-payment">Add Payment</button>
-                        </a>
+                        <a href="{{ route('payments.create') }}" class="btn btn-primary add-payment">Add Payment</a>
                     </div>
                 </div>
             </div>
@@ -108,7 +111,7 @@
 
     <!-- Payment Table -->
     <div class="mb-3 row">
-        <div class="p-3 card card-table">
+        <div class="p-3 gif-container card card-table">
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover table-striped" style="cursor: pointer;">
@@ -143,12 +146,16 @@
                                 </td>
                                 <td>{{ $student->payment_date ? \Carbon\Carbon::parse($student->payment_date)->format('m/d/Y') : 'N/A' }}</td>
                                 <td>
-                                    <button class="btn view-transactions" data-student-id="{{ $student->studentid }}" data-bs-toggle="modal" data-bs-target="#transactionModal" title="View Transactions">
-                                        <i class="fa-solid fa-eye" style="color:#305cde; font-size: 18px;"></i>
-                                    </button>
-                                    <a href="{{ route('payments.edit', $student) }}" class="btn" title="Edit">
-                                        <i class="fa-solid fa-pen-to-square" style="color:#ffc107; font-size: 18px;" onmouseover="this.style.color='#e0a800'" onmouseout="this.style.color='#ffc107'"></i>
-                                    </a>
+                                    <div class="gap-2 d-flex justify-content-center">
+                                        <button class="btn view-transactions" data-student-id="{{ $student->studentid }}" data-bs-toggle="modal" data-bs-target="#transactionModal" title="View Transactions">
+                                            <i class="fa-solid fa-eye" style="color:#305cde; font-size: 18px;"></i>
+                                        </button>
+                                      <a href="{{ route('payments.view', $student->studentid) }}">
+                                <button class="btn" title="View Details">
+                                 <i class="fa-solid fa-info-circle" style="color:#007bff; font-size: 18px;"></i>
+             </button>
+</a>
+                                    </div>
                                 </td>
                             </tr>
                             @empty
@@ -162,79 +169,193 @@
             </div>
         </div>
     </div>
+
+    <!-- Transaction Modal -->
+    <div class="modal fade" id="transactionModal" tabindex="-1" aria-labelledby="transactionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="transactionModalLabel">Payment History</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="loadingSpinner" class="text-center" style="display: none;">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    <table class="table table-striped" id="transactionTable">
+                        <thead>
+                            <tr>
+                                <th scope="col">Payment ID</th>
+                                <th scope="col">Amount</th>
+                                <th scope="col">Payment Method</th>
+                                <th scope="col">Payment Date</th>
+                                <th scope="col">Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionTableBody">
+                            <!-- Transaction rows will be populated here via AJAX -->
+                        </tbody>
+                    </table>
+                    <div id="noTransactions" class="text-center" style="display: none;">
+                        No payment history found for this student.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Search functionality
-        const searchInput = document.getElementById('searchInput');
-        const paymentRows = document.querySelectorAll('.payment-row');
+document.addEventListener('DOMContentLoaded', function() {
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    const paymentRows = document.querySelectorAll('.payment-row');
 
-        searchInput.addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
+    searchInput.addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+
+        paymentRows.forEach(row => {
+            const studentId = row.cells[0].textContent.toLowerCase();
+            const fullName = row.cells[1].textContent.toLowerCase();
+            const gradeSection = row.cells[2].textContent.toLowerCase();
+            const status = row.cells[6].textContent.toLowerCase();
+
+            if (studentId.includes(searchTerm) ||
+                fullName.includes(searchTerm) ||
+                gradeSection.includes(searchTerm) ||
+                status.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+
+    // Tab filtering
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+
+            const filter = this.getAttribute('data-filter');
 
             paymentRows.forEach(row => {
-                const studentId = row.cells[0].textContent.toLowerCase();
-                const fullName = row.cells[1].textContent.toLowerCase();
-                const gradeSection = row.cells[2].textContent.toLowerCase();
-                const status = row.cells[6].textContent.toLowerCase();
-
-                if (studentId.includes(searchTerm) ||
-                    fullName.includes(searchTerm) ||
-                    gradeSection.includes(searchTerm) ||
-                    status.includes(searchTerm)) {
+                const status = row.getAttribute('data-status').toLowerCase();
+                if (filter === 'all' || status === filter) {
                     row.style.display = '';
                 } else {
                     row.style.display = 'none';
                 }
             });
         });
+    });
 
-        // Tab filtering
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
+    // Sort functionality
+    const sortSelect = document.querySelectorAll('.form-select')[1]; // Second select is for sorting
+    sortSelect.addEventListener('change', function() {
+        const sortValue = this.value;
+        const tbody = document.getElementById('paymentsTable');
+        const rows = Array.from(paymentRows);
 
-                const filter = this.getAttribute('data-filter');
-
-                paymentRows.forEach(row => {
-                    const status = row.getAttribute('data-status').toLowerCase();
-                    if (filter === 'all' || status === filter) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
-            });
+        rows.sort((a, b) => {
+            if (sortValue === 'name-asc') {
+                return a.cells[1].textContent.localeCompare(b.cells[1].textContent);
+            } else if (sortValue === 'name-desc') {
+                return b.cells[1].textContent.localeCompare(a.cells[1].textContent);
+            } else if (sortValue === 'amount-due-asc') {
+                const aAmount = parseFloat(a.cells[5].textContent.replace('₱', '').replace(',', ''));
+                const bAmount = parseFloat(b.cells[5].textContent.replace('₱', '').replace(',', ''));
+                return aAmount - bAmount;
+            } else if (sortValue === 'amount-due-desc') {
+                const aAmount = parseFloat(a.cells[5].textContent.replace('₱', '').replace(',', ''));
+                const bAmount = parseFloat(b.cells[5].textContent.replace('₱', '').replace(',', ''));
+                return bAmount - aAmount;
+            }
+            return 0;
         });
 
-        // Sort functionality
-        const sortSelect = document.querySelectorAll('.form-select')[1]; // Second select is for sorting
-        sortSelect.addEventListener('change', function() {
-            const sortValue = this.value;
-            const tbody = document.getElementById('paymentsTable');
-            const rows = Array.from(paymentRows);
+        rows.forEach(row => tbody.appendChild(row));
+    });
 
-            rows.sort((a, b) => {
-                if (sortValue === 'name-asc') {
-                    return a.cells[1].textContent.localeCompare(b.cells[1].textContent);
-                } else if (sortValue === 'name-desc') {
-                    return b.cells[1].textContent.localeCompare(a.cells[1].textContent);
-                } else if (sortValue === 'amount-due-asc') {
-                    const aAmount = parseFloat(a.cells[5].textContent.replace('₱', '').replace(',', ''));
-                    const bAmount = parseFloat(b.cells[5].textContent.replace('₱', '').replace(',', ''));
-                    return aAmount - bAmount;
-                } else if (sortValue === 'amount-due-desc') {
-                    const aAmount = parseFloat(a.cells[5].textContent.replace('₱', '').replace(',', ''));
-                    const bAmount = parseFloat(b.cells[5].textContent.replace('₱', '').replace(',', ''));
-                    return bAmount - aAmount;
-                }
-                return 0;
-            });
+    // Function to load transactions for a specific student
+    function loadTransactions(studentId, modalLabel) {
+        const transactionTableBody = document.getElementById('transactionTableBody');
+        const noTransactions = document.getElementById('noTransactions');
+        const loadingSpinner = document.getElementById('loadingSpinner');
 
-            rows.forEach(row => tbody.appendChild(row));
+        loadingSpinner.style.display = 'block';
+        transactionTableBody.innerHTML = '';
+        noTransactions.style.display = 'none';
+
+        fetch(`/payments/history/${studentId}`, {
+            method: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(response.status === 419 ? 'Session expired. Please refresh the page.' : 'Failed to fetch payment history.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            loadingSpinner.style.display = 'none';
+            modalLabel.textContent = `Payment History for Student ID: ${studentId}`;
+
+            if (data.transactions && data.transactions.length > 0) {
+                data.transactions.forEach(transaction => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${transaction.receiptnumber || 'N/A'}</td>
+                        <td>₱${isNaN(parseFloat(transaction.amount)) ? '0.00' : parseFloat(transaction.amount).toFixed(2)}</td>
+                        <td>${transaction.payment_method || 'N/A'}</td>
+                        <td>${transaction.payment_date ? new Date(transaction.payment_date).toLocaleDateString('en-US') : 'N/A'}</td>
+                        <td>${transaction.remarks || 'N/A'}</td>
+                    `;
+                    transactionTableBody.appendChild(row);
+                });
+            } else {
+                noTransactions.style.display = 'block';
+            }
+        })
+        .catch(error => {
+            loadingSpinner.style.display = 'none';
+            noTransactions.style.display = 'block';
+            noTransactions.textContent = error.message.includes('Session expired') 
+                ? 'Session expired. Please refresh the page.' 
+                : 'Error loading payment history. Please try again later.';
+            console.error('Error:', error);
+        });
+    }
+
+    // View transactions from table
+    document.querySelectorAll('.view-transactions').forEach(button => {
+        button.addEventListener('click', function() {
+            const studentId = this.getAttribute('data-student-id');
+            const transactionModalLabel = document.getElementById('transactionModalLabel');
+            loadTransactions(studentId, transactionModalLabel);
         });
     });
+
+    // Reset transaction modal on close
+    document.getElementById('transactionModal').addEventListener('hidden.bs.modal', function () {
+        const transactionTableBody = document.getElementById('transactionTableBody');
+        const noTransactions = document.getElementById('noTransactions');
+        const transactionModalLabel = document.getElementById('transactionModalLabel');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+
+        transactionTableBody.innerHTML = '';
+        noTransactions.style.display = 'none';
+        transactionModalLabel.textContent = 'Payment History';
+        loadingSpinner.style.display = 'none';
+    });
+});
 </script>
 @endsection

@@ -8,19 +8,18 @@ class Payment extends Model
 {
     protected $table = 'payment';
 
-    protected $fillable = [
+     protected $fillable = [
         'studentid',
-        'payment_date',
-        'payment_amount',
-        'description',
-        'payment_method',
         'receiptnumber',
-        'paymentstatus',
+        'amount',
+        'payment_method',
+        'payment_date',
+        'remarks',
     ];
 
     public function student()
     {
-        return $this->belongsTo(Student::class, 'student_id');
+        return $this->belongsTo(Student::class, 'studentid', 'studentid');
     }
-
+   
 }

@@ -8,20 +8,22 @@
 
 @section('content')
 <div class="dashboard-content my-auto">
-    <p><span class="h5" style="color:#555 !important;">Welcome back,
-            {{ ucfirst(auth()->user()->username) }}!</span><br><span class="h2"
+    <p><span class="h5">Welcome back, {{ ucfirst(auth()->user()->username) }}!</span><br><span class="h2"
             style="color: var(--text-clr) !important;">
             Dashboard
         </span></p>
 
     <hr>
+    @php
+    $totalstudents = \App\Models\Student::count('studentid');
+    @endphp
     <div class="row mb-2 justify-content-center">
         <div class="row">
             <div class="col-md-4">
                 <div class="card stat-card">
                     <div class="card-body text-center">
                         <i class="fas fa-users stat-icon"></i>
-                        <h3>1,432</h3>
+                      <h3 class="mt-2 card-title">{{ number_format($totalstudents) }}</h3>
                         <p>Total Students</p>
                     </div>
                 </div>
@@ -78,6 +80,7 @@
                     <h5>Students</h5>
                     <canvas id="studentsChart" height="50"></canvas>
                     <div class="chart-legend">
+                        
                         <span><i class="fas fa-circle" style="color: #305cde;"></i> STEM</span>
                         <span><i class="fas fa-circle" style="color: #5e63ff;"></i> ABM</span>
                         <span><i class="fas fa-circle" style="color: #d3d3d3;"></i> HUMMS</span>

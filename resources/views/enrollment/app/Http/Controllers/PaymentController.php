@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Student;
+use App\Models\Payment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PaymentController extends Controller
 {
     public function index()
     {
-        
         return redirect()->route('enrollment.show', 'payment');
     }
 
@@ -23,33 +24,46 @@ class PaymentController extends Controller
         $validated = $request->validate([
             'payment_amount' => 'required|numeric|min:0',
             'payment_date' => 'required|date',
-            'receiptnumber' => 'required|string',
+            'receiptnumber' => 'required|string|unique:payments,reference_number',
             'payment_method' => 'required|string',
             'studentid' => 'required|string|exists:students,studentid',
             'description' => 'required|string'
         ]);
 
-        // Assuming Student model handles payment updates
         $student = Student::where('studentid', $validated['studentid'])->first();
+        
+        // Create payment record
+        $payment = new Payment();
+        $payment->student_id = $student->id;
+        $payment->amount = $validated['payment_amount'];
+        $payment->payment_method = $validated['payment_method'];
+        $payment->reference_number = $validated['receiptnumber'];
+        $payment->payment_date = $validated['payment_date'];
+        $payment->remarks = $validated['description'];
+        $payment->processed_by = Auth::user()->name;
+        $payment->save();
+
+        // Update student's payment information
         $student->update([
             'downpayment' => $student->downpayment + $validated['payment_amount'],
-            'balance' => $student->balance - $validated['payment_amount'],
-            'paymentstatus' => $student->balance <= 0 ? 'paid' : 'unpaid',
+            'balance' => max(0, $student->balance - $validated['payment_amount']),
+            'paymentstatus' => ($student->balance - $validated['payment_amount']) <= 0 ? 'paid' : 'unpaid',
             'payment_method' => $validated['payment_method'],
             'payment_date' => $validated['payment_date']
         ]);
 
-        return redirect()->route('payments.index')->with('success', 'Payment recorded successfully.');
+        return redirect()->route('payments.view', $student->studentid)
+            ->with('success', 'Payment recorded successfully.');
     }
 
-    public function show(Student $student)
+    public function view($studentId)
     {
-        return view('payments.show', compact('student'));
-    }
+        $student = Student::where('studentid', $studentId)->firstOrFail();
+        $payments = Payment::where('student_id', $student->id)
+            ->orderBy('payment_date', 'desc')
+            ->get();
 
-    public function edit(Student $student)
-    {
-        return view('payments.edit', compact('student'));
+        return view('view-payment', compact('student', 'payments'));
     }
 
     public function checkStudent(Request $request)
@@ -64,9 +78,10 @@ class PaymentController extends Controller
             return response()->json([
                 'success' => true,
                 'student' => [
+                    'id' => $student->id,
                     'first_name' => $student->first_name,
                     'last_name' => $student->last_name,
-                    'studentid' => $student->studentid
+                    'balance' => $student->balance
                 ]
             ]);
         }
@@ -88,10 +103,10 @@ class PaymentController extends Controller
             ->orWhere('first_name', 'like', "%$query%")
             ->orWhere('last_name', 'like', "%$query%")
             ->take(10)
-            ->get(['studentid', 'first_name', 'last_name']);
+            ->get(['id', 'studentid', 'first_name', 'last_name', 'balance']);
 
         return response()->json([
-            'student' => $students
+            'students' => $students
         ]);
     }
-}
+} 
