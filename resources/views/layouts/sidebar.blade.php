@@ -8,7 +8,7 @@
     <ul>
         <li
             class="{{ ($activePage ?? 'dashboard') === 'dashboard' || is_null($activePage ?? 'dashboard') ? 'active' : '' }}">
-            <a href="{{ route('enrollment.show', 'dashboard') }}">
+            <a href="{{ route('dashboard.index') }}">
                 <i class="fas fa-th-large"></i>
                 <span>Dashboard</span>
             </a>
@@ -38,8 +38,8 @@
                 <span>Payment Tracking</span>
             </a>
         </li>
-        <li class="{{ ($activePage ?? 'dashboard') === 'class_schedule' ? 'active' : '' }}">
-            <a href="{{ route('enrollment.show', 'class_schedule') }}">
+        <li class="{{ ($activePage ?? 'dashboard') === 'schedule' ? 'active' : '' }}">
+            <a href="{{ route('schedule.index') }}">
                 <i class="fas fa-calendar-alt"></i>
                 <span>Class Schedule</span>
             </a>

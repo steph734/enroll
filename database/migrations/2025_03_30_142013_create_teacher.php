@@ -45,7 +45,7 @@ return new class extends Migration
             $table->string('resume');
             $table->string('transcript');
             $table->date('date_hired');
-            $table->enum('status', ['Active', 'Inactive', 'On Leave'])->default('Active');
+            $table->enum('status', ['Active', 'Inactive', 'On Leave', 'Terminated'])->default('Active');
             $table->string('employee_id')->unique();
             $table->timestamps();
         });

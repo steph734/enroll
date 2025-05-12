@@ -8,18 +8,14 @@
 
 @section('content')
 <div class="students-content">
-
     <div class="container">
-
         <h2>List of Students</h2>
         <p style="font-size: 18px; color:#555 !important;">For 1st Semester, Class of 2024-2025</p>
         <div class="mb-3 row">
-
             <div class="p-3 card card-header-student sticky-card">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="card-title">
-
                             <!-- <p style="font-size: 14px;">Total Students: {{ \App\Models\Student::count() }}</p> -->
                         </div>
                         <form action="" id="searchForm">
@@ -42,7 +38,7 @@
                         </div>
 
                         <div class="gap-2 dropdowns d-flex">
-                            <select class="form-select filter-select form-select-sm " id="gradeLevelFilter"
+                            <select class="form-select filter-select form-select-sm" id="gradeLevelFilter"
                                 style="width: 150px;">
                                 <option value="">All Grade Levels</option>
                                 <option value="Grade 11">Grade 11</option>
@@ -64,20 +60,16 @@
                             </select>
                             <a href="">
                                 <button class="btn btn-outline-dark btn-sm" id="clearFilters"><i
-                                        class="fa-solid fa-eraser"></i> Clear
-                                    Filters</button>
+                                        class="fa-solid fa-eraser"></i> Clear Filters</button>
                             </a>
                             <a href="{{ route('enrollment.show', 'enrollment_form') }}">
                                 <button class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> Add
                                     Student</button>
                             </a>
                         </div>
-
-
                     </div>
                 </div>
             </div>
-
         </div>
 
         <div class="mb-3 row">
@@ -113,22 +105,18 @@
                                     <td class="text-center">{{ $student->strand->strand_name }}</td>
                                     <td class="text-center">{{ $student->grade_level }}</td>
                                     <td class="text-center">
-                                        <form action="{{ route('student.update', $student->id) }}" method="POST">
-                                            @csrf
-                                            @method('PUT')
-                                            <select name="status" class=" form-select form-select-sm d-flex"
-                                                onchange="this.form.submit()" style="width: auto;">
-                                                <option value="ongoing"
-                                                    {{ $student->status == 'ongoing' ? 'selected' : '' }}>Ongoing
-                                                </option>
-                                                <option value="graduated"
-                                                    {{ $student->status == 'graduated' ? 'selected' : '' }}>Graduated
-                                                </option>
-                                                <option value="dropped"
-                                                    {{ $student->status == 'dropped' ? 'selected' : '' }}>Dropped
-                                                </option>
-                                            </select>
-                                        </form>
+                                        <select name="status" class="form-select form-select-sm status-select"
+                                            data-student-id="{{ $student->id }}" style="width: auto;">
+                                            <option value="pending"
+                                                {{ $student->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                                            <option value="ongoing"
+                                                {{ $student->status == 'ongoing' ? 'selected' : '' }}>Ongoing</option>
+                                            <option value="graduated"
+                                                {{ $student->status == 'graduated' ? 'selected' : '' }}>Graduated
+                                            </option>
+                                            <option value="dropped"
+                                                {{ $student->status == 'dropped' ? 'selected' : '' }}>Dropped</option>
+                                        </select>
                                     </td>
                                     <td class="text-center">
                                         <div class="gap-2 d-flex justify-content-center">
@@ -165,6 +153,7 @@
         const strandFilter = document.getElementById('strandFilter');
         const clearFiltersBtn = document.getElementById('clearFilters');
         const tabs = document.querySelectorAll('.tab');
+        const statusSelects = document.querySelectorAll('.status-select');
 
         // Debounce function for search
         const debounce = (func, wait) => {
@@ -247,6 +236,57 @@
                 suggestionsDiv.style.display = 'none';
             }
         }, 300);
+
+        // Update student status via AJAX with confirmation
+        statusSelects.forEach(select => {
+            let previousValue = select.value; // Store initial value
+
+            select.addEventListener('change', function() {
+                const studentId = this.getAttribute('data-student-id');
+                const newStatus = this.value;
+                const row = this.closest('.student-row');
+                const studentName = `${row.cells[1].textContent} ${row.cells[2].textContent}`;
+
+                // Show confirmation dialog
+                if (confirm(
+                        `Are you sure you want to change the status of ${studentName} to "${newStatus}"?`
+                    )) {
+                    fetch('{{ route("students.updateStatus") }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({
+                                student_id: studentId,
+                                status: newStatus
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Update the row's data-status attribute and previous value
+                                row.setAttribute('data-status', newStatus);
+                                previousValue = newStatus;
+                                applyFilters(); // Re-apply filters
+                                alert('Status updated successfully!');
+                            } else {
+                                alert('Failed to update status: ' + (data.message ||
+                                    'Unknown error'));
+                                this.value = previousValue; // Revert to previous value
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('An error occurred while updating the status.');
+                            this.value = previousValue; // Revert to previous value
+                        });
+                } else {
+                    // Revert to previous value if canceled
+                    this.value = previousValue;
+                }
+            });
+        });
 
         // Event listeners
         searchInput.addEventListener('input', () => {

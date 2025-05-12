@@ -11,6 +11,9 @@ use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TrackStrandController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\SectionLineController;
+use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ReportsController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -24,9 +27,11 @@ Route::get('/signup', function () {
 
 // Authenticated routes
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('enrollment.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+
+    // Route::get('/dashboard', function () {
+    //     return view('enrollment.dashboard');
+    // })->name('dashboard');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -45,7 +50,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/students/{id}', [StudentController::class, 'destroy'])->name('student.destroy');
     Route::get('/students/filter', [StudentController::class, 'filter'])->name('student.filter');
     Route::get('/students/search', [StudentController::class, 'search'])->name('student.search');
-
+    Route::get('/students/{id}', [StudentController::class, 'show'])->name('students.show');
+    Route::post('/students/update-status', [StudentController::class, 'updateStatus'])->name('students.updateStatus');
     // Teacher routes
     Route::get('/teachers', [TeacherController::class, 'index'])->name('teachers.index');
     Route::get('/teachers/create', [TeacherController::class, 'create'])->name('teachers.create');
@@ -56,6 +62,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/teachers', [TeacherController::class, 'store'])->name('teachers.store');
     Route::put('/teachers/{id}', [TeacherController::class, 'update'])->name('teachers.update');
     Route::delete('/teachers/{id}', [TeacherController::class, 'destroy'])->name('teachers.destroy');
+    Route::post('/teachers/update-status', [TeacherController::class, 'updateStatus'])->name('teachers.updateStatus');
 
     // Subject routes
     Route::get('/enrollment/subjects', [SubjectController::class, 'index'])->name('subject.index');
@@ -66,6 +73,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/enrollment/subjects', [SubjectController::class, 'store'])->name('subject.store');
     Route::put('/enrollment/subjects/{id}', [SubjectController::class, 'update'])->name('subject.update');
     Route::delete('/enrollment/subjects/{id}', [SubjectController::class, 'destroy'])->name('subject.destroy');
+
+    // Schedule routes
+    Route::get('/enrollment/schedules', [ScheduleController::class, 'index'])->name('schedule.index');
+    Route::get('/enrollment/schedules/create', [ScheduleController::class, 'create'])->name('schedule.create');
+    Route::post('/enrollment/schedules', [ScheduleController::class, 'store'])->name('schedule.store');
+    Route::get('/enrollment/schedules/{schedule}/{formtype}', [ScheduleController::class, 'edit'])
+        ->name('schedule.edit')
+        ->where('formtype', 'view|scheduleedit');
+    Route::put('/enrollment/schedules/{schedule}', [ScheduleController::class, 'update'])->name('schedule.update');
+    Route::delete('/enrollment/schedules/{schedule}', [ScheduleController::class, 'destroy'])->name('schedule.destroy');
 
     // Section routes
     Route::get('/sections', [SectionController::class, 'index'])->name('section.index');
@@ -88,19 +105,19 @@ Route::middleware('auth')->group(function () {
     Route::post('/section/{section}/students', [SectionLineController::class, 'store'])->name('sectionline.store');
     Route::delete('/sectionline/{sectionLine}', [SectionLineController::class, 'destroy'])->name('sectionline.destroy');
 
-    //Subject Management
     // Subject Management
     Route::get('/enrollment/subjectmanagement', [SubjectManageController::class, 'index'])->name('subjectmanage.index');
     Route::post('/enrollment/subjectmanagement/assign', [SubjectManageController::class, 'assign'])->name('subject.assign');
     Route::post('/enrollment/subjectmanagement/assign-teacher', [SubjectManageController::class, 'assignTeacher'])->name('subject.assignTeacher');
+
+    Route::get('/reports', [ReportsController::class, 'index'])->name('reports.index');
+    Route::get('/reports/generate/{type}', [ReportsController::class, 'generate'])->name('reports.generate');
     // Track-Strand AJAX
     Route::get('/strands', [TrackStrandController::class, 'getStrands'])->name('strands.get');
 
     // Enrollment page (dynamic) - placed last to avoid conflicts
     Route::get('/enrollment/{page}', [EnrollmentController::class, 'show'])->name('enrollment.show')
         ->where('page', '(dashboard|students|teachers|payment|class_schedule|reports|accounts|enrollment_form|teacher_form|edit|studentedit|sections)');
-
-    // Add any other routes that require authentication here
 });
 
 require __DIR__ . '/auth.php';

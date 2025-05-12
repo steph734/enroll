@@ -46,8 +46,10 @@ class Student extends Model
         'payment_method',
         'balance',
         'receiptnumber',
+        'section_id', // Add this
     ];
 
+    // Relationships remain the same
     public function strand()
     {
         return $this->belongsTo(Strands::class, 'strand_id');

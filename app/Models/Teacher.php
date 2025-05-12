@@ -42,14 +42,16 @@ class Teacher extends Model
         'employee_id',
         'status'
     ];
+    public function strand()
+    {
+        return $this->belongsTo(Strands::class, 'strand_id');
+    }
+
     public function track()
     {
         return $this->belongsTo(Tracks::class, 'track_id');
     }
-    public function strands()
-    {
-        return $this->belongsTo(Strands::class, 'strand_id');
-    }
+
     public function students()
     {
         return $this->hasMany(Student::class, 'student_id');
@@ -59,9 +61,18 @@ class Teacher extends Model
         return $this->belongsToMany(Subject::class, 'teacher_subject', 'teacher_id', 'subject_id')
             ->withPivot('school_year', 'status');
     }
+    public function subject()
+    {
+        return $this->belongsTo(Subject::class);
+    }
 
+    // public function teacherSubject()
+    // {
+    //     return $this->hasMany(TeacherSubject::class, 'teacher_id','id');
+
+    // }
     public function teacherSubject()
     {
-        return $this->hasMany(TeacherSubject::class, 'teacher_id');
+        return $this->hasMany(TeacherSubject::class);
     }
 }

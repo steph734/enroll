@@ -12,13 +12,10 @@
         <h2>List of Teachers</h2>
         <p style="font-size: 18px; color:#555 !important;">For 1st Semester, Class of 2024-2025</p>
         <div class="row mb-3">
-
             <div class="p-3 card card-header-teacher">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
-                        <div class="card-title">
-
-                        </div>
+                        <div class="card-title"></div>
                         <form action="teachers" id="searchForm">
                             <div class="search-container-dash">
                                 <i class="fa-solid fa-magnifying-glass"></i>
@@ -43,9 +40,10 @@
                         <div class="gap-2 dropdowns d-flex">
                             <select class="form-select" id="statusFilter" style="width: 150px;">
                                 <option value="">Filter by Status</option>
-                                <option value="ongoing">Ongoing</option>
-                                <option value="graduated">Graduated</option>
-                                <option value="dropped">Dropped</option>
+                                <option value="Active">Active</option>
+                                <option value="On Leave">On Leave</option>
+                                <option value="Inactive">Inactive</option>
+                                <option value="Terminated">Terminated</option>
                             </select>
                             <select class="form-select" id="employmentStatusFilter" style="width: 150px;">
                                 <option value="">Filter by Employment Status</option>
@@ -53,18 +51,16 @@
                                 <option value="Part-time">Part-Time</option>
                                 <option value="Contractual">Contractual</option>
                             </select>
-                            <a href="">
+                            <a href="#">
                                 <button class="btn btn-outline-dark btn-sm p-1" id="clearFilters">
                                     <i class="fa-solid fa-eraser"></i> Clear Filters
                                 </button>
                             </a>
-
                             <a href="{{ route('enrollment.show', 'teacher_form') }}">
                                 <button class="p-1 btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i>
                                     Add Teacher</button>
                             </a>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -96,7 +92,8 @@
                             <tbody id="teachersTable">
                                 @forelse(\App\Models\Teacher::all() as $teacher)
                                 <tr class="teacher-row" data-specialization="{{ $teacher->specialization }}"
-                                    data-employment-status="{{ $teacher->employment_status }}">
+                                    data-employment-status="{{ $teacher->employment_status }}"
+                                    data-status="{{ $teacher->status }}">
                                     <td>{{ $teacher->id }}</td>
                                     <td>{{ $teacher->first_name }}</td>
                                     <td>{{ $teacher->last_name }}</td>
@@ -105,10 +102,20 @@
                                     <td>{{ $teacher->specialization }}</td>
                                     <td>{{ $teacher->employment_status }}</td>
                                     <td>
-                                        <select name="status" class="form-select form-select-sm">
-                                            <option value="ongoing">Ongoing</option>
-                                            <option value="graduated">Graduated</option>
-                                            <option value="dropped">Dropped</option>
+                                        <select name="status" class="form-select form-select-sm status-select"
+                                            data-teacher-id="{{ $teacher->id }}">
+                                            <option value="Active"
+                                                {{ $teacher->status === 'Active' ? 'selected' : '' }}>
+                                                Active</option>
+                                            <option value="On Leave"
+                                                {{ $teacher->status === 'On Leave' ? 'selected' : '' }}>
+                                                On Leave</option>
+                                            <option value="Inactive"
+                                                {{ $teacher->status === 'Inactive' ? 'selected' : '' }}>
+                                                Inactive</option>
+                                            <option value="Terminated"
+                                                {{ $teacher->status === 'Terminated' ? 'selected' : '' }}>
+                                                Terminated</option>
                                         </select>
                                     </td>
                                     <td>
@@ -135,7 +142,9 @@
         </div>
     </div>
 </div>
+@endsection
 
+@section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.getElementById('searchInput');
@@ -145,6 +154,7 @@
         const employmentStatusFilter = document.getElementById('employmentStatusFilter');
         const clearFiltersBtn = document.getElementById('clearFilters');
         const tabs = document.querySelectorAll('.tab');
+        const statusSelects = document.querySelectorAll('.status-select');
 
         // Debounce function for search
         const debounce = (func, wait) => {
@@ -180,11 +190,7 @@
                     email.includes(searchTerm);
 
                 const matchesSpecialization = selectedSpecialization === 'all' ||
-                    (selectedSpecialization === 'Academic' && specialization === 'Academic') ||
-                    (selectedSpecialization === 'TVL' && specialization === 'TVL') ||
-                    (selectedSpecialization === 'Sports' && specialization === 'Sports') ||
-                    (selectedSpecialization === 'Arts and Design' && specialization ===
-                        'Arts and Design');
+                    specialization === selectedSpecialization;
 
                 const matchesStatus = !selectedStatus || status === selectedStatus;
                 const matchesEmploymentStatus = !selectedEmploymentStatus || employmentStatus ===
@@ -229,7 +235,58 @@
             }
         }, 300);
 
-        // Event listeners
+        // Update teacher status via AJAX with confirmation
+        statusSelects.forEach(select => {
+            let previousValue = select.value; // Store initial value
+
+            select.addEventListener('change', function() {
+                const teacherId = this.getAttribute('data-teacher-id');
+                const newStatus = this.value;
+                const row = this.closest('.teacher-row');
+                const teacherName = `${row.cells[1].textContent} ${row.cells[2].textContent}`;
+
+                // Show confirmation dialog
+                if (confirm(
+                        `Are you sure you want to change the status of ${teacherName} to "${newStatus}"?`
+                    )) {
+                    fetch('{{ route("teachers.updateStatus") }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({
+                                teacher_id: teacherId,
+                                status: newStatus
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Update the row's data-status attribute and previous value
+                                row.setAttribute('data-status', newStatus);
+                                previousValue = newStatus;
+                                applyFilters(); // Re-apply filters
+                                alert('Status updated successfully!');
+                            } else {
+                                alert('Failed to update status: ' + (data.message ||
+                                    'Unknown error'));
+                                this.value = previousValue; // Revert to previous value
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('An error occurred while updating the status.');
+                            this.value = previousValue; // Revert to previous value
+                        });
+                } else {
+                    // Revert to previous value if canceled
+                    this.value = previousValue;
+                }
+            });
+        });
+
+        // Event listeners for filters and search
         searchInput.addEventListener('input', () => {
             updateSuggestions();
             applyFilters();

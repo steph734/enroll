@@ -123,7 +123,7 @@
                     <table class="table table-striped table-hover" style="cursor: pointer;">
                         <thead>
                             <tr>
-                                <th scope="col" class="p-1 text-center align-middle">#</th>
+                                <th scope="col" class="p-1 text-center align-middle"></th>
                                 <th scope="col" class="p-1 text-center align-middle">Section Name</th>
                                 <th scope="col" class="p-1 text-center align-middle">Description</th>
                                 <th scope="col" class="p-1 text-center align-middle">School Year</th>
@@ -141,7 +141,7 @@
                             @forelse($sections as $section)
                             <tr>
                                 <td class="text-center p-2"><a href="{{ route('sectionline.index',$section->id) }}"><i
-                                            class="fa-solid fa-list-ol" style="color:#555;"></i></td>
+                                            class="fa-solid fa-angle-right"></i></td>
                                 <td class="text-center">{{ $section->section_name }}</td>
                                 <td class="text-center">{{ $section->description ?? '-' }}</td>
                                 <td class="text-center">{{ $section->school_year ?? '-' }}</td>

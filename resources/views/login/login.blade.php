@@ -49,7 +49,7 @@
                 </div>
             </div>
             <div class="col-6">
-                <p>Effortless enrollment, seamless access.</p>
+
                 <img src="{{ asset('img/logo1.png') }}" alt="Logo" width="500" height="500">
             </div>
         </div>

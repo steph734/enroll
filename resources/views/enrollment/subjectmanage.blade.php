@@ -6,449 +6,459 @@
 
 @section('content')
 <div class="subject-content">
-    <div class="container">
-        <div class="d-flex justify-content-between mb-1">
-            <div>
-                <h2>Subject Management</h2>
-                <p style="font-size: 18px; color:#555 !important;">
-                    Manage and organize subjects efficiently.
-                </p>
-            </div>
-            <a href="{{ route('subject.index') }}"><button class="btn tex-dark"><i
-                        class="fa-solid fa-right-from-bracket"></i> Back</button></a>
+
+    <div class="d-flex justify-content-between mb-1">
+        <div>
+            <h2>Subject Management</h2>
+            <p style="font-size: 18px; color:#555 !important;">
+                Manage and organize subjects efficiently.
+            </p>
         </div>
-        <!-- Handlers -->
-        @if ($errors->any())
-        <div class="alert alert-danger p-1 mb-3">
-            <i class="fa-solid fa-circle-exclamation"></i>
-            <strong>Whoops!</strong> There were some problems with your input.
+        <a href="{{ route('subject.index') }}"><button class="btn tex-dark"><i
+                    class="fa-solid fa-right-from-bracket"></i> Back</button></a>
+    </div>
+    <!-- Handlers -->
+    @if ($errors->any())
+    <div class="alert alert-danger p-1 mb-3">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <strong>Whoops!</strong> There were some problems with your input.
+        <ul>
+            @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
+
+    @if (session('success'))
+    <div class="alert alert-success p-1 mb-3">
+        <strong><i class="fa-solid fa-circle-check"></i> Success!</strong> {{ session('success') }}
+    </div>
+    @endif
+    <button class="btn btn-sm btn-primary p-1 mb-3" style="font-size: 14px;" disabled>
+        <i class="fa-solid fa-graduation-cap"></i> Students
+    </button>
+    <!-- Student Assignment Note -->
+    <div class="note-div" id="studentNote">
+        <div class="note-header">
+            <h6>How to Assign Subjects to Students</h6>
+            <i class="fa-solid fa-chevron-down toggle-icon" data-note-id="studentNote"></i>
+        </div>
+        <div class="note-details" id="studentNoteDetails">
             <ul>
-                @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-                @endforeach
+                <li><strong>Step 1: Filter students by strand and grade level.</strong>
+                    <ul>
+                        <li>Click the "Strand" dropdown to select a specific strand (e.g., STEM, ABM).</li>
+                        <li>Click the "Grade Level" dropdown to choose Grade 11 or 12.</li>
+                        <li>Use "All Strands" or "All Levels" to view all students.</li>
+                    </ul>
+                </li>
+                <li><strong>Step 2: Select students.</strong>
+                    <ul>
+                        <li>Check the boxes next to student names to select them.</li>
+                        <li>Use the "Select All" checkbox to select all visible students.</li>
+                        <li>Ensure you have at least one student selected.</li>
+                    </ul>
+                </li>
+                <li><strong>Step 3: Select subjects.</strong>
+                    <ul>
+                        <li>Check the boxes next to subjects in the right panel.</li>
+                        <li>Ensure subjects match the selected students' strand and grade level.</li>
+                        <li>Use "Select All" to choose all visible subjects.</li>
+                    </ul>
+                </li>
+                <li><strong>Step 4: Assign subjects.</strong>
+                    <ul>
+                        <li>Click "Assign Subjects" to open a confirmation popup.</li>
+                        <li>Review the selected students and subjects in the popup.</li>
+                        <li>Click "Assign" to confirm, or "Cancel" to revise your selections.</li>
+                    </ul>
+                </li>
             </ul>
         </div>
-        @endif
-
-        @if (session('success'))
-        <div class="alert alert-success p-1 mb-3">
-            <strong><i class="fa-solid fa-circle-check"></i> Success!</strong> {{ session('success') }}
-        </div>
-        @endif
-        <button class="btn btn-sm btn-primary p-1 mb-3" style="font-size: 14px;" disabled>
-            <i class="fa-solid fa-graduation-cap"></i> Students
-        </button>
-        <!-- Student Assignment Note -->
-        <div class="note-div" id="studentNote">
-            <div class="note-header">
-                <h6>How to Assign Subjects to Students</h6>
-                <i class="fa-solid fa-chevron-down toggle-icon" data-note-id="studentNote"></i>
-            </div>
-            <div class="note-details" id="studentNoteDetails">
-                <ul>
-                    <li><strong>Step 1: Filter students by strand and grade level.</strong>
-                        <ul>
-                            <li>Click the "Strand" dropdown to select a specific strand (e.g., STEM, ABM).</li>
-                            <li>Click the "Grade Level" dropdown to choose Grade 11 or 12.</li>
-                            <li>Use "All Strands" or "All Levels" to view all students.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Step 2: Select students.</strong>
-                        <ul>
-                            <li>Check the boxes next to student names to select them.</li>
-                            <li>Use the "Select All" checkbox to select all visible students.</li>
-                            <li>Ensure you have at least one student selected.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Step 3: Select subjects.</strong>
-                        <ul>
-                            <li>Check the boxes next to subjects in the right panel.</li>
-                            <li>Ensure subjects match the selected students' strand and grade level.</li>
-                            <li>Use "Select All" to choose all visible subjects.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Step 4: Assign subjects.</strong>
-                        <ul>
-                            <li>Click "Assign Subjects" to open a confirmation popup.</li>
-                            <li>Review the selected students and subjects in the popup.</li>
-                            <li>Click "Assign" to confirm, or "Cancel" to revise your selections.</li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <!-- Student Assignment Section -->
-        <form id="assignSubjectForm" action="{{ route('subject.assign') }}" method="POST">
-            @csrf
-            <div class="row">
-                <!-- Left Card: Students Selection -->
-                <div class="col-6">
-                    <div class="card p-1">
-                        <div class="card-header">
-                            <h5>Assign Subjects to Students</h5>
-                            <div class="d-flex gap-2">
-                                <!-- Strand Filter -->
-                                <div class="dropdown">
-                                    <a class="btn btn-outline-dark btn-sm" href="#" role="button"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fa-solid fa-filter"></i> <span
-                                            class="filter-strand">{{ $strand ?? 'Strand' }}</span>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item {{ !$strand ? 'active' : '' }}" href="#"
-                                                data-strand="">All Strands</a></li>
-                                        @foreach ($strands as $id => $strandName)
-                                        <li><a class="dropdown-item {{ $strand == strtolower($strandName) ? 'active' : '' }}"
-                                                href="#"
-                                                data-strand="{{ strtolower($strandName) }}">{{ $strandName }}</a></li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                                <!-- Grade Level Filter -->
-                                <div class="dropdown">
-                                    <a class="btn btn-outline-dark btn-sm" href="#" role="button"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fa-solid fa-filter"></i> <span
-                                            class="filter-grade-level">{{ $gradeLevel ?? 'Grade Level' }}</span>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item {{ !$gradeLevel ? 'active' : '' }}" href="#"
-                                                data-strand="{{ $strand ?? '' }}" data-grade-level="">All Levels</a>
-                                        </li>
-                                        <li><a class="dropdown-item {{ $gradeLevel == '11' ? 'active' : '' }}" href="#"
-                                                data-strand="{{ $strand ?? '' }}" data-grade-level="11">Grade 11</a>
-                                        </li>
-                                        <li><a class="dropdown-item {{ $gradeLevel == '12' ? 'active' : '' }}" href="#"
-                                                data-strand="{{ $strand ?? '' }}" data-grade-level="12">Grade 12</a>
-                                        </li>
-                                    </ul>
-                                </div>
+    </div>
+    <!-- Student Assignment Section -->
+    <form id="assignSubjectForm" action="{{ route('subject.assign') }}" method="POST">
+        @csrf
+        <div class="row">
+            <!-- Left Card: Students Selection -->
+            <div class="col-6">
+                <div class="card p-1">
+                    <div class="card-header">
+                        <h5>Assign Subjects to Students</h5>
+                        <div class="d-flex gap-2">
+                            <!-- Strand Filter -->
+                            <div class="dropdown">
+                                <a class="btn btn-outline-dark btn-sm" href="#" role="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                    <i class="fa-solid fa-filter"></i> <span
+                                        class="filter-strand">{{ $strand ?? 'Strand' }}</span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item {{ !$strand ? 'active' : '' }}" href="#"
+                                            data-strand="">All Strands</a></li>
+                                    @foreach ($strands as $id => $strandName)
+                                    <li><a class="dropdown-item {{ $strand == strtolower($strandName) ? 'active' : '' }}"
+                                            href="#" data-strand="{{ strtolower($strandName) }}">{{ $strandName }}</a>
+                                    </li>
+                                    @endforeach
+                                </ul>
                             </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between mb-2">
-                                <label class="form-label">Select Students</label>
-                                <div class="form-check p-1">
-                                    <input type="checkbox" id="select_all_students" class="form-check-input">
-                                    <label for="select_all_students" class="form-check-label">Select All</label>
-                                </div>
+                            <!-- Grade Level Filter -->
+                            <div class="dropdown">
+                                <a class="btn btn-outline-dark btn-sm" href="#" role="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                    <i class="fa-solid fa-filter"></i> <span
+                                        class="filter-grade-level">{{ $gradeLevel ?? 'Grade Level' }}</span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item {{ !$gradeLevel ? 'active' : '' }}" href="#"
+                                            data-strand="{{ $strand ?? '' }}" data-grade-level="">All Levels</a>
+                                    </li>
+                                    <li><a class="dropdown-item {{ $gradeLevel == '11' ? 'active' : '' }}" href="#"
+                                            data-strand="{{ $strand ?? '' }}" data-grade-level="11">Grade 11</a>
+                                    </li>
+                                    <li><a class="dropdown-item {{ $gradeLevel == '12' ? 'active' : '' }}" href="#"
+                                            data-strand="{{ $strand ?? '' }}" data-grade-level="12">Grade 12</a>
+                                    </li>
+                                </ul>
                             </div>
-                            @if ($students->isNotEmpty())
-                            @foreach ($students as $student)
-                            <div class="student-card" data-strand="{{ strtolower($student->strand->strand_name) }}"
-                                data-grade-level="{{ $student->grade_level }}">
-                                <div class="d-flex justify-content-between">
-                                    <div>
-                                        <input type="checkbox" id="student_{{ $student->id }}" name="student_ids[]"
-                                            value="{{ $student->id }}" class="form-check-input student-checkbox"
-                                            data-student-name="{{ $student->first_name }} {{ $student->last_name }}">
-                                        <label for="student_{{ $student->id }}" class="form-check-label">
-                                            {{ $student->id }} - {{ $student->first_name }} {{ $student->last_name }}
-                                            ({{ $student->strand->strand_name }}, {{ $student->grade_level }})
-                                        </label>
-                                    </div>
-                                    <div>
-                                        <a href="{{ route('student.edit', ['id'=>$student->id,'formtype'=>'view']) }}"><i
-                                                class="fa-solid fa-expand"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                            @endforeach
-                            @else
-                            <p>No students available.</p>
-                            @endif
                         </div>
                     </div>
-                </div>
-                <!-- Right Card: Subjects Selection -->
-                <div class="col-6">
-                    <div class="card p-1">
-                        <div class="card-header">
-                            <h5><i class="fa-solid fa-book"></i> Select Subjects</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between mb-2">
-                                <label class="form-label">Select Subjects</label>
-                                <div class="form-check p-1">
-                                    <input type="checkbox" id="select_all_subjects" class="form-check-input">
-                                    <label for="select_all_subjects" class="form-check-label">Select All</label>
-                                </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <label class="form-label">Select Students</label>
+                            <div class="form-check p-1">
+                                <input type="checkbox" id="select_all_students" class="form-check-input">
+                                <label for="select_all_students" class="form-check-label">Select All</label>
                             </div>
-                            @if ($subjects->isNotEmpty())
-                            @php
-                            $groupedSubjects = $subjects->groupBy(function($subject) {
-                            return $subject->strand->strand_name;
-                            });
-                            @endphp
-                            @foreach ($groupedSubjects as $strandName => $strandSubjects)
-                            <div class="strand-group">
-                                <h6 class="strand-header" style="margin: 10px 0 5px; color: #333; font-weight: bold;">
-                                    {{ $strandName }}
-                                </h6>
-                                @foreach ($strandSubjects as $subject)
-                                <div class="subject-card" data-strand="{{ strtolower($subject->strand->strand_name) }}"
-                                    data-grade-level="{{ $subject->grade_level }}">
-                                    <input type="checkbox" id="subject_{{ $subject->id }}" name="subject_ids[]"
-                                        value="{{ $subject->id }}" class="form-check-input subject-checkbox"
-                                        data-subject-name="{{ $subject->subject_name }}"
-                                        data-strand="{{ strtolower($subject->strand->strand_name) }}"
-                                        data-grade-level="{{ $subject->grade_level }}">
-                                    <label for="subject_{{ $subject->id }}" class="form-check-label">
-                                        {{ $subject->subject_name }} ( {{ $subject->grade_level }},
-                                        {{ $subject->semester }} , {{ $subject->term }})
+                        </div>
+                        @if ($students->isNotEmpty())
+                        @foreach ($students as $student)
+                        <div class="student-card" data-strand="{{ strtolower($student->strand->strand_name) }}"
+                            data-grade-level="{{ $student->grade_level }}">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <input type="checkbox" id="student_{{ $student->id }}" name="student_ids[]"
+                                        value="{{ $student->id }}" class="form-check-input student-checkbox"
+                                        data-student-name="{{ $student->first_name }} {{ $student->last_name }}">
+                                    <label for="student_{{ $student->id }}" class="form-check-label">
+                                        {{ $student->id }} - {{ $student->first_name }} {{ $student->last_name }}
+                                        ({{ $student->strand->strand_name }}, {{ $student->grade_level }})
                                     </label>
                                 </div>
-                                @endforeach
+                                <div>
+                                    <a href="{{ route('student.edit', ['id'=>$student->id,'formtype'=>'view']) }}"><i
+                                            class="fa-solid fa-expand"></i></a>
+                                </div>
                             </div>
-                            @endforeach
-                            @else
-                            <p>No subjects available.</p>
-                            @endif
                         </div>
+                        @endforeach
+                        @else
+                        <p>No students available.</p>
+                        @endif
                     </div>
                 </div>
             </div>
-            <div class="d-flex justify-content-end mt-3">
-                <button type="submit" class="btn btn-primary btn-sm" id="assignStudentButton"><i
-                        class="fa-solid fa-upload"></i> Assign Subjects</button>
-            </div>
-        </form>
-        <hr>
-        <button class="btn btn-sm btn-primary p-1 mb-3" style="font-size: 14px;" disabled>
-            <i class="fa-solid fa-chalkboard-user"></i> Teachers
-        </button>
-        <!-- Teacher Assignment Note -->
-        <div class="note-div" id="teacherNote">
-            <div class="note-header">
-                <h6>How to Assign Subjects to Teachers</h6>
-                <i class="fa-solid fa-chevron-down toggle-icon" data-note-id="teacherNote"></i>
-            </div>
-            <div class="note-details" id="teacherNoteDetails">
-                <ul>
-                    <li><strong>Step 1: Filter teachers by specialization.</strong>
-                        <ul>
-                            <li>Click the "Specialization" dropdown to select a specific specialization (e.g., Math,
-                                Science).</li>
-                            <li>Use "All Specializations" to view all teachers.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Step 2: Select teachers.</strong>
-                        <ul>
-                            <li>Check the boxes next to teacher names to select them.</li>
-                            <li>Use the "Select All" checkbox to select all visible teachers.</li>
-                            <li>Ensure at least one teacher is selected.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Step 3: Select subjects.</strong>
-                        <ul>
-                            <li>Check the boxes next to subjects in the right panel.</li>
-                            <li>Choose subjects that align with the teachers' specialization for best results.</li>
-                            <li>Use "Select All" to choose all visible subjects.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Step 4: Assign subjects.</strong>
-                        <ul>
-                            <li>Click "Assign to Teachers" to open a confirmation popup.</li>
-                            <li>Review the selected teachers and subjects in the popup.</li>
-                            <li>Click "Assign" to confirm, or "Cancel" to revise your selections.</li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <!-- Teacher Assignment Section -->
-        <form id="assignTeacherForm" action="{{ route('subject.assignTeacher') }}" method="POST" class="mt-4">
-            @csrf
-            <div class="row">
-                <!-- Left Card: Teachers Selection -->
-                <div class="col-6">
-                    <div class="card p-1">
-                        <div class="card-header">
-                            <h5>Assign Subjects to Teachers</h5>
-                            <div class="d-flex gap-2">
-                                <!-- Specialization Filter -->
-                                <div class="dropdown">
-                                    <a class="btn btn-outline-dark btn-sm" href="#" role="button"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fa-solid fa-filter"></i> <span
-                                            class="filter-specialization">{{ $specialization ?? 'Specialization' }}</span>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item {{ !$specialization ? 'active' : '' }}" href="#"
-                                                data-specialization="">All Specializations</a></li>
-                                        @foreach ($specializations as $spec)
-                                        <li><a class="dropdown-item {{ $specialization == $spec ? 'active' : '' }}"
-                                                href="#" data-specialization="{{ $spec }}">{{ $spec }}</a></li>
-                                        @endforeach
-                                    </ul>
-                                </div>
+            <!-- Right Card: Subjects Selection -->
+            <div class="col-6">
+                <div class="card p-1">
+                    <div class="card-header">
+                        <h5><i class="fa-solid fa-book"></i> Select Subjects</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <label class="form-label">Select Subjects</label>
+                            <div class="form-check p-1">
+                                <input type="checkbox" id="select_all_subjects" class="form-check-input">
+                                <label for="select_all_subjects" class="form-check-label">Select All</label>
                             </div>
                         </div>
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between mb-2">
-                                <label class="form-label">Select Teachers</label>
-                                <div class="form-check p-1">
-                                    <input type="checkbox" id="select_all_teachers" class="form-check-input">
-                                    <label for="select_all_teachers" class="form-check-label">Select All</label>
-                                </div>
-                            </div>
-                            @if ($teachers->isNotEmpty())
-                            @foreach ($teachers as $teacher)
-                            <div class="teacher-card"
-                                data-specialization="{{ strtolower($teacher->specialization ?? '') }}">
-                                <input type="checkbox" id="teacher_{{ $teacher->id }}" name="teacher_ids[]"
-                                    value="{{ $teacher->id }}" class="form-check-input teacher-checkbox"
-                                    data-teacher-name="{{ $teacher->first_name }} {{ $teacher->last_name }}">
-                                <label for="teacher_{{ $teacher->id }}" class="form-check-label">
-                                    {{ $teacher->id }} - {{ $teacher->first_name }} {{ $teacher->last_name }}
-                                    (Specialization: {{ $teacher->specialization ?? 'N/A' }})
+                        @if ($subjects->isNotEmpty())
+                        @php
+                        $groupedSubjects = $subjects->groupBy(function($subject) {
+                        return $subject->strand->strand_name;
+                        });
+                        @endphp
+                        @foreach ($groupedSubjects as $strandName => $strandSubjects)
+                        <div class="strand-group">
+                            <h6 class="strand-header" style="margin: 10px 0 5px; color: #333; font-weight: bold;">
+                                {{ $strandName }}
+                            </h6>
+                            @foreach ($strandSubjects as $subject)
+                            <div class="subject-card" data-strand="{{ strtolower($subject->strand->strand_name) }}"
+                                data-grade-level="{{ $subject->grade_level }}">
+                                <input type="checkbox" id="subject_{{ $subject->id }}" name="subject_ids[]"
+                                    value="{{ $subject->id }}" class="form-check-input subject-checkbox"
+                                    data-subject-name="{{ $subject->subject_name }}"
+                                    data-strand="{{ strtolower($subject->strand->strand_name) }}"
+                                    data-grade-level="{{ $subject->grade_level }}">
+                                <label for="subject_{{ $subject->id }}" class="form-check-label">
+                                    {{ $subject->subject_name }} ( {{ $subject->grade_level }},
+                                    {{ $subject->semester }} , {{ $subject->term }})
                                 </label>
                             </div>
                             @endforeach
-                            @else
-                            <p>No teachers available.</p>
-                            @endif
                         </div>
+                        @endforeach
+                        @else
+                        <p>No subjects available.</p>
+                        @endif
                     </div>
                 </div>
-                <!-- Right Card: Subjects Selection -->
-                <div class="col-6">
-                    <div class="card p-1">
-                        <div class="card-header">
-                            <h5><i class="fa-solid fa-book"></i> Select Subjects</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between mb-2">
-                                <label class="form-label">Select Subjects</label>
-                                <div class="form-check p-1">
-                                    <input type="checkbox" id="select_all_teacher_subjects" class="form-check-input">
-                                    <label for="select_all_teacher_subjects" class="form-check-label">Select All</label>
-                                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-end mt-3">
+            <button type="submit" class="btn btn-primary btn-sm" id="assignStudentButton"><i
+                    class="fa-solid fa-upload"></i> Assign Subjects</button>
+        </div>
+    </form>
+    <hr>
+    <button class="btn btn-sm btn-primary p-1 mb-3" style="font-size: 14px;" disabled>
+        <i class="fa-solid fa-chalkboard-user"></i> Teachers
+    </button>
+    <!-- Teacher Assignment Note -->
+    <div class="note-div" id="teacherNote">
+        <div class="note-header">
+            <h6>How to Assign Subjects to Teachers</h6>
+            <i class="fa-solid fa-chevron-down toggle-icon" data-note-id="teacherNote"></i>
+        </div>
+        <div class="note-details" id="teacherNoteDetails">
+            <ul>
+                <li><strong>Step 1: Filter teachers by specialization.</strong>
+                    <ul>
+                        <li>Click the "Specialization" dropdown to select a specific specialization (e.g., Math,
+                            Science).</li>
+                        <li>Use "All Specializations" to view all teachers.</li>
+                    </ul>
+                </li>
+                <li><strong>Step 2: Select teachers.</strong>
+                    <ul>
+                        <li>Check the boxes next to teacher names to select them.</li>
+                        <li>Use the "Select All" checkbox to select all visible teachers.</li>
+                        <li>Ensure at least one teacher is selected.</li>
+                    </ul>
+                </li>
+                <li><strong>Step 3: Select subjects.</strong>
+                    <ul>
+                        <li>Check the boxes next to subjects in the right panel.</li>
+                        <li>Choose subjects that align with the teachers' specialization for best results.</li>
+                        <li>Use "Select All" to choose all visible subjects.</li>
+                    </ul>
+                </li>
+                <li><strong>Step 4: Assign subjects.</strong>
+                    <ul>
+                        <li>Click "Assign to Teachers" to open a confirmation popup.</li>
+                        <li>Review the selected teachers and subjects in the popup.</li>
+                        <li>Click "Assign" to confirm, or "Cancel" to revise your selections.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- Teacher Assignment Section -->
+    <form id="assignTeacherForm" action="{{ route('subject.assignTeacher') }}" method="POST" class="mt-4">
+        @csrf
+        <div class="row">
+            <!-- Left Card: Teachers Selection -->
+            <div class="col-6">
+                <div class="card p-1">
+                    <div class="card-header">
+                        <h5>Assign Subjects to Teachers</h5>
+                        <div class="d-flex gap-2">
+                            <!-- Specialization Filter -->
+                            <div class="dropdown">
+                                <a class="btn btn-outline-dark btn-sm" href="#" role="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                    <i class="fa-solid fa-filter"></i> <span
+                                        class="filter-specialization">{{ $specialization ?? 'Specialization' }}</span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item {{ !$specialization ? 'active' : '' }}" href="#"
+                                            data-specialization="">All Specializations</a></li>
+                                    @foreach ($specializations as $spec)
+                                    <li><a class="dropdown-item {{ $specialization == $spec ? 'active' : '' }}" href="#"
+                                            data-specialization="{{ $spec }}">{{ $spec }}</a></li>
+                                    @endforeach
+                                </ul>
                             </div>
-                            @if ($subjects->isNotEmpty())
-                            @php
-                            $groupedSubjects = $subjects->groupBy(function($subject) {
-                            return $subject->strand->strand_name;
-                            });
-                            @endphp
-                            @foreach ($groupedSubjects as $strandName => $strandSubjects)
-                            <div class="strand-group">
-                                <h6 class="strand-header" style="margin: 10px 0 5px; color: #333; font-weight: bold;">
-                                    {{ $strandName }}
-                                </h6>
-                                @foreach ($strandSubjects as $subject)
-                                <div class="subject-card">
-                                    <input type="checkbox" id="teacher_subject_{{ $subject->id }}" name="subject_ids[]"
-                                        value="{{ $subject->id }}" class="form-check-input teacher-subject-checkbox"
-                                        data-subject-name="{{ $subject->subject_name }}"
-                                        data-strand="{{ strtolower($subject->strand->strand_name) }}"
-                                        data-grade-level="{{ $subject->grade_level }}">
-                                    <label for="teacher_subject_{{ $subject->id }}" class="form-check-label">
-                                        {{ $subject->subject_name }} ({{ $subject->strand->strand_name }},
-                                        {{ $subject->grade_level }}, {{ $subject->semester }}, {{ $subject->term }})
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <label class="form-label">Select Teachers</label>
+                            <div class="form-check p-1">
+                                <input type="checkbox" id="select_all_teachers" class="form-check-input">
+                                <label for="select_all_teachers" class="form-check-label">Select All</label>
+                            </div>
+                        </div>
+                        @if ($teachers->isNotEmpty())
+                        @foreach ($teachers as $teacher)
+                        <div class="teacher-card"
+                            data-specialization="{{ strtolower($teacher->specialization ?? '') }}">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <input type="checkbox" id="teacher_{{ $teacher->id }}" name="teacher_ids[]"
+                                        value="{{ $teacher->id }}" class="form-check-input teacher-checkbox"
+                                        data-teacher-name="{{ $teacher->first_name }} {{ $teacher->last_name }}">
+
+                                    <label for="teacher_{{ $teacher->id }}" class="form-check-label">
+                                        {{ $teacher->id }} - {{ $teacher->first_name }} {{ $teacher->last_name }}
+                                        (Specialization: {{ $teacher->specialization ?? 'N/A' }})
                                     </label>
                                 </div>
-                                @endforeach
+                                <div>
+                                    <a href="{{ route('teachers.edit', ['id'=>$teacher->id,'formtype'=>'view']) }}"><i
+                                            class="fa-solid fa-expand"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                        @else
+                        <p>No teachers available.</p>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            <!-- Right Card: Subjects Selection -->
+            <div class="col-6">
+                <div class="card p-1">
+                    <div class="card-header">
+                        <h5><i class="fa-solid fa-book"></i> Select Subjects</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <label class="form-label">Select Subjects</label>
+                            <div class="form-check p-1">
+                                <input type="checkbox" id="select_all_teacher_subjects" class="form-check-input">
+                                <label for="select_all_teacher_subjects" class="form-check-label">Select All</label>
+                            </div>
+                        </div>
+                        @if ($subjects->isNotEmpty())
+                        @php
+                        $groupedSubjects = $subjects->groupBy(function($subject) {
+                        return $subject->strand->strand_name;
+                        });
+                        @endphp
+                        @foreach ($groupedSubjects as $strandName => $strandSubjects)
+                        <div class="strand-group">
+                            <h6 class="strand-header" style="margin: 10px 0 5px; color: #333; font-weight: bold;">
+                                {{ $strandName }}
+                            </h6>
+                            @foreach ($strandSubjects as $subject)
+                            <div class="subject-card">
+                                <input type="checkbox" id="teacher_subject_{{ $subject->id }}" name="subject_ids[]"
+                                    value="{{ $subject->id }}" class="form-check-input teacher-subject-checkbox"
+                                    data-subject-name="{{ $subject->subject_name }}"
+                                    data-strand="{{ strtolower($subject->strand->strand_name) }}"
+                                    data-grade-level="{{ $subject->grade_level }}">
+                                <label for="teacher_subject_{{ $subject->id }}" class="form-check-label">
+                                    {{ $subject->subject_name }} ({{ $subject->strand->strand_name }},
+                                    {{ $subject->grade_level }}, {{ $subject->semester }}, {{ $subject->term }})
+                                </label>
+
                             </div>
                             @endforeach
-                            @else
-                            <p>No subjects available.</p>
-                            @endif
                         </div>
+                        @endforeach
+                        @else
+                        <p>No subjects available.</p>
+                        @endif
                     </div>
-                </div>
-            </div>
-            <div class="d-flex justify-content-end mt-3">
-                <button type="submit" class="btn btn-primary btn-sm" id="assignTeacherButton"><i
-                        class="fa-solid fa-upload"></i> Assign to Teachers</button>
-            </div>
-        </form>
-
-        <!-- Custom Error Modal -->
-        <div class="custom-modal" id="customErrorModal">
-            <div class="modal-content">
-                <div class="modal-header error">
-                    <h5 style="margin: 0;"><i class="fa-solid fa-circle-exclamation"></i> Error</h5>
-                    <button type="button" class="modal-close" data-modal-id="customErrorModal"
-                        aria-label="Close error modal">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <strong>Warning!</strong>
-                    <p id="errorMessage" style="color:#333 !important;"></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="modal-close btn text-danger" data-modal-id="customErrorModal"
-                        style="padding: 8px 16px; cursor: pointer;" aria-label="Close error modal">Close</button>
                 </div>
             </div>
         </div>
-
-        <!-- Custom Confirmation Modal for Students -->
-        <div class="custom-modal" id="customAssignStudentModal">
-            <div class="modal-content">
-                <div class="modal-header confirm">
-                    <h5 style="margin: 0;">Confirm Student Assignment</h5>
-                    <button type="button" class="modal-close" data-modal-id="customAssignStudentModal"
-                        aria-label="Close assign confirmation modal">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div style="text-align: center; font-size: 50px;">
-                        <i class="fa-solid fa-circle-plus" style="color: #28a745;"></i>
-                    </div>
-                    <p>Are you sure you want to assign the following subjects to the selected students?</p>
-                    <h6>Selected Students:</h6>
-                    <ul id="selectedStudentsList"
-                        style="list-style: none; padding: 0; max-height: 150px; overflow-y: auto;"></ul>
-                    <h6>Selected Subjects:</h6>
-                    <ul id="selectedSubjectsList"
-                        style="list-style: none; padding: 0; max-height: 150px; overflow-y: auto;"></ul>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="modal-close btn text-danger" data-modal-id="customAssignStudentModal"
-                        style="padding: 8px 16px; cursor: pointer;" aria-label="Cancel assign subjects">Cancel</button>
-                    <button type="button" id="confirmAssignStudentButton"
-                        style="padding: 8px 16px; border: none; border-radius: 4px; background: #28a745; color: white; cursor: pointer;"
-                        aria-label="Confirm assign subjects">Assign</button>
-                </div>
-            </div>
+        <div class="d-flex justify-content-end mt-3">
+            <button type="submit" class="btn btn-primary btn-sm" id="assignTeacherButton"><i
+                    class="fa-solid fa-upload"></i> Assign to Teachers</button>
         </div>
+    </form>
 
-        <!-- Custom Confirmation Modal for Teachers -->
-        <div class="custom-modal" id="customAssignTeacherModal">
-            <div class="modal-content">
-                <div class="modal-header confirm">
-                    <h5 style="margin: 0;">Confirm Teacher Assignment</h5>
-                    <button type="button" class="modal-close" data-modal-id="customAssignTeacherModal"
-                        aria-label="Close assign confirmation modal">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div style="text-align: center; font-size: 50px;">
-                        <i class="fa-solid fa-circle-plus" style="color: #28a745;"></i>
-                    </div>
-                    <p>Are you sure you want to assign the following subjects to the selected teachers?</p>
-                    <h6>Selected Teachers:</h6>
-                    <ul id="selectedTeachersList"
-                        style="list-style: none; padding: 0; max-height: 150px; overflow-y: auto;"></ul>
-                    <h6>Selected Subjects:</h6>
-                    <ul id="selectedTeacherSubjectsList"
-                        style="list-style: none; padding: 0; max-height: 150px; overflow-y: auto;"></ul>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="modal-close btn text-danger" data-modal-id="customAssignTeacherModal"
-                        style="padding: 8px 16px; cursor: pointer;" aria-label="Cancel assign subjects">Cancel</button>
-                    <button type="button" id="confirmAssignTeacherButton"
-                        style="padding: 8px 16px; border: none; border-radius: 4px; background: #28a745; color: white; cursor: pointer;"
-                        aria-label="Confirm assign subjects">Assign</button>
-                </div>
+    <!-- Custom Error Modal -->
+    <div class="custom-modal" id="customErrorModal">
+        <div class="modal-content">
+            <div class="modal-header error">
+                <h5 style="margin: 0;"><i class="fa-solid fa-circle-exclamation"></i> Error</h5>
+                <button type="button" class="modal-close" data-modal-id="customErrorModal"
+                    aria-label="Close error modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <strong>Warning!</strong>
+                <p id="errorMessage" style="color:#333 !important;"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="modal-close btn text-danger" data-modal-id="customErrorModal"
+                    style="padding: 8px 16px; cursor: pointer;" aria-label="Close error modal">Close</button>
             </div>
         </div>
     </div>
+
+    <!-- Custom Confirmation Modal for Students -->
+    <div class="custom-modal" id="customAssignStudentModal">
+        <div class="modal-content">
+            <div class="modal-header confirm">
+                <h5 style="margin: 0;">Confirm Student Assignment</h5>
+                <button type="button" class="modal-close" data-modal-id="customAssignStudentModal"
+                    aria-label="Close assign confirmation modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div style="text-align: center; font-size: 50px;">
+                    <i class="fa-solid fa-circle-plus" style="color: #28a745;"></i>
+                </div>
+                <p>Are you sure you want to assign the following subjects to the selected students?</p>
+                <h6>Selected Students:</h6>
+                <ul id="selectedStudentsList"
+                    style="list-style: none; padding: 0; max-height: 150px; overflow-y: auto;"></ul>
+                <h6>Selected Subjects:</h6>
+                <ul id="selectedSubjectsList"
+                    style="list-style: none; padding: 0; max-height: 150px; overflow-y: auto;"></ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="modal-close btn text-danger" data-modal-id="customAssignStudentModal"
+                    style="padding: 8px 16px; cursor: pointer;" aria-label="Cancel assign subjects">Cancel</button>
+                <button type="button" id="confirmAssignStudentButton"
+                    style="padding: 8px 16px; border: none; border-radius: 4px; background: #28a745; color: white; cursor: pointer;"
+                    aria-label="Confirm assign subjects">Assign</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Confirmation Modal for Teachers -->
+    <div class="custom-modal" id="customAssignTeacherModal">
+        <div class="modal-content">
+            <div class="modal-header confirm">
+                <h5 style="margin: 0;">Confirm Teacher Assignment</h5>
+                <button type="button" class="modal-close" data-modal-id="customAssignTeacherModal"
+                    aria-label="Close assign confirmation modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div style="text-align: center; font-size: 50px;">
+                    <i class="fa-solid fa-circle-plus" style="color: #28a745;"></i>
+                </div>
+                <p>Are you sure you want to assign the following subjects to the selected teachers?</p>
+                <h6>Selected Teachers:</h6>
+                <ul id="selectedTeachersList"
+                    style="list-style: none; padding: 0; max-height: 150px; overflow-y: auto;"></ul>
+                <h6>Selected Subjects:</h6>
+                <ul id="selectedTeacherSubjectsList"
+                    style="list-style: none; padding: 0; max-height: 150px; overflow-y: auto;"></ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="modal-close btn text-danger" data-modal-id="customAssignTeacherModal"
+                    style="padding: 8px 16px; cursor: pointer;" aria-label="Cancel assign subjects">Cancel</button>
+                <button type="button" id="confirmAssignTeacherButton"
+                    style="padding: 8px 16px; border: none; border-radius: 4px; background: #28a745; color: white; cursor: pointer;"
+                    aria-label="Confirm assign subjects">Assign</button>
+            </div>
+        </div>
+    </div>
+
 </div>
 @endsection
 

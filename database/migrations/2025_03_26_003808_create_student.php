@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('home_address');
             $table->string('zip_code');
             $table->string('contact_number');
-            $table->enum('status', ['ongoing', 'graduated', 'dropped']);
+            $table->enum('status', ['ongoing', 'graduated', 'dropped', 'pending'])->default('pending');
             $table->string('secondary_contact')->nullable();
             $table->string('email')->unique();
             $table->string('profile_picture')->nullable();

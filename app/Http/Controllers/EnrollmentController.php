@@ -15,7 +15,7 @@ class EnrollmentController extends Controller
             'subject-section',
             'section',
             'payment',
-            'class_schedule',
+            'schedule',
             'reports',
             'accounts',
             'enrollment_form',

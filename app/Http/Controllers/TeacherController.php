@@ -19,7 +19,23 @@ class TeacherController extends Controller
     {
         return redirect()->route('enrollment.show', 'teachers');
     }
+    public function updateStatus(Request $request)
+    {
+        $request->validate([
+            'teacher_id' => 'required|exists:teachers,id',
+            'status' => 'required|in:Active,On Leave,Inactive,Terminated',
+        ]);
 
+        try {
+            $teacher = Teacher::findOrFail($request->teacher_id);
+            $teacher->status = $request->status;
+            $teacher->save();
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
     // Store a new teacher
     public function store(Request $request)
     {
@@ -114,7 +130,8 @@ class TeacherController extends Controller
     // Edit teacher form
     public function edit(Request $request, $id, $formtype = 'view')
     {
-        $teacher = Teacher::findOrFail($id);
+
+        $teacher = Teacher::with(['track', 'strand', 'teacherSubject.subject'])->findOrFail($id);
         $activePage = 'teachers'; // Set the active page for this route
         if ($formtype === 'view') {
             return view('enrollment.teacheredit', compact('teacher', 'formtype', 'activePage'));

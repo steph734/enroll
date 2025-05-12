@@ -115,6 +115,23 @@ class StudentController extends Controller
 
         return redirect()->route('enrollment.show', 'students')->with('success', 'Student enrolled successfully!');
     }
+    public function updateStatus(Request $request)
+    {
+        $request->validate([
+            'student_id' => 'required|exists:students,id',
+            'status' => 'required|in:ongoing,graduated,dropped',
+        ]);
+
+        try {
+            $student = Student::findOrFail($request->student_id);
+            $student->status = $request->status;
+            $student->save();
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
 
     // Generate unique receipt number
     private function generateReceiptNumber()
