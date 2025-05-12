@@ -23,10 +23,10 @@ class StudentTableSeeder extends Seeder
         // Fetch existing Tracks, Strands, and Sections
         $tracks = Tracks::all();
         $strands = Strands::all();
-        $sections = Section::all();
+        // $sections = Section::all();
 
         // Check if Tracks, Strands, and Sections exist
-        if ($tracks->isEmpty() || $strands->isEmpty() || $sections->isEmpty()) {
+        if ($tracks->isEmpty() || $strands->isEmpty()) {
             throw new \Exception('Tracks, Strands, or Sections are missing in the database. Please ensure they are populated before running the seeder.');
         }
 
@@ -40,8 +40,8 @@ class StudentTableSeeder extends Seeder
             $strand = $availableStrands->isNotEmpty() ? $availableStrands->random() : $strands->random();
 
             // Select a random section that belongs to the chosen strand
-            $availableSections = $sections->where('strand_id', $strand->id);
-            $section = $availableSections->isNotEmpty() ? $availableSections->random() : $sections->random();
+            // $availableSections = $sections->where('strand_id', $strand->id);
+            // $section = $availableSections->isNotEmpty() ? $availableSections->random() : $sections->random();
 
             Student::create([
                 'profile_picture' => 'storage/profiles/sample_' . $faker->uuid . '.jpg',
@@ -70,7 +70,7 @@ class StudentTableSeeder extends Seeder
                 'transcript' => 'storage/transcripts/transcript_' . $faker->uuid . '.pdf',
                 'track_id' => $track->id,
                 'strand_id' => $strand->id,
-                'section_id' => $section->id,
+                // 'section_id' => $section->id,
                 'grade_level' => $faker->randomElement(['Grade 11', 'Grade 12']),
                 'class_schedule' => $faker->randomElement(['Morning', 'Afternoon', 'Evening']),
                 'additional_notes' => $faker->boolean(40) ? $faker->sentence : null,

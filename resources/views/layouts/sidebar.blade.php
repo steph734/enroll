@@ -14,7 +14,7 @@
             </a>
         </li>
         <li class="{{ in_array($activePage ?? 'dashboard', ['students', 'enrollment_form']) ? 'active' : '' }}">
-            <a href="{{ route('enrollment.show', 'students') }}">
+            <a href="{{ route('enrollment.show','students') }}">
                 <i class="fas fa-users"></i>
                 <span>Students</span>
             </a>

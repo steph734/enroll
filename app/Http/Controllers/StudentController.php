@@ -20,14 +20,17 @@ class StudentController extends Controller
     // Display the students list
     public function index()
     {
-        return redirect()->route('enrollment.show', 'students');
+        // Fetch students ordered by created_at in descending order
+        $students = Student::orderBy('created_at', 'desc')->get();
+        $activePage = 'students';
+        // Pass students to the view
+        return view('enrollment.students', compact('students', 'activePage'));
     }
-
     // Store a new student
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'profile_picture' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'profile_picture' => 'nullable|image|max:2048',
             'first_name' => 'required|string|max:255',
             'middle_name' => 'nullable|string|max:255',
             'last_name' => 'required|string|max:255',
@@ -36,36 +39,37 @@ class StudentController extends Controller
             'age' => 'required|integer|min:1',
             'nationality' => 'required|string|max:255',
             'home_address' => 'required|string|max:255',
-            'zip_code' => 'required|string|max:10',
+            'zip_code' => 'required|string|max:20',
             'contact_number' => 'required|string|max:20',
             'secondary_contact' => 'nullable|string|max:20',
-            'email' => 'required|email|max:255',
+            'email' => 'required|email|max:255|unique:students,email', // Add unique rule
             'guardian_first_name' => 'required|string|max:255',
             'guardian_middle_name' => 'nullable|string|max:255',
             'guardian_last_name' => 'required|string|max:255',
-            'relationship' => 'required|string|in:Mother,Father,Guardian,Other',
+            'relationship' => 'required|in:Mother,Father,Guardian,Other',
             'guardian_contact' => 'required|string|max:20',
             'guardian_email' => 'nullable|email|max:255',
             'previous_school' => 'required|string|max:255',
-            'grade_completed' => 'required|string|in:Grade 1,Grade 2,Grade 3,Grade 4,Grade 5,Grade 6,Grade 7,Grade 8,Grade 9,Grade 10',
-            'school_year_completed' => 'required|string|regex:/^\d{4}-\d{4}$/',
+            'grade_completed' => 'required|in:Grade 1,Grade 2,Grade 3,Grade 4,Grade 5,Grade 6,Grade 7,Grade 8,Grade 9,Grade 10',
+            'school_year_completed' => 'required|string|max:20',
             'gpa' => 'nullable|string|max:10',
             'transcript' => 'required|file|mimes:pdf,doc,docx|max:2048',
             'track_id' => 'required|exists:tracks,id',
             'strand_id' => 'required|exists:strands,id',
-            'grade_level' => 'required|string|in:Grade 11,Grade 12',
-            'class_schedule' => 'required|string|in:Morning,Afternoon,Evening',
+            'grade_level' => 'required|in:Grade 11,Grade 12',
+            'class_schedule' => 'required|in:Morning,Afternoon,Evening',
             'additional_notes' => 'nullable|string',
             'medical_info' => 'nullable|string',
             'special_accommodations' => 'nullable|string',
-            'studentid' => 'required|numeric|digits:6|unique:students,studentid',
             'payment_date' => 'required|date',
             'downpayment' => 'required|numeric|min:0',
-            'payment_method' => 'required|string|in:Cash,Credit Card,Bank Transfer,Online Payment',
+            'payment_method' => 'required|in:Cash,Credit Card,Bank Transfer,Online Payment',
             'balance' => 'required|numeric|min:0',
-            'receiptnumber' => 'required|string|size:6|unique:students,receiptnumber',
+            'receiptnumber' => 'required|string|max:20',
+            'studentid' => 'required|string|max:20|unique:students,studentid',
         ]);
 
+        // Handle file uploads
         $profilePicturePath = $request->file('profile_picture')
             ? $request->file('profile_picture')->store('profile_pictures', 'public')
             : null;
@@ -73,6 +77,7 @@ class StudentController extends Controller
             ? $request->file('transcript')->store('transcripts', 'public')
             : null;
 
+        // Create the student record
         Student::create([
             'profile_picture' => $profilePicturePath,
             'first_name' => $request->first_name,
@@ -105,16 +110,18 @@ class StudentController extends Controller
             'additional_notes' => $request->additional_notes,
             'medical_info' => $request->medical_info,
             'special_accommodations' => $request->special_accommodations,
-            'studentid' => $request->studentid,
             'payment_date' => $request->payment_date,
             'downpayment' => $request->downpayment,
             'payment_method' => $request->payment_method,
             'balance' => $request->balance,
             'receiptnumber' => $request->receiptnumber,
+            'studentid' => $request->studentid,
+            // section_id is nullable, so it’s not included
         ]);
 
-        return redirect()->route('enrollment.show', 'students')->with('success', 'Student enrolled successfully!');
+        return redirect()->route('enrollment.show', 'students')->with('success', 'Student enrolled successfully.');
     }
+
     public function updateStatus(Request $request)
     {
         $request->validate([

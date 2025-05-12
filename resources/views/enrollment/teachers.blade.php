@@ -11,6 +11,23 @@
     <div class="container">
         <h2>List of Teachers</h2>
         <p style="font-size: 18px; color:#555 !important;">For 1st Semester, Class of 2024-2025</p>
+        @if ($errors->any())
+        <div class="alert alert-danger p-1 mb-3">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <strong>Whoops!</strong> There were some problems with your input.
+            <ul>
+                @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
+
+        @if (session('success'))
+        <div class="alert alert-success p-1 mb-3">
+            <strong><i class="fa-solid fa-circle-check"></i> Success!</strong> {{ session('success') }}
+        </div>
+        @endif
         <div class="row mb-3">
             <div class="p-3 card card-header-teacher">
                 <div class="card-body">

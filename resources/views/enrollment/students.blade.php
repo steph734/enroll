@@ -11,6 +11,23 @@
     <div class="container">
         <h2>List of Students</h2>
         <p style="font-size: 18px; color:#555 !important;">For 1st Semester, Class of 2024-2025</p>
+        @if ($errors->any())
+        <div class="alert alert-danger p-1 mb-3">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <strong>Whoops!</strong> There were some problems with your input.
+            <ul>
+                @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
+
+        @if (session('success'))
+        <div class="alert alert-success p-1 mb-3">
+            <strong><i class="fa-solid fa-circle-check"></i> Success!</strong> {{ session('success') }}
+        </div>
+        @endif
         <div class="mb-3 row">
             <div class="p-3 card card-header-student sticky-card">
                 <div class="card-body">
@@ -92,7 +109,7 @@
                                 </tr>
                             </thead>
                             <tbody id="studentsTable">
-                                @forelse(\App\Models\Student::all() as $student)
+                                @forelse(App\Models\Student::orderBy('created_at', 'desc')->get() as $student)
                                 <tr class="student-row" data-track="{{ $student->track->track_name }}"
                                     data-grade-level="{{ $student->grade_level }}" data-status="{{ $student->status }}"
                                     data-strand="{{ $student->strand->strand_name }}">

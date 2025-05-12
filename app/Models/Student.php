@@ -46,7 +46,7 @@ class Student extends Model
         'payment_method',
         'balance',
         'receiptnumber',
-        'section_id', // Add this
+        // 'section_id',
     ];
 
     // Relationships remain the same
