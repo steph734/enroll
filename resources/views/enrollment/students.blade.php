@@ -8,10 +8,13 @@
 
 @section('content')
 <div class="students-content">
-    <div class="mb-3 row">
-        <div class="row row-header-student">
-            <h2>List of Students</h2>
-            <p style="font-size: 18px; color:#555 !important;">For 1st Semester, Class of 2024-2025</p>
+
+    <div class="container">
+
+        <h2>List of Students</h2>
+        <p style="font-size: 18px; color:#555 !important;">For 1st Semester, Class of 2024-2025</p>
+        <div class="mb-3 row">
+
             <div class="p-3 card card-header-student sticky-card">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
@@ -39,104 +42,113 @@
                         </div>
 
                         <div class="gap-2 dropdowns d-flex">
-                            <select class="form-select filter-select" id="gradeLevelFilter" style="width: 150px;">
+                            <select class="form-select filter-select form-select-sm " id="gradeLevelFilter"
+                                style="width: 150px;">
                                 <option value="">All Grade Levels</option>
                                 <option value="Grade 11">Grade 11</option>
                                 <option value="Grade 12">Grade 12</option>
                             </select>
-                            <select class="form-select filter-select" id="statusFilter" style="width: 150px;">
+                            <select class="form-select filter-select form-select-sm" id="statusFilter"
+                                style="width: 150px;">
                                 <option value="">All Statuses</option>
                                 <option value="ongoing">Ongoing</option>
                                 <option value="graduated">Graduated</option>
                                 <option value="dropped">Dropped</option>
                             </select>
-                            <select class="form-select filter-select" id="strandFilter" style="width: 150px;">
+                            <select class="form-select filter-select form-select-sm" id="strandFilter"
+                                style="width: 150px;">
                                 <option value="">All Strands</option>
                                 @foreach(\App\Models\Strands::all() as $strand)
                                 <option value="{{ $strand->strand_name }}">{{ $strand->strand_name }}</option>
                                 @endforeach
                             </select>
-                            <button class="btn btn-outline-dark btn-sm p-1" id="clearFilters"><i
-                                    class="fa-solid fa-eraser"></i> Clear
-                                Filters</button>
+                            <a href="">
+                                <button class="btn btn-outline-dark btn-sm" id="clearFilters"><i
+                                        class="fa-solid fa-eraser"></i> Clear
+                                    Filters</button>
+                            </a>
+                            <a href="{{ route('enrollment.show', 'enrollment_form') }}">
+                                <button class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> Add
+                                    Student</button>
+                            </a>
                         </div>
 
-                        <a href="{{ route('enrollment.show', 'enrollment_form') }}">
-                            <button class="btn btn-primary add-student"><i class="fa-solid fa-plus"></i> Add
-                                Student</button>
-                        </a>
+
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div class="mb-3 row">
-        <div class="p-3 card card-table">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover table-striped" style="cursor: pointer;">
-                        <thead>
-                            <tr>
-                                <th scope="col" class="p-1 text-center align-middle">ID</th>
-                                <th scope="col" class="p-1 text-center align-middle">First Name</th>
-                                <th scope="col" class="p-1 text-center align-middle">Last Name</th>
-                                <th scope="col" class="p-1 text-center align-middle">Email</th>
-                                <th scope="col" class="p-1 text-center align-middle">Age</th>
-                                <th scope="col" class="p-1 text-center align-middle">Track</th>
-                                <th scope="col" class="p-1 text-center align-middle">Strand</th>
-                                <th scope="col" class="p-1 text-center align-middle">Grade Level</th>
-                                <th scope="col" class="p-1 text-center align-middle">Status</th>
-                                <th scope="col" class="p-1 text-center align-middle">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="studentsTable">
-                            @forelse(\App\Models\Student::all() as $student)
-                            <tr class="student-row" data-track="{{ $student->track->track_name }}"
-                                data-grade-level="{{ $student->grade_level }}" data-status="{{ $student->status }}"
-                                data-strand="{{ $student->strand->strand_name }}">
-                                <td class="text-center">{{ $student->studentid }}</td>
-                                <td class="text-center">{{ $student->first_name }}</td>
-                                <td class="text-center">{{ $student->last_name }}</td>
-                                <td class="text-center">{{ $student->email }}</td>
-                                <td class="text-center">{{ $student->age }}</td>
-                                <td class="text-center">{{ $student->track->track_name }}</td>
-                                <td class="text-center">{{ $student->strand->strand_name }}</td>
-                                <td class="text-center">{{ $student->grade_level }}</td>
-                                <td class="text-center">
-                                    <form action="{{ route('student.update', $student->id) }}" method="POST">
-                                        @csrf
-                                        @method('PUT')
-                                        <select name="status" class="status-dropdown d-flex"
-                                            onchange="this.form.submit()">
-                                            <option value="ongoing"
-                                                {{ $student->status == 'ongoing' ? 'selected' : '' }}>Ongoing</option>
-                                            <option value="graduated"
-                                                {{ $student->status == 'graduated' ? 'selected' : '' }}>Graduated
-                                            </option>
-                                            <option value="dropped"
-                                                {{ $student->status == 'dropped' ? 'selected' : '' }}>Dropped</option>
-                                        </select>
-                                    </form>
-                                </td>
-                                <td class="text-center">
-                                    <div class="gap-2 d-flex justify-content-center">
-                                        <a
-                                            href="{{ route('student.edit', ['id' => $student->id, 'formtype' => 'view']) }}">
-                                            <button class="btn" title="View">
-                                                <i class="fa-solid fa-eye" style="color:#305cde;"></i>
-                                            </button>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="10" class="p-3 text-center">No students found.</td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+        </div>
+
+        <div class="mb-3 row">
+            <div class="p-3 card card-table">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped" style="cursor: pointer;">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="p-1 text-center align-middle">ID</th>
+                                    <th scope="col" class="p-1 text-center align-middle">First Name</th>
+                                    <th scope="col" class="p-1 text-center align-middle">Last Name</th>
+                                    <th scope="col" class="p-1 text-center align-middle">Email</th>
+                                    <th scope="col" class="p-1 text-center align-middle">Age</th>
+                                    <th scope="col" class="p-1 text-center align-middle">Track</th>
+                                    <th scope="col" class="p-1 text-center align-middle">Strand</th>
+                                    <th scope="col" class="p-1 text-center align-middle">Grade Level</th>
+                                    <th scope="col" class="p-1 text-center align-middle">Status</th>
+                                    <th scope="col" class="p-1 text-center align-middle">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentsTable">
+                                @forelse(\App\Models\Student::all() as $student)
+                                <tr class="student-row" data-track="{{ $student->track->track_name }}"
+                                    data-grade-level="{{ $student->grade_level }}" data-status="{{ $student->status }}"
+                                    data-strand="{{ $student->strand->strand_name }}">
+                                    <td class="text-center">{{ $student->studentid }}</td>
+                                    <td class="text-center">{{ $student->first_name }}</td>
+                                    <td class="text-center">{{ $student->last_name }}</td>
+                                    <td class="text-center">{{ $student->email }}</td>
+                                    <td class="text-center">{{ $student->age }}</td>
+                                    <td class="text-center">{{ $student->track->track_name }}</td>
+                                    <td class="text-center">{{ $student->strand->strand_name }}</td>
+                                    <td class="text-center">{{ $student->grade_level }}</td>
+                                    <td class="text-center">
+                                        <form action="{{ route('student.update', $student->id) }}" method="POST">
+                                            @csrf
+                                            @method('PUT')
+                                            <select name="status" class=" form-select form-select-sm d-flex"
+                                                onchange="this.form.submit()" style="width: auto;">
+                                                <option value="ongoing"
+                                                    {{ $student->status == 'ongoing' ? 'selected' : '' }}>Ongoing
+                                                </option>
+                                                <option value="graduated"
+                                                    {{ $student->status == 'graduated' ? 'selected' : '' }}>Graduated
+                                                </option>
+                                                <option value="dropped"
+                                                    {{ $student->status == 'dropped' ? 'selected' : '' }}>Dropped
+                                                </option>
+                                            </select>
+                                        </form>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="gap-2 d-flex justify-content-center">
+                                            <a
+                                                href="{{ route('student.edit', ['id' => $student->id, 'formtype' => 'view']) }}">
+                                                <button class="btn" title="View">
+                                                    <i class="fa-solid fa-eye" style="color:#305cde;"></i>
+                                                </button>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="10" class="p-3 text-center">No students found.</td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

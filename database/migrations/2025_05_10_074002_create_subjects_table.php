@@ -13,11 +13,14 @@ return new class extends Migration
     {
         Schema::create('subjects', function (Blueprint $table) {
             $table->id();
+            $table->string('subject_code')->unique();
             $table->foreignId('strand_id')->constrained('strands')->onDelete('cascade');
-            $table->foreignId('section_id')->constrained('sections')->onDelete('cascade');
             $table->foreignId('track_id')->constrained('tracks')->onDelete('cascade');
             $table->string('subject_name')->unique();
             $table->string('description')->nullable();
+            $table->string('grade_level');
+            $table->string('semester');
+            $table->string('term');
             $table->timestamps();
         });
     }

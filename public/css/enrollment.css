@@ -1,40 +1,40 @@
 .section-title {
-  background-color: #305cde;
-  color: white;
-  padding: 5px 10px;
-  margin-bottom: 0;
-  width: 300px;
-  text-align: center;
-  border-radius: 10px 10px 0 0;
+    background-color: #305cde;
+    color: white;
+    padding: 5px 10px;
+    margin-bottom: 0;
+    width: 300px;
+    text-align: center;
+    border-radius: 10px 10px 0 0;
 }
 
 .form-section {
-  /* border: 1px solid #305cde; */
-  /* border-radius: 5px; */
+    /* border: 1px solid #305cde; */
+    /* border-radius: 5px; */
 }
 
-.card{
-  border-radius: 0 15px 15px 15px;
-  transition: transform 0.2s ease;
+.card {
+    border-radius: 0 15px 15px 15px;
+    transition: transform 0.2s ease;
 }
 
-.card:hover{
-  transform: translateY(-2px);
+.card:hover {
+    transform: translateY(-2px);
 }
 
 .profile-pic {
-  width: 150px;
-  height: 150px;
-  background-color: #ddd;
-  border-radius: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 10px;
+    width: 150px;
+    height: 150px;
+    background-color: #ddd;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
 }
 
 /* Buttons */
-.btn {
+/* .btn {
   padding: 10px 20px;
   font-size: 1rem;
   border-radius: 5px;
@@ -62,4 +62,4 @@
 .btn-primary:hover {
   background-color: #254ab5;
   transform: scale(1.05);
-}
+} */

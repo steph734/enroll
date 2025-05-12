@@ -19,14 +19,16 @@ class SectionLine extends Model
     {
         return $this->belongsTo(Section::class, 'section_id');
     }
-
-    public function subject()
+    public function student()
     {
-        return $this->belongsTo(Subject::class, 'subject_id');
+        return $this->belongsTo(Student::class, 'student_id');
     }
-
-    public function teacher()
+    public function track()
     {
-        return $this->belongsTo(User::class, 'teacher_id');
+        return $this->belongsTo(Tracks::class, 'track_id');
+    }
+    public function strand()
+    {
+        return $this->belongsTo(Strands::class, 'strand_id');
     }
 }

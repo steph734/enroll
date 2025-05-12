@@ -11,7 +11,7 @@ class StudentSubject extends Model
     protected $fillable = [
         'student_id',
         'subject_id',
-        'grade_level',
+        'grade',
         'school_year',
         'status',
     ];
@@ -23,6 +23,6 @@ class StudentSubject extends Model
 
     public function subject()
     {
-        return $this->belongsTo(Subject::class, 'subject_id');
+        return $this->belongsTo(Subject::class, 'subject_id', 'id');
     }
 }

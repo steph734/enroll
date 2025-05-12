@@ -54,4 +54,14 @@ class Teacher extends Model
     {
         return $this->hasMany(Student::class, 'student_id');
     }
+    public function subjects()
+    {
+        return $this->belongsToMany(Subject::class, 'teacher_subject', 'teacher_id', 'subject_id')
+            ->withPivot('school_year', 'status');
+    }
+
+    public function teacherSubject()
+    {
+        return $this->hasMany(TeacherSubject::class, 'teacher_id');
+    }
 }

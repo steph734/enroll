@@ -41,6 +41,7 @@ return new class extends Migration
             $table->string('transcript');
             $table->foreignId('track_id')->constrained('tracks')->onDelete('cascade');
             $table->foreignId('strand_id')->constrained('strands')->onDelete('cascade');
+            $table->foreignId('section_id')->constrained('sections')->onDelete('cascade');
             $table->string('grade_level');
             $table->string('class_schedule');
             $table->text('additional_notes')->nullable();

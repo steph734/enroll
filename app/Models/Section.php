@@ -13,9 +13,12 @@ class Section extends Model
         'description',
         'track_id',
         'strand_id',
-        'grade_level',
         'school_year',
+        'GradeLevel',
         'status',
+        'adviser',
+        'room',
+        'capacity',
     ];
 
     public function track()
@@ -31,5 +34,17 @@ class Section extends Model
     public function students()
     {
         return $this->hasMany(Student::class, 'section_id');
+    }
+    public function teachers()
+    {
+        return $this->belongsTo(Teacher::class, 'section_id');
+    }
+    public function advisers()
+    {
+        return $this->belongsTo(Teacher::class, 'adviser');
+    }
+    public function sectionLines()
+    {
+        return $this->hasMany(SectionLine::class, 'section_id');
     }
 }

@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Student;
 use App\Models\Tracks;
 use App\Models\Strands;
+use App\Models\Section;
 use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
 
@@ -19,23 +20,28 @@ class StudentTableSeeder extends Seeder
     {
         $faker = Faker::create();
 
-        // Fetch existing Tracks and Strands
+        // Fetch existing Tracks, Strands, and Sections
         $tracks = Tracks::all();
         $strands = Strands::all();
+        $sections = Section::all();
 
-        // Check if Tracks and Strands exist
-        if ($tracks->isEmpty() || $strands->isEmpty()) {
-            throw new \Exception('Tracks or Strands are missing in the database. Please ensure they are populated before running the seeder.');
+        // Check if Tracks, Strands, and Sections exist
+        if ($tracks->isEmpty() || $strands->isEmpty() || $sections->isEmpty()) {
+            throw new \Exception('Tracks, Strands, or Sections are missing in the database. Please ensure they are populated before running the seeder.');
         }
 
         // Generate 50 student records
-        for ($i = 0; $i < 50; $i++) {
+        for ($i = 0; $i < 200; $i++) {
             // Select a random track
             $track = $tracks->random();
 
             // Select a random strand that belongs to the chosen track
             $availableStrands = $strands->where('track_id', $track->id);
             $strand = $availableStrands->isNotEmpty() ? $availableStrands->random() : $strands->random();
+
+            // Select a random section that belongs to the chosen strand
+            $availableSections = $sections->where('strand_id', $strand->id);
+            $section = $availableSections->isNotEmpty() ? $availableSections->random() : $sections->random();
 
             Student::create([
                 'profile_picture' => 'storage/profiles/sample_' . $faker->uuid . '.jpg',
@@ -64,6 +70,7 @@ class StudentTableSeeder extends Seeder
                 'transcript' => 'storage/transcripts/transcript_' . $faker->uuid . '.pdf',
                 'track_id' => $track->id,
                 'strand_id' => $strand->id,
+                'section_id' => $section->id,
                 'grade_level' => $faker->randomElement(['Grade 11', 'Grade 12']),
                 'class_schedule' => $faker->randomElement(['Morning', 'Afternoon', 'Evening']),
                 'additional_notes' => $faker->boolean(40) ? $faker->sentence : null,

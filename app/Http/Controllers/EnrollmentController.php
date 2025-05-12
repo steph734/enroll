@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 
 class EnrollmentController extends Controller
 {
-
     public function show($page)
     {
         $allowedPages = [
@@ -14,7 +13,7 @@ class EnrollmentController extends Controller
             'students',
             'teachers',
             'subject-section',
-            'sections',
+            'section',
             'payment',
             'class_schedule',
             'reports',
@@ -31,7 +30,9 @@ class EnrollmentController extends Controller
             abort(404, 'Page not found');
         }
 
-        // Use dot notation for views in subdirectories
-        return view("enrollment.{$page}", compact('page'));
+        // Pass the current page as activePage to the view
+        $activePage = $page;
+
+        return view("enrollment.{$page}", compact('page', 'activePage'));
     }
 }

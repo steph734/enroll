@@ -17,7 +17,12 @@ return new class extends Migration
             $table->foreignId('strand_id')->constrained('strands')->onDelete('cascade');
             $table->string('section_name')->unique();
             $table->string('description')->nullable();
-            $table->integer('capacity')->default(0); // Maximum number of students allowed in the section
+            $table->string('school_year')->nullable();
+            $table->string('GradeLevel')->nullable(); // e.g., Grade 11, Grade 12
+            $table->string('status')->default('active'); // active, inactive
+            $table->string('adviser')->nullable(); // Name of the class adviser
+            $table->string('room')->nullable(); // Room number or name
+            $table->integer('capacity')->default(50); // Maximum number of students allowed in the section
             $table->timestamps();
         });
     }

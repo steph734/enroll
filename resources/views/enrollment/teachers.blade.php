@@ -8,10 +8,11 @@
 
 @section('content')
 <div class="teachers-content">
-    <div class="mb-3 row">
-        <div class="row">
-            <h2>List of Teachers</h2>
-            <p style="font-size: 18px; color:#555 !important;">For 1st Semester, Class of 2024-2025</p>
+    <div class="container">
+        <h2>List of Teachers</h2>
+        <p style="font-size: 18px; color:#555 !important;">For 1st Semester, Class of 2024-2025</p>
+        <div class="row mb-3">
+
             <div class="p-3 card card-header-teacher">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
@@ -32,7 +33,7 @@
                     <!-- Filters Section -->
                     <div class="mt-3 filters d-flex justify-content-between align-items-center">
                         <div class="gap-3 tabs d-flex">
-                            <button class="tab active" data-filter="all">ALL Teachers</button>
+                            <button class="tab active" data-filter="all">All Teachers</button>
                             <button class="tab" data-filter="Academic">Academic Track</button>
                             <button class="tab" data-filter="TVL">TVL</button>
                             <button class="tab" data-filter="Sports">Sports</button>
@@ -52,79 +53,83 @@
                                 <option value="Part-time">Part-Time</option>
                                 <option value="Contractual">Contractual</option>
                             </select>
-                            <button class="btn btn-outline-dark btn-sm p-1" id="clearFilters">
-                                <i class="fa-solid fa-eraser"></i> Clear Filters
-                            </button>
+                            <a href="">
+                                <button class="btn btn-outline-dark btn-sm p-1" id="clearFilters">
+                                    <i class="fa-solid fa-eraser"></i> Clear Filters
+                                </button>
+                            </a>
+
+                            <a href="{{ route('enrollment.show', 'teacher_form') }}">
+                                <button class="p-1 btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i>
+                                    Add Teacher</button>
+                            </a>
                         </div>
 
-                        <a href="{{ route('enrollment.show', 'teacher_form') }}">
-                            <button class="p-1 btn btn-primary add-teacher rounded-5"><i class="fa-solid fa-plus"></i>
-                                Add Teacher</button>
-                        </a>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    @if (session()->has('success'))
-    <div class="alert alert-success p-5" role="alert">
-        {{ session('success') }}
-    </div>
-    @endif
-    <div class="mb-3 row">
-        <div class="p-3 card card-table">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover table-striped" style="cursor: pointer;">
-                        <thead>
-                            <tr>
-                                <th scope="col" class="align-middle">ID</th>
-                                <th scope="col" class="align-middle">Firstname</th>
-                                <th scope="col" class="align-middle">Lastname</th>
-                                <th scope="col" class="align-middle">Email</th>
-                                <th scope="col" class="align-middle">Age</th>
-                                <th scope="col" class="align-middle">Specialization</th>
-                                <th scope="col" class="align-middle">Employment Status</th>
-                                <th scope="col" class="align-middle">Status</th>
-                                <th scope="col" class="align-middle">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="teachersTable">
-                            @forelse(\App\Models\Teacher::all() as $teacher)
-                            <tr class="teacher-row" data-specialization="{{ $teacher->specialization }}"
-                                data-employment-status="{{ $teacher->employment_status }}">
-                                <td>{{ $teacher->id }}</td>
-                                <td>{{ $teacher->first_name }}</td>
-                                <td>{{ $teacher->last_name }}</td>
-                                <td>{{ $teacher->email }}</td>
-                                <td>{{ $teacher->age }}</td>
-                                <td>{{ $teacher->specialization }}</td>
-                                <td>{{ $teacher->employment_status }}</td>
-                                <td>
-                                    <select name="status" class="status-dropdown">
-                                        <option value="ongoing">Ongoing</option>
-                                        <option value="graduated">Graduated</option>
-                                        <option value="dropped">Dropped</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <div class="gap-2 d-flex justify-content-center">
-                                        <a
-                                            href="{{ route('teachers.edit', ['id' => $teacher->id, 'formtype' => 'view']) }}">
-                                            <button class="btn" title="View">
-                                                <i class="fa-solid fa-eye" style="color:#305cde;"></i>
-                                            </button>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="9" class="text-center">No teachers found.</td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+
+        @if (session()->has('success'))
+        <div class="alert alert-success p-5" role="alert">
+            {{ session('success') }}
+        </div>
+        @endif
+        <div class="mb-3 row">
+            <div class="p-3 card card-table">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped" style="cursor: pointer;">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="align-middle">ID</th>
+                                    <th scope="col" class="align-middle">Firstname</th>
+                                    <th scope="col" class="align-middle">Lastname</th>
+                                    <th scope="col" class="align-middle">Email</th>
+                                    <th scope="col" class="align-middle">Age</th>
+                                    <th scope="col" class="align-middle">Specialization</th>
+                                    <th scope="col" class="align-middle">Employment Status</th>
+                                    <th scope="col" class="align-middle">Status</th>
+                                    <th scope="col" class="align-middle">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="teachersTable">
+                                @forelse(\App\Models\Teacher::all() as $teacher)
+                                <tr class="teacher-row" data-specialization="{{ $teacher->specialization }}"
+                                    data-employment-status="{{ $teacher->employment_status }}">
+                                    <td>{{ $teacher->id }}</td>
+                                    <td>{{ $teacher->first_name }}</td>
+                                    <td>{{ $teacher->last_name }}</td>
+                                    <td>{{ $teacher->email }}</td>
+                                    <td>{{ $teacher->age }}</td>
+                                    <td>{{ $teacher->specialization }}</td>
+                                    <td>{{ $teacher->employment_status }}</td>
+                                    <td>
+                                        <select name="status" class="form-select form-select-sm">
+                                            <option value="ongoing">Ongoing</option>
+                                            <option value="graduated">Graduated</option>
+                                            <option value="dropped">Dropped</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <div class="gap-2 d-flex justify-content-center">
+                                            <a
+                                                href="{{ route('teachers.edit', ['id' => $teacher->id, 'formtype' => 'view']) }}">
+                                                <button class="btn" title="View">
+                                                    <i class="fa-solid fa-eye" style="color:#305cde;"></i>
+                                                </button>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="9" class="text-center">No teachers found.</td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

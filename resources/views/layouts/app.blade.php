@@ -12,11 +12,13 @@
     @vite(['resources/css/app.css'])
     <link rel="stylesheet" href="{{ asset('css/layout.css') }}">
     <link rel="stylesheet" href="{{ asset('statics/css/bootstrap.min.css') }}">
+
     @yield('styles')
+    <script src="{{ asset('statics/js/bootstrap.bundle.min.js') }}"></script>
     <style>
-        body {
-            background: whitesmoke;
-        }
+    body {
+        background: whitesmoke;
+    }
     </style>
 </head>
 
@@ -61,9 +63,7 @@
         @yield('content')
     </main>
 
-
     @vite(['resources/js/app.js'])
-    <script src="{{ asset('statics/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('js/app.js') }}"></script>
     @yield('scripts')
 </body>

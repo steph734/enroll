@@ -1,6 +1,7 @@
-.students-content {
-    margin: 10px !important;
-}
+/* .students-content {
+    margin: 0px !important;
+    padding: 0px !important;
+} */
 .card-table {
     min-height: 100vh !important;
     /* border: 1px solid var(--line-clr) !important; */
@@ -70,6 +71,7 @@ tr {
 /* Style for the filters container */
 .filters {
     margin-top: 20px !important;
+    margin-bottom: 0px !important;
 }
 
 /* Style for the tabs */
@@ -104,29 +106,10 @@ tr {
 }
 
 .form-select {
-    padding: 8px;
     font-size: 14px;
     border: 1px solid #ccc;
     border-radius: 5px;
     background-color: #f2f5ff !important;
-}
-
-/* Style for the Add Student button */
-.add-student {
-    padding: 8px 16px;
-    font-size: 14px;
-    border-radius: 20px;
-    width: 150px;
-    height: 30px;
-    background-color: #305cde;
-    border: none;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.add-student:hover {
-    background-color: #0056b3;
-    box-shadow: 0 1px 2px #111111;
-    transform: translateY(-2px);
 }
 
 /* Adjust the search bar to match the image */
@@ -151,7 +134,6 @@ tr {
     color: #666;
 }
 .status-dropdown {
-    padding: 8px;
     border-radius: 6px;
     border: 1px solid #ced4da;
     background-color: #fff;
@@ -159,7 +141,7 @@ tr {
     font-family: Arial, sans-serif;
     cursor: pointer;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    width: 80px;
+    width: auto;
 }
 
 .status-dropdown:hover {

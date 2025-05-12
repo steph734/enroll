@@ -115,11 +115,11 @@ class TeacherController extends Controller
     public function edit(Request $request, $id, $formtype = 'view')
     {
         $teacher = Teacher::findOrFail($id);
-
+        $activePage = 'teachers'; // Set the active page for this route
         if ($formtype === 'view') {
-            return view('enrollment.teacheredit', compact('teacher', 'formtype'));
+            return view('enrollment.teacheredit', compact('teacher', 'formtype', 'activePage'));
         } elseif ($formtype === 'teacheredit') {
-            return view('enrollment.teacheredit', compact('teacher', 'formtype'));
+            return view('enrollment.teacheredit', compact('teacher', 'formtype', 'activePage'));
         }
 
         return redirect()->route('teachers.index')->with('error', 'Invalid form type.');

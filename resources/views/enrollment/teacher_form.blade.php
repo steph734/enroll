@@ -12,7 +12,7 @@
         @csrf
         <!-- Personal Information -->
         <h5 class="section-title">Personal Information</h5>
-        <div class="mb-3 shadow card form-section">
+        <div class="mb-3 shadow-sm  card form-section">
             <div class="m-3 row">
                 <div class="p-1 text-center col-md-3">
                     <div class="mb-3 profile-pic">
@@ -129,7 +129,7 @@
 
         <!-- Educational Background -->
         <h5 class="section-title">Educational Background</h5>
-        <div class="mb-3 shadow card form-section">
+        <div class="mb-3 shadow-sm  card form-section">
             <div class="m-3 row">
                 <div class="p-1 mb-3 col-md-3">
                     <label for="degree" class="form-label">Highest Degree</label>
@@ -168,7 +168,7 @@
 
         <!-- Teaching Credentials -->
         <h5 class="section-title">Teaching Credentials</h5>
-        <div class="mb-3 shadow card form-section">
+        <div class="mb-3 shadow-sm  card form-section">
             <div class="m-3 row">
                 <div class="p-1 mb-3 col-md-4">
                     <label for="prc_license" class="form-label">PRC License Number</label>
@@ -226,7 +226,7 @@
 
         <!-- Employment Details -->
         <h5 class="section-title">Employment Details</h5>
-        <div class="mb-3 shadow card form-section">
+        <div class="mb-3 shadow-sm  card form-section">
             <div class="m-3 row">
                 <div class="p-1 mb-3 col-md-4">
                     <label for="previous_school" class="form-label">Previous School (Optional)</label>
@@ -297,7 +297,7 @@
 
         <!-- Additional Information -->
         <h5 class="section-title">Additional Information</h5>
-        <div class="mb-3 shadow card form-section">
+        <div class="mb-3 shadow-sm  card form-section">
             <div class="p-3 row">
                 <div class="p-1 mb-3 col-md-4">
                     <label for="certifications" class="form-label">Certifications/Trainings</label>
@@ -346,7 +346,7 @@
 
         <!-- Administrative Use -->
         <h5 class="section-title">Administrative Use</h5>
-        <div class="mb-3 shadow card form-section">
+        <div class="mb-3 shadow-sm card form-section">
             <div class="m-3 row">
                 <div class="p-1 mb-3 col-md-6">
                     <label for="date_hired" class="form-label">Date Hired</label>
@@ -369,8 +369,9 @@
         <!-- Submit Button -->
         <div class="p-3 card">
             <div class="gap-3 d-flex justify-content-center">
-                <button type="submit" class="btn btn-outline-primary btn-lg w-25">Register Teacher</button>
-                <button type="button" class="btn btn-primary btn-lg w-25">Cancel</button>
+                <button type="submit" class="btn btn-primary btn-sm">Register Teacher</button>
+                <a href="{{ route('teachers.index') }}"><button type="button"
+                        class="btn btn-outline-primary btn-sm">Cancel</button></a>
             </div>
         </div>
     </form>

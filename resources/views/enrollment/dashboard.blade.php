@@ -15,36 +15,36 @@
         </span></p>
 
     <hr>
-    <div class="row mb-2 justify-content-center">
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card stat-card">
-                    <div class="card-body text-center">
-                        <i class="fas fa-users stat-icon"></i>
-                        <h3>1,432</h3>
-                        <p>Total Students</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card stat-card">
-                    <div class="card-body text-center">
-                        <i class="fas fa-file-alt stat-icon"></i>
-                        <h3>2,000</h3>
-                        <p>Total Applications</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card stat-card">
-                    <div class="card-body text-center">
-                        <i class="fas fa-check-circle stat-icon"></i>
-                        <h3>1,821</h3>
-                        <p>Submitted Applications</p>
-                    </div>
+    <div class="row mt-3 mb-2">
+        <div class="col-md-4">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-users stat-icon"></i>
+                    <h3>1,432</h3>
+                    <p>Total Students</p>
                 </div>
             </div>
         </div>
+        <div class="col-md-4">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-file-alt stat-icon"></i>
+                    <h3>2,000</h3>
+                    <p>Total Applications</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-check-circle stat-icon"></i>
+                    <h3>1,821</h3>
+                    <p>Submitted Applications</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-2">
         <div class="col-md-4">
             <div class="card card-first">
                 <div class="card-body text-center">
@@ -70,6 +70,7 @@
             </div>
         </div>
     </div>
+
 
     <div class="row mb-2">
         <div class="col-md-6">

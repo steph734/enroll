@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Student extends Model
 {
-
     protected $table = 'students';
 
     protected $fillable = [
@@ -46,9 +45,9 @@ class Student extends Model
         'downpayment',
         'payment_method',
         'balance',
-        'receiptnumber'
-
+        'receiptnumber',
     ];
+
     public function strand()
     {
         return $this->belongsTo(Strands::class, 'strand_id');
@@ -57,5 +56,26 @@ class Student extends Model
     public function track()
     {
         return $this->belongsTo(Tracks::class, 'track_id');
+    }
+
+    public function section()
+    {
+        return $this->belongsTo(Section::class, 'section_id');
+    }
+
+    public function sectionLines()
+    {
+        return $this->hasMany(SectionLine::class, 'student_id');
+    }
+
+    public function studentSubject()
+    {
+        return $this->hasMany(StudentSubject::class, 'student_id');
+    }
+
+    public function subjects()
+    {
+        return $this->belongsToMany(Subject::class, 'student_subject', 'student_id', 'subject_id')
+            ->withPivot('grade', 'status', 'school_year');
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Student;
 use App\Models\Tracks;
+use App\Models\StudentSubject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -125,19 +126,18 @@ class StudentController extends Controller
         return $receiptNumber;
     }
 
-    // Edit student form
     public function edit(Request $request, $id, $formtype)
     {
-        $student = Student::findOrFail($id);
+        $student = Student::with(['track', 'strand', 'studentSubject.subject'])->findOrFail($id);
         $tracks = Tracks::all();
-        if ($formtype == 'view') {
-            return view('enrollment.studentedit', compact('student', 'tracks', 'formtype'));
-        } elseif ($formtype == 'studentedit') {
-            return view('enrollment.studentedit', compact('student', 'tracks', 'formtype'));
+        $activePage = 'students';
+
+        if ($formtype == 'view' || $formtype == 'studentedit') {
+            return view('enrollment.studentedit', compact('student', 'tracks', 'formtype', 'activePage'));
         }
+
         return redirect()->route('enrollment.show', 'students')->with('error', 'Invalid form type.');
     }
-
     // Update student
     public function update(Request $request, $id)
     {
@@ -212,86 +212,86 @@ class StudentController extends Controller
     }
 
     // Filter students
-    public function filter(Request $request)
-    {
-        $query = Student::with(['track', 'strand']);
+    // public function filter(Request $request)
+    // {
+    //     $query = Student::with(['track', 'strand']);
 
-        // Input validation
-        $search = $request->input('search', '');
-        $strand = $request->input('strand', 'all');
-        $grade = $request->input('grade', 'all');
-        $sort = $request->input('sort', 'none');
-        $track = $request->input('track', 'all');
+    //     // Input validation
+    //     $search = $request->input('search', '');
+    //     $strand = $request->input('strand', 'all');
+    //     $grade = $request->input('grade', 'all');
+    //     $sort = $request->input('sort', 'none');
+    //     $track = $request->input('track', 'all');
 
-        // Search filter
-        if (!empty($search)) {
-            $query->where(function ($q) use ($search) {
-                $q->where('first_name', 'like', "%{$search}%")
-                    ->orWhere('last_name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%");
-            });
-        }
+    //     // Search filter
+    //     if (!empty($search)) {
+    //         $query->where(function ($q) use ($search) {
+    //             $q->where('first_name', 'like', "%{$search}%")
+    //                 ->orWhere('last_name', 'like', "%{$search}%")
+    //                 ->orWhere('email', 'like', "%{$search}%");
+    //         });
+    //     }
 
-        // Strand filter
-        if ($strand !== 'all') {
-            $query->whereHas('strand', function ($q) use ($strand) {
-                $q->where('strand_name', $strand);
-            });
-        }
+    //     // Strand filter
+    //     if ($strand !== 'all') {
+    //         $query->whereHas('strand', function ($q) use ($strand) {
+    //             $q->where('strand_name', $strand);
+    //         });
+    //     }
 
-        // Grade filter
-        if ($grade !== 'all') {
-            $query->where('grade_level', $grade);
-        }
+    //     // Grade filter
+    //     if ($grade !== 'all') {
+    //         $query->where('grade_level', $grade);
+    //     }
 
-        // Track filter (based on tab selection)
-        if ($track !== 'all') {
-            $query->whereHas('track', function ($q) use ($track) {
-                $q->where('track_name', $track);
-            });
-        }
+    //     // Track filter (based on tab selection)
+    //     if ($track !== 'all') {
+    //         $query->whereHas('track', function ($q) use ($track) {
+    //             $q->where('track_name', $track);
+    //         });
+    //     }
 
-        // Sort filter
-        switch ($sort) {
-            case 'name-asc':
-                $query->orderBy('first_name', 'asc');
-                break;
-            case 'name-desc':
-                $query->orderBy('first_name', 'desc');
-                break;
-            case 'grade-asc':
-                $query->orderBy('grade_level', 'asc');
-                break;
-            case 'grade-desc':
-                $query->orderBy('grade_level', 'desc');
-                break;
-            default:
-                $query->orderBy('id', 'asc'); // Default sorting
-                break;
-        }
+    //     // Sort filter
+    //     switch ($sort) {
+    //         case 'name-asc':
+    //             $query->orderBy('first_name', 'asc');
+    //             break;
+    //         case 'name-desc':
+    //             $query->orderBy('first_name', 'desc');
+    //             break;
+    //         case 'grade-asc':
+    //             $query->orderBy('grade_level', 'asc');
+    //             break;
+    //         case 'grade-desc':
+    //             $query->orderBy('grade_level', 'desc');
+    //             break;
+    //         default:
+    //             $query->orderBy('id', 'asc'); // Default sorting
+    //             break;
+    //     }
 
-        // Pagination
-        $perPage = 10; // Adjust as needed
-        $page = $request->input('page', 1);
-        $students = $query->paginate($perPage, ['*'], 'page', $page);
+    //     // Pagination
+    //     $perPage = 10; // Adjust as needed
+    //     $page = $request->input('page', 1);
+    //     $students = $query->paginate($perPage, ['*'], 'page', $page);
 
-        // Return JSON response with students and pagination metadata
-        return response()->json([
-            'students' => $students->items(),
-            'current_page' => $students->currentPage(),
-            'last_page' => $students->lastPage(),
-            'total' => $students->total(),
-        ]);
-    }
-    // Search for autocomplete suggestions
-    public function search(Request $request)
-    {
-        $search = $request->search;
-        $students = Student::where('first_name', 'like', "%{$search}%")
-            ->orWhere('last_name', 'like', "%{$search}%")
-            ->take(5)
-            ->get(['id', 'first_name', 'last_name']);
+    //     // Return JSON response with students and pagination metadata
+    //     return response()->json([
+    //         'students' => $students->items(),
+    //         'current_page' => $students->currentPage(),
+    //         'last_page' => $students->lastPage(),
+    //         'total' => $students->total(),
+    //     ]);
+    // }
+    // // Search for autocomplete suggestions
+    // public function search(Request $request)
+    // {
+    //     $search = $request->search;
+    //     $students = Student::where('first_name', 'like', "%{$search}%")
+    //         ->orWhere('last_name', 'like', "%{$search}%")
+    //         ->take(5)
+    //         ->get(['id', 'first_name', 'last_name']);
 
-        return response()->json($students);
-    }
+    //     return response()->json($students);
+    // }
 }
