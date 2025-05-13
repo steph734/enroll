@@ -68,6 +68,7 @@ class TeacherController extends Controller
             'years_experience' => 'nullable|integer|min:0',
             'teaching_schedule' => 'required|in:Morning,Afternoon,Evening',
             'certifications' => 'nullable|string',
+            'subjects' => 'nullable|string',
             'medical_info' => 'nullable|string',
             'accommodations' => 'nullable|string',
             'date_hired' => 'required|date',

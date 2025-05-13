@@ -18,9 +18,9 @@ return new class extends Migration
             $table->foreignId('track_id')->constrained('tracks')->onDelete('cascade');
             $table->string('subject_name')->unique();
             $table->string('description')->nullable();
-            $table->string('grade_level');
-            $table->string('semester');
-            $table->string('term');
+            $table->string('grade_level')->nullable();
+            $table->string('semester')->nullable();
+            $table->string('term')->nullable();
             $table->timestamps();
         });
     }

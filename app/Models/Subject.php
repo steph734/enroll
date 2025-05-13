@@ -17,7 +17,7 @@ class Subject extends Model
         'grade_level',
         'semester',
         'term',
-        'prerequisite',
+        'prerequisites',
     ];
 
     public function track()

@@ -82,12 +82,6 @@
                 </div>
             </div>
         </div>
-
-        @if (session()->has('success'))
-        <div class="alert alert-success p-5" role="alert">
-            {{ session('success') }}
-        </div>
-        @endif
         <div class="mb-3 row">
             <div class="p-3 card card-table">
                 <div class="card-body">
@@ -107,7 +101,7 @@
                                 </tr>
                             </thead>
                             <tbody id="teachersTable">
-                                @forelse(\App\Models\Teacher::all() as $teacher)
+                                @forelse(\App\Models\Teacher::orderBy('created_at', 'desc')->get() as $teacher)
                                 <tr class="teacher-row" data-specialization="{{ $teacher->specialization }}"
                                     data-employment-status="{{ $teacher->employment_status }}"
                                     data-status="{{ $teacher->status }}">

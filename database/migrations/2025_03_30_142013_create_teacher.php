@@ -38,7 +38,7 @@ return new class extends Migration
             $table->integer('years_experience')->default(0);
             $table->string('employment_status');
             $table->string('teaching_schedule');
-            $table->string('subjects');
+            $table->string('subjects')->nullable();
             $table->text('certifications')->nullable();
             $table->text('medical_info')->nullable();
             $table->text('accommodations')->nullable();

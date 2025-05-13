@@ -200,16 +200,18 @@
                     <label for="specialization" class="form-label">Teaching Specialization/Track</label>
                     <select class="form-select @error('specialization') is-invalid @enderror" id="specialization"
                         name="specialization" required>
-                        @forelse(\App\Models\Strands::all() as $track)
-                        <option value="{{ $track->strandname }}"
-                            {{ old('track') == $track->strandname ? 'selected' : '' }}>
-                            {{ $track->strandname }}
+                        <option value="" {{ old('specialization') ? '' : 'selected' }} disabled>Select Specialization
+                        </option>
+                        @forelse(\App\Models\Tracks::all() as $strand)
+                        <option value="{{ $strand->track_name }}"
+                            {{ old('specialization') == $strand->track_name ? 'selected' : '' }}>
+                            {{ $strand->track_name }}
                         </option>
                         @empty
-                        <option value="">No tracks available</option>
+                        <option value="">No strands available</option>
                         @endforelse
                     </select>
-                    @error('track')
+                    @error('specialization')
                     <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>

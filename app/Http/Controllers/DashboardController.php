@@ -16,7 +16,7 @@ class DashboardController extends Controller
         $pendingStudents = Student::where('status', 'pending')->count();
 
         // Active students (students with 'active' or 'enrolled' status)
-        $activeStudents = Student::where('status', 'active')->count();
+        $activeStudents = Student::where('status', 'ongoing')->count();
 
         // Recent students
         $recentStudents = Student::select('id', 'first_name', 'last_name', 'grade_level', 'strand_id', 'status')

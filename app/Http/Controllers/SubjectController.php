@@ -83,9 +83,14 @@ class SubjectController extends Controller
             'subject_code' => 'required|string|max:10|unique:subjects,subject_code',
             'subject_name' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
+            'grade_level' => 'nullable|string|max:1000',
+            'semester' => 'required|string|max:1000',
+            'term' => 'required|string|max:1000',
+            'prerequisites' => 'required|string|max:1000',
             'strand_id' => 'required|exists:strands,id',
             'track_id' => 'required|exists:tracks,id',
         ]);
+
         Subject::create($validatedData);
 
         return redirect()->route('subject.index')->with('success', 'Subject created successfully.');
@@ -99,6 +104,10 @@ class SubjectController extends Controller
             'subject_code' => 'required|string|max:10|unique:subjects,subject_code,' . $subject->id,
             'subject_name' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
+            'grade_level' => 'nullable|string|max:1000',
+            'semester' => 'nullable|string|max:1000',
+            'term' => 'nullable|string|max:1000',
+            'prerequisites' => 'nullable|string|max:1000',
             'strand_id' => 'required|exists:strands,id',
             'track_id' => 'required|exists:tracks,id',
         ]);
