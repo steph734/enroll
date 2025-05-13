@@ -6,6 +6,7 @@ use App\Models\Student;
 use App\Models\Subject;
 use App\Models\Teacher;
 use App\Models\Strands;
+use App\Models\StudentSubject;
 use Illuminate\Http\Request;
 
 class SubjectManageController extends Controller
@@ -34,7 +35,7 @@ class SubjectManageController extends Controller
 
         foreach ($request->student_ids as $studentId) {
             foreach ($request->subject_ids as $subjectId) {
-                \App\Models\StudentSubject::firstOrCreate([
+                StudentSubject::firstOrCreate([
                     'student_id' => $studentId,
                     'subject_id' => $subjectId,
                     'school_year' => date('Y') . '-' . (date('Y') + 1), // Default to current school year
@@ -44,6 +45,14 @@ class SubjectManageController extends Controller
         }
 
         return redirect()->back()->with('success', 'Subjects assigned to students successfully.');
+    }
+
+    public function show($id)
+    {
+        $subject = StudentSubject::findOrFail($id);
+        $formType = 'view';
+        $activePage = 'studentedit';
+        return view('enrollment.studentedit', compact('subject', 'formType', 'activePage'));
     }
 
     public function assignTeacher(Request $request)

@@ -3,7 +3,7 @@
 @section('title', 'payment-form')
 
 @section('styles')
-    <link rel="stylesheet" href="{{ asset('css/enrollment.css') }}">
+<link rel="stylesheet" href="{{ asset('css/enrollment.css') }}">
 @endsection
 
 @section('content')
@@ -18,7 +18,8 @@
             <div class="m-3 row">
                 <div class="p-1 mb-3 col-md-4">
                     <label for="payment_amount" class="form-label">Payment Amount</label>
-                    <input type="number" class="form-control" id="payment_amount" name="payment_amount" step="0.01" required min="0">
+                    <input type="number" class="form-control" id="payment_amount" name="payment_amount" step="0.01"
+                        required min="0">
                 </div>
                 <div class="p-1 mb-3 col-md-4">
                     <label for="payment_date" class="form-label">Payment Date</label>
@@ -26,7 +27,8 @@
                 </div>
                 <div class="p-1 mb-3 col-md-4">
                     <label for="receipt_number" class="form-label">Receipt Number</label>
-                    <input type="text" class="form-control" id="receipt_number" name="receipt_number" value="P03" required>
+                    <input type="text" class="form-control" id="receipt_number" name="receipt_number" value="P03"
+                        required>
                 </div>
             </div>
             <div class="m-3 row">
@@ -42,11 +44,13 @@
                 </div>
                 <div class="p-1 mb-3 col-md-4">
                     <label for="studentid" class="form-label">Student ID</label>
-                    <input type="text" class="form-control" id="studentid" name="studentid" value="{{ $studentid ?? '' }}" readonly required>
+                    <input type="text" class="form-control" id="studentid" name="studentid"
+                        value="{{ $studentid ?? '' }}" readonly required>
                 </div>
                 <div class="p-1 mb-3 col-md-4">
                     <label for="amount_due" class="form-label">Amount Due</label>
-                    <input type="text" class="form-control" id="amount_due" name="amount_due" value="40000" readonly required>
+                    <input type="text" class="form-control" id="amount_due" name="amount_due" value="40000" readonly
+                        required>
                 </div>
             </div>
         </div>

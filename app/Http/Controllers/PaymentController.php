@@ -68,7 +68,7 @@ class PaymentController extends Controller
     {
         $sections = Section::all();
         $students = Student::all();
-        return view('payments.create', 'payment_form', compact('section', 'students'));
+        return view('enrollment.payment', 'payment_form', compact('section', 'students'));
     }
 
     public function store(Request $request)

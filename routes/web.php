@@ -14,6 +14,7 @@ use App\Http\Controllers\SectionLineController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ReportsController;
+use App\Http\Controllers\AccountsController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -109,12 +110,31 @@ Route::middleware('auth')->group(function () {
     Route::get('/enrollment/subjectmanagement', [SubjectManageController::class, 'index'])->name('subjectmanage.index');
     Route::post('/enrollment/subjectmanagement/assign', [SubjectManageController::class, 'assign'])->name('subject.assign');
     Route::post('/enrollment/subjectmanagement/assign-teacher', [SubjectManageController::class, 'assignTeacher'])->name('subject.assignTeacher');
+    Route::get('/enrollment/subjects/{id}', [SubjectManageController::class, 'show'])->name('subject.show');
 
     Route::get('/reports', [ReportsController::class, 'index'])->name('reports.index');
     Route::get('/reports/generate/{type}', [ReportsController::class, 'generate'])->name('reports.generate');
     // Track-Strand AJAX
     Route::get('/strands', [TrackStrandController::class, 'getStrands'])->name('strands.get');
 
+
+    //Accs n Payments
+    Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
+    Route::get('/payments/create', [PaymentController::class, 'create'])->name('payments.create');
+    Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');
+    Route::get('/payments/{id}', [PaymentController::class, 'show'])->name('payments.show');
+    Route::get('/payments/{student}/edit', [PaymentController::class, 'edit'])->name('payments.edit');
+    Route::post('/payments/check-student', [PaymentController::class, 'checkStudent'])->name('payments.check-student');
+    Route::post('/payments/search-students', [PaymentController::class, 'searchStudents'])->name('payments.search-students');
+    Route::get('/payments/transactions/{studentid}', [PaymentController::class, 'transactions'])->name('payments.transactions');
+    Route::get('/payments/{id}', [PaymentController::class, 'view'])->name('payments.view');
+    Route::get('/payments/history/all', [PaymentController::class, 'allPaymentHistory'])->name('payments.history.all');
+
+
+    Route::get('/accounts', [AccountsController::class, 'index'])->name('accounts.index');
+    Route::post('/accounts', [AccountsController::class, 'store'])->name('accounts.store');
+    // Route::patch('/accounts/{user}/deactivate', [AccountsController::class, 'deactivate'])->name('accounts.deactivate');
+    Route::patch('/accounts/{id}/status', [AccountsController::class, 'updateStatus'])->name('accounts.status.update');
     // Enrollment page (dynamic) - placed last to avoid conflicts
     Route::get('/enrollment/{page}', [EnrollmentController::class, 'show'])->name('enrollment.show')
         ->where('page', '(dashboard|students|teachers|payment|class_schedule|reports|accounts|enrollment_form|teacher_form|edit|studentedit|sections)');

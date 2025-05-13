@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('username')->unique();
             $table->string('password');
+            $table->enum('status', ['Active', 'Deactivated'])->default('Active');
             $table->rememberToken();
             $table->timestamps();
         });
