@@ -15,6 +15,7 @@ use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\AccountsController;
+use App\Models\PaymentLine;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -118,18 +119,28 @@ Route::middleware('auth')->group(function () {
     Route::get('/strands', [TrackStrandController::class, 'getStrands'])->name('strands.get');
 
 
-    //Accs n Payments
-    Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
-    Route::get('/payments/create', [PaymentController::class, 'create'])->name('payments.create');
-    Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');
-    Route::get('/payments/{id}', [PaymentController::class, 'show'])->name('payments.show');
-    Route::get('/payments/{student}/edit', [PaymentController::class, 'edit'])->name('payments.edit');
-    Route::post('/payments/check-student', [PaymentController::class, 'checkStudent'])->name('payments.check-student');
-    Route::post('/payments/search-students', [PaymentController::class, 'searchStudents'])->name('payments.search-students');
-    Route::get('/payments/transactions/{studentid}', [PaymentController::class, 'transactions'])->name('payments.transactions');
-    Route::get('/payments/{id}', [PaymentController::class, 'view'])->name('payments.view');
-    Route::get('/payments/history/all', [PaymentController::class, 'allPaymentHistory'])->name('payments.history.all');
 
+    Route::get('/payments/{studentId}/transactions', function ($studentId) {
+        return PaymentLine::where('student_id', $studentId)
+            ->with(['payment' => function ($query) {
+                $query->select('id', 'payment_date');
+            }])
+            ->get(['id', 'payment_id', 'amount', 'description', 'payment_method'])
+            ->map(function ($line) {
+                return [
+                    'payment_id' => $line->payment_id,
+                    'amount' => $line->amount,
+                    'payment_method' => $line->payment_method,
+                    'description' => $line->description,
+                    'payment_date' => $line->payment->payment_date,
+                ];
+            });
+    });
+    //Accs n Payments
+    Route::get('/payments/create/{student_id?}', [PaymentController::class, 'create'])->name('payments.create');
+    Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');
+    Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
+    Route::get('/payments', [PaymentController::class, 'index'])->name('payments.view');
 
     Route::get('/accounts', [AccountsController::class, 'index'])->name('accounts.index');
     Route::post('/accounts', [AccountsController::class, 'store'])->name('accounts.store');

@@ -3,128 +3,102 @@
 namespace App\Http\Controllers;
 
 use App\Models\Payment;
-use App\Models\Section;
+use App\Models\PaymentLine;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
 
 class PaymentController extends Controller
 {
-    public function index(Request $request)
+    public function create($student_id = null)
     {
-        $search = $request->query('search');
-        $filter = $request->query('filter', 'all');
-        $sort = $request->query('sort', 'name-asc');
-        $gradeFilter = $request->query('grade');
-
-        $query = Payment::with(['student', 'section']);
-
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('studentid', 'like', "%{$search}%")
-                    ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$search}%"])
-                    ->orWhere('grade_level', 'like', "%{$search}%")
-                    ->orWhere('status', 'like', "%{$search}%");
-            });
-        }
-
-        if ($filter !== 'all') {
-            $query->where('status', $filter);
-        }
-
-        if ($gradeFilter) {
-            $query->where('grade_level', $gradeFilter);
-        }
-
-        switch ($sort) {
-            case 'name-asc':
-                $query->orderByRaw("CONCAT(first_name, ' ', last_name) ASC");
-                break;
-            case 'name-desc':
-                $query->orderByRaw("CONCAT(first_name, ' ', last_name) DESC");
-                break;
-            case 'amount-due-asc':
-                $query->orderBy('balance', 'asc'); // Changed to balance
-                break;
-            case 'amount-due-desc':
-                $query->orderBy('balance', 'desc'); // Changed to balance
-                break;
-        }
-
-        $student = $query->get();
-
-        $totalPayments = Student::sum('downpayment');
-        $totalOutstanding = '₱' . number_format($student->sum('balance'), 2);
-        $unpaidCount = $student->where('status', 'unpaid')->count();
-
-        return view('payments.index', compact(
-            'payments',
-            'totalPayments',
-            'totalOutstanding',
-            'unpaidCount'
-        ));
-    }
-
-    public function create()
-    {
-        $sections = Section::all();
         $students = Student::all();
-        return view('enrollment.payment', 'payment_form', compact('section', 'students'));
+        $activePage = 'payment';
+        return view('enrollment.payment_form', compact('student_id', 'students', 'activePage'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'studentid' => 'required|exists:students,studentid',
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'grade_level' => 'required|string|max:255',
-            'section_id' => 'nullable|exists:sections,id',
+            'student_id' => 'required|exists:students,id',
             'amount_due' => 'required|numeric|min:0',
-            'payment_amount' => 'nullable|numeric|min:0',
-            'payment_date' => 'nullable|date',
+            'payment_date' => 'required|date',
+            'receipt_number' => 'required|string|max:255',
+            'payment_lines' => 'required|array|min:1',
+            'payment_lines.*.amount' => 'required|numeric|min:0',
+            'payment_lines.*.description' => 'required|string|max:255',
+            'payment_lines.*.payment_method' => 'required|in:Credit Card,Debit Card,Cash,Bank Transfer',
         ]);
 
-        // Calculate balance and status
-        $validated['balance'] = $validated['amount_due'] - ($validated['payment_amount'] ?? 0);
-        $validated['status'] = $validated['balance'] <= 0 ? 'paid' : 'unpaid';
+        try {
+            DB::beginTransaction();
 
-        $payment = Payment::create($validated);
+            // Fetch student
+            $student = Student::findOrFail($validated['student_id']);
 
-        return redirect()->route('payments.index')->with('success', 'Payment record created successfully.');
+            // Verify amount_due matches student's balance
+            if ($validated['amount_due'] != $student->balance) {
+                throw new \Exception('Amount due does not match student balance.');
+            }
+
+            // Calculate total payment amount
+            $totalPaymentAmount = array_sum(array_column($validated['payment_lines'], 'amount'));
+
+            // Verify payment doesn't exceed balance
+            if ($totalPaymentAmount > $student->balance) {
+                throw new \Exception('Payment amount exceeds student balance.');
+            }
+
+            // Create Payment record
+            $payment = Payment::create([
+                'student_id' => $validated['student_id'],
+                'first_name' => $student->first_name,
+                'last_name' => $student->last_name,
+                'grade_level' => $student->grade_level,
+                'section_id' => $student->section_id ?? null,
+                'amount_due' => $validated['amount_due'],
+                'payment_amount' => $totalPaymentAmount,
+                'balance' => $student->balance - $totalPaymentAmount,
+                'status' => ($student->balance - $totalPaymentAmount) <= 0 ? 'paid' : 'unpaid',
+                'payment_date' => $validated['payment_date'],
+            ]);
+
+            // Add PaymentLine records and track downpayment
+            $downpaymentAmount = 0;
+            foreach ($validated['payment_lines'] as $line) {
+                $paymentLine = PaymentLine::create([
+                    'student_id' => $validated['student_id'],
+                    'payment_id' => $payment->id,
+                    'amount' => $line['amount'],
+                    'description' => $line['description'],
+                    'payment_method' => $line['payment_method'],
+                ]);
+                if (strtolower($line['description']) == 'down payment') {
+                    $downpaymentAmount += $line['amount'];
+                }
+            }
+
+            // Update student's balance and downpayment
+            $student->balance -= $totalPaymentAmount;
+            if ($downpaymentAmount > 0) {
+                $student->downpayment = ($student->downpayment ?? 0) + $downpaymentAmount;
+            }
+            $student->save();
+
+            DB::commit();
+
+            return Redirect::route('payments.index')->with('success', 'Payment recorded successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return Redirect::back()->withInput()->with('error', 'Failed to record payment: ' . $e->getMessage());
+        }
     }
 
-    public function show(Payment $payment)
+    public function index()
     {
-        $payment->load(['student', 'section']);
-        return view('payments.show', compact('payment'));
-    }
-
-    public function edit(Payment $payment)
-    {
-        $sections = Section::all();
-        $students = Student::all();
-        return view('payments.edit', compact('payment', 'sections', 'students'));
-    }
-
-    public function update(Request $request, Payment $payment)
-    {
-        $validated = $request->validate([
-            'studentid' => 'required|exists:students,studentid',
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'grade_level' => 'required|string|max:255',
-            'section_id' => 'nullable|exists:sections,id',
-            'amount_due' => 'required|numeric|min:0',
-            'payment_amount' => 'nullable|numeric|min:0',
-            'payment_date' => 'nullable|date',
-        ]);
-
-        // Calculate balance and status
-        $validated['balance'] = $validated['amount_due'] - ($validated['payment_amount'] ?? 0);
-        $validated['status'] = $validated['balance'] <= 0 ? 'paid' : 'unpaid';
-
-        $payment->update($validated);
-
-        return redirect()->route('payments.index')->with('success', 'Payment record updated successfully.');
+        $payments = Payment::with('student')->get();
+        $activePage = 'payment';
+        return view('enrollment.payment', compact('payments', 'activePage'));
     }
 }

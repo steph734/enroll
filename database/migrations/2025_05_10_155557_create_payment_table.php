@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('payment', function (Blueprint $table) {
@@ -16,7 +13,7 @@ return new class extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->string('grade_level');
-            $table->unsignedBigInteger('section_id')->nullable();
+            $table->foreignId('section_id')->nullable()->constrained('sections')->onDelete('set null');
             $table->decimal('amount_due', 10, 2);
             $table->decimal('payment_amount', 10, 2)->default(0);
             $table->decimal('balance', 10, 2)->default(0);
@@ -27,11 +24,6 @@ return new class extends Migration
         });
     }
 
-
-
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('payment');

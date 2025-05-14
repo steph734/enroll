@@ -50,6 +50,10 @@ class Student extends Model
     ];
 
     // Relationships remain the same
+    public function payments()
+    {
+        return $this->hasMany(Payment::class, 'student_id');
+    }
     public function strand()
     {
         return $this->belongsTo(Strands::class, 'strand_id');
