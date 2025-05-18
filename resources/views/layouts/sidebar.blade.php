@@ -34,7 +34,7 @@
         </li>
         <li class="{{ ($activePage ?? 'dashboard') === 'payment' ? 'active' : '' }}">
             <a href="{{ route('enrollment.show', 'payment') }}">
-                <i class="fas fa-dollar-sign"></i>
+                <i class="fas fa-receipt"></i>
                 <span>Payment Tracking</span>
             </a>
         </li>
@@ -59,10 +59,11 @@
         </li>
         <hr>
         <li>
-            <a href="{{ route('logout') }}"
-                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+            <a href="{{ route('logout') }}" 
+               onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+               class="{{ ($activePage ?? 'dashboard') === 'logout' ? 'active' : '' }}">
                 <i class="fas fa-sign-out-alt"></i>
-                <span>Leave</span>
+                <span>Log out</span>
             </a>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                 @csrf

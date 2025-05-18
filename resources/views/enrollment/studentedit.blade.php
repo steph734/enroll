@@ -112,21 +112,49 @@
     }
 
     .profile-pic {
+        width: 150px;
+        height: 150px;
         display: flex;
         justify-content: center;
         align-items: center;
+        margin-bottom: 15px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 3px solid var(--line-clr);
     }
 
     .profile-pic img {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
+        width: 100%;
+        height: 100%;
         object-fit: cover;
     }
 
     .profile-pic i {
-        font-size: 2rem;
-        color: #9ca3af;
+        font-size: 80px;
+        color: #305cde;
+        opacity: 0.7;
+    }
+
+    .form-item {
+        margin-bottom: 15px;
+    }
+
+    .form-item label {
+        display: block;
+        margin-bottom: 5px;
+        color: #333;
+        font-weight: 500;
+    }
+
+    .form-item input[type="file"] {
+        border: 1px solid #ddd;
+        padding: 5px;
+        border-radius: 4px;
+    }
+
+    .form-item .text-muted {
+        font-size: 12px;
+        margin-top: 5px;
     }
 
     .alert {
@@ -284,13 +312,17 @@
             <div class="form-grid">
                 <div class="form-item">
                     <div class="profile-pic">
-                        @if($student->profile_picture)
-                        <img src="{{ Storage::url($student->profile_picture) }}" alt="Profile Picture">
+                        @if($student->profile_picture && Storage::exists('public/' . $student->profile_picture))
+                            <img src="{{ Storage::url($student->profile_picture) }}" alt="Profile Picture">
                         @else
-                        <i class="fas fa-user"></i>
+                            <i class="fas fa-user-circle fa-5x" style="color: #305cde; opacity: 0.7;"></i>
                         @endif
                     </div>
-                    <input type="file" name="profile_picture" class="form-control mt-2">
+                    <input type="file" name="profile_picture" class="form-control mt-2" accept="image/jpeg,image/png,image/jpg">
+                    <small class="text-muted">Max size: 2MB. Allowed formats: JPG, JPEG, PNG</small>
+                    @error('profile_picture')
+                    <div class="text-danger">{{ $message }}</div>
+                    @enderror
                 </div>
                 <div class="form-item">
                     <label>First Name</label>
@@ -388,10 +420,10 @@
             <div class="info-grid">
                 <div class="info-item">
                     <div class="profile-pic">
-                        @if($student->profile_picture)
-                        <img src="{{ Storage::url($student->profile_picture) }}" alt="Profile Picture">
+                        @if($student->profile_picture && Storage::exists('public/' . $student->profile_picture))
+                            <img src="{{ Storage::url($student->profile_picture) }}" alt="Profile Picture">
                         @else
-                        <i class="fas fa-user"></i>
+                            <i class="fas fa-user-circle fa-5x" style="color: #305cde; opacity: 0.7;"></i>
                         @endif
                     </div>
                 </div>

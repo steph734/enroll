@@ -97,6 +97,7 @@
                             <thead>
                                 <tr>
                                     <th scope="col" class="p-1 text-center align-middle">ID</th>
+                                    <th scope="col" class="p-1 text-center align-middle">Profile</th>
                                     <th scope="col" class="p-1 text-center align-middle">First Name</th>
                                     <th scope="col" class="p-1 text-center align-middle">Last Name</th>
                                     <th scope="col" class="p-1 text-center align-middle">Email</th>
@@ -114,6 +115,15 @@
                                     data-grade-level="{{ $student->grade_level }}" data-status="{{ $student->status }}"
                                     data-strand="{{ $student->strand->strand_name }}">
                                     <td class="text-center">{{ $student->studentid }}</td>
+                                    <td class="text-center">
+                                        <div class="profile-pic-small">
+                                            @if($student->profile_picture && Storage::exists('public/' . $student->profile_picture))
+                                                <img src="{{ Storage::url($student->profile_picture) }}" alt="Profile Picture" class="rounded-circle" width="40" height="40">
+                                            @else
+                                                <i class="fas fa-user-circle fa-2x" style="color: #305cde;"></i>
+                                            @endif
+                                        </div>
+                                    </td>
                                     <td class="text-center">{{ $student->first_name }}</td>
                                     <td class="text-center">{{ $student->last_name }}</td>
                                     <td class="text-center">{{ $student->email }}</td>
@@ -140,7 +150,7 @@
                                             <a
                                                 href="{{ route('student.edit', ['id' => $student->id, 'formtype' => 'view']) }}">
                                                 <button class="btn" title="View">
-                                                    <i class="fa-solid fa-eye" style="color:#305cde;"></i>
+                                                    <i class="fa-solid fa-file-lines" style="color:#305cde;"></i>
                                                 </button>
                                             </a>
                                         </div>
@@ -194,9 +204,9 @@
             const selectedStrand = strandFilter.value;
 
             studentRows.forEach(row => {
-                const firstName = row.cells[1].textContent.toLowerCase();
-                const lastName = row.cells[2].textContent.toLowerCase();
-                const email = row.cells[3].textContent.toLowerCase();
+                const firstName = row.cells[2].textContent.toLowerCase();
+                const lastName = row.cells[3].textContent.toLowerCase();
+                const email = row.cells[4].textContent.toLowerCase();
                 const track = row.getAttribute('data-track');
                 const gradeLevel = row.getAttribute('data-grade-level');
                 const status = row.getAttribute('data-status');
@@ -230,8 +240,8 @@
             }
 
             const matches = Array.from(studentRows).filter(row => {
-                const firstName = row.cells[1].textContent.toLowerCase();
-                const lastName = row.cells[2].textContent.toLowerCase();
+                const firstName = row.cells[2].textContent.toLowerCase();
+                const lastName = row.cells[3].textContent.toLowerCase();
                 return firstName.includes(searchTerm) || lastName.includes(searchTerm);
             });
 
@@ -240,7 +250,7 @@
                     const suggestion = document.createElement('div');
                     suggestion.classList.add('p-2');
                     suggestion.textContent =
-                        `${row.cells[1].textContent} ${row.cells[2].textContent}`;
+                        `${row.cells[2].textContent} ${row.cells[3].textContent}`;
                     suggestion.addEventListener('click', () => {
                         searchInput.value = suggestion.textContent;
                         suggestionsDiv.style.display = 'none';
@@ -262,7 +272,7 @@
                 const studentId = this.getAttribute('data-student-id');
                 const newStatus = this.value;
                 const row = this.closest('.student-row');
-                const studentName = `${row.cells[1].textContent} ${row.cells[2].textContent}`;
+                const studentName = `${row.cells[2].textContent} ${row.cells[3].textContent}`;
 
                 // Show confirmation dialog
                 if (confirm(

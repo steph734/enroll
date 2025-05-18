@@ -188,3 +188,22 @@ td {
 td .status-dropdown {
     vertical-align: middle;
 }
+
+/* Profile Picture Styles */
+.profile-pic-small {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    margin: 0 auto;
+}
+
+.profile-pic-small img {
+    object-fit: cover;
+    border: 2px solid var(--line-clr);
+}
+
+.profile-pic-small .fa-user-circle {
+    opacity: 0.7;
+}

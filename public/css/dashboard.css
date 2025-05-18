@@ -110,3 +110,42 @@
         border: 1px solid var(--line-clr) !important;
     }
 }
+
+/* Pagination Styles */
+.pagination {
+    display: flex;
+    gap: 5px;
+}
+
+.pagination .page-item {
+    list-style: none;
+}
+
+.pagination .page-link {
+    padding: 4px 8px;
+    border-radius: 3px;
+    color: var(--text-clr);
+    background-color: var(--base-clr);
+    border: 1px solid var(--line-clr);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+
+.pagination .page-link:hover {
+    background-color: var(--hover-clr);
+    color: white;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: white;
+    color: var(--accent-clr);
+    border: 2px solid var(--accent-clr);
+    font-weight: 500;
+}
+
+.pagination .page-item.disabled .page-link {
+    background-color: var(--base-clr);
+    color: var(--secondary-text-clr);
+    cursor: not-allowed;
+}

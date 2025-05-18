@@ -19,36 +19,42 @@
     @endif
 
     <!-- Summary Cards -->
-    @php
-    $totalPayments = $students->sum('total_paid');
-    $totalBalance = $students->sum('balance');
-    $totalPaidStudents = $students->where('balance', 0)->count();
-    @endphp
-    <div class="mb-3 row">
-        <div class="col-md-4">
-            <div class="p-3 m-1 text-center card">
-                <div class="card-body">
-                    <i class="fa-solid fa-money-bill-wave fa-2x text-success"></i>
-                    <h5 class="mt-2 card-title">₱{{ number_format($totalPayments, 2) }}</h5>
-                    <p class="card-text">Total Payments Collected</p>
+    <div class="mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <div>
+                <h5 class="mb-0">Summary</h5>
+                <small class="text-muted">Click to view payment statistics and totals</small>
+            </div>
+            <button id="toggleSummary" class="btn btn-outline-secondary btn-sm">
+                <i class="fa-solid fa-chevron-down"></i> Show Summary
+            </button>
+        </div>
+        <div id="summaryCards" class="row" style="display: none;">
+            <div class="col-md-4">
+                <div class="p-3 m-1 text-center card">
+                    <div class="card-body">
+                        <i class="fa-solid fa-money-bill-wave fa-2x text-success"></i>
+                        <h5 class="mt-2 card-title">₱{{ number_format($totalPayments, 2) }}</h5>
+                        <p class="card-text">Total Payments Collected</p>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="p-3 m-1 text-center card">
-                <div class="card-body">
-                    <i class="fa-solid fa-balance-scale fa-2x text-warning"></i>
-                    <h5 class="mt-2 card-title">₱{{ number_format($totalBalance, 2) }}</h5>
-                    <p class="card-text">Total Outstanding Balance</p>
+            <div class="col-md-4">
+                <div class="p-3 m-1 text-center card">
+                    <div class="card-body">
+                        <i class="fa-solid fa-balance-scale fa-2x text-warning"></i>
+                        <h5 class="mt-2 card-title">₱{{ number_format($totalBalance, 2) }}</h5>
+                        <p class="card-text">Total Outstanding Balance</p>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="p-3 m-1 text-center card">
-                <div class="card-body">
-                    <i class="fa-solid fa-user-check fa-2x text-success"></i>
-                    <h5 class="mt-2 card-title">{{ $totalPaidStudents }}</h5>
-                    <p class="card-text">Fully Paid Students</p>
+            <div class="col-md-4">
+                <div class="p-3 m-1 text-center card">
+                    <div class="card-body">
+                        <i class="fa-solid fa-user-check fa-2x text-success"></i>
+                        <h5 class="mt-2 card-title">{{ $totalPaidStudents }}</h5>
+                        <p class="card-text">Fully Paid Students</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -147,7 +153,7 @@
                                     <td>
                                         <a href="{{ route('payments.history', $student->id) }}">
                                             <button class="btn" title="View Payment History">
-                                                <i class="fa-solid fa-eye" style="color:#305cde; font-size: 18px;"></i>
+                                                <i class="fa-solid fa-receipt" style="color:#305cde; font-size: 18px;"></i>
                                             </button>
                                         </a>
                                     </td>
@@ -159,6 +165,16 @@
                                 @endforelse
                             </tbody>
                         </table>
+                        
+                        <!-- Pagination -->
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+                            <div>
+                                Showing {{ $students->firstItem() ?? 0 }} to {{ $students->lastItem() ?? 0 }} of {{ $students->total() }} entries
+                            </div>
+                            <div>
+                                {{ $students->links() }}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -198,64 +214,15 @@
             const selectedGradeLevel = gradeLevelFilter.value;
             const sortValue = sortBy.value;
 
-            let filteredRows = Array.from(paymentRows);
+            // Add these parameters to the current URL
+            const url = new URL(window.location.href);
+            url.searchParams.set('search', searchTerm);
+            url.searchParams.set('status', selectedStatus);
+            url.searchParams.set('grade_level', selectedGradeLevel);
+            url.searchParams.set('sort', sortValue);
 
-            // Filter rows
-            filteredRows = filteredRows.filter(row => {
-                const studentId = row.cells[0].textContent.toLowerCase();
-                const fullName = row.cells[1].textContent.toLowerCase();
-                const gradeSection = row.cells[2].textContent.toLowerCase();
-                const status = row.getAttribute('data-status');
-                const gradeLevel = row.getAttribute('data-grade-level');
-
-                const matchesSearch = !searchTerm ||
-                    studentId.includes(searchTerm) ||
-                    fullName.includes(searchTerm) ||
-                    gradeSection.includes(searchTerm);
-
-                const matchesStatus = selectedStatus === 'all' ||
-                    status === selectedStatus;
-
-                const matchesGradeLevel = !selectedGradeLevel || gradeLevel === selectedGradeLevel;
-
-                return matchesSearch && matchesStatus && matchesGradeLevel;
-            });
-
-            // Sort rows
-            filteredRows.sort((a, b) => {
-                if (sortValue === 'name-asc') {
-                    return a.cells[1].textContent.localeCompare(b.cells[1].textContent);
-                } else if (sortValue === 'name-desc') {
-                    return b.cells[1].textContent.localeCompare(a.cells[1].textContent);
-                } else if (sortValue === 'amount-paid-asc') {
-                    const aAmount = parseFloat(a.getAttribute('data-amount-paid'));
-                    const bAmount = parseFloat(b.getAttribute('data-amount-paid'));
-                    return aAmount - bAmount;
-                } else if (sortValue === 'amount-paid-desc') {
-                    const aAmount = parseFloat(a.getAttribute('data-amount-paid'));
-                    const bAmount = parseFloat(b.getAttribute('data-amount-paid'));
-                    return bAmount - aAmount;
-                } else if (sortValue === 'balance-asc') {
-                    const aBalance = parseFloat(a.getAttribute('data-balance'));
-                    const bBalance = parseFloat(b.getAttribute('data-balance'));
-                    return aBalance - bBalance;
-                } else if (sortValue === 'balance-desc') {
-                    const aBalance = parseFloat(a.getAttribute('data-balance'));
-                    const bBalance = parseFloat(b.getAttribute('data-balance'));
-                    return bBalance - aBalance;
-                }
-                return 0;
-            });
-
-            // Update table
-            const tbody = document.getElementById('paymentsTable');
-            tbody.innerHTML = '';
-            filteredRows.forEach(row => tbody.appendChild(row));
-
-            // Show/hide rows based on filters
-            paymentRows.forEach(row => {
-                row.style.display = filteredRows.includes(row) ? '' : 'none';
-            });
+            // Redirect to apply filters
+            window.location.href = url.toString();
         };
 
         // Search suggestions
@@ -316,6 +283,22 @@
             document.querySelector('.tab[data-filter="all"]').classList.add('active');
             suggestionsDiv.style.display = 'none';
             applyFilters();
+        });
+
+        // Add collapse functionality for summary cards
+        const toggleBtn = document.getElementById('toggleSummary');
+        const summaryCards = document.getElementById('summaryCards');
+        let isExpanded = false;
+
+        toggleBtn.addEventListener('click', function() {
+            isExpanded = !isExpanded;
+            summaryCards.style.display = isExpanded ? 'flex' : 'none';
+            
+            // Update button icon and text
+            const icon = toggleBtn.querySelector('i');
+            icon.classList.remove(isExpanded ? 'fa-chevron-down' : 'fa-chevron-up');
+            icon.classList.add(isExpanded ? 'fa-chevron-up' : 'fa-chevron-down');
+            toggleBtn.innerHTML = `<i class="fa-solid ${isExpanded ? 'fa-chevron-up' : 'fa-chevron-down'}"></i> ${isExpanded ? 'Hide Summary' : 'Show Summary'}`;
         });
     });
 </script>

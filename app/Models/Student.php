@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Student extends Model
 {
@@ -17,39 +18,49 @@ class Student extends Model
         'gender',
         'age',
         'nationality',
-        'address',
+        'home_address',
         'zip_code',
+        'contact_number',
+        'secondary_contact',
+        'email',
         'guardian_first_name',
+        'guardian_middle_name',
         'guardian_last_name',
         'relationship',
         'guardian_contact',
+        'guardian_email',
         'previous_school',
         'grade_completed',
         'school_year_completed',
+        'gpa',
         'transcript',
         'track_id',
-        'studentid',
         'strand_id',
-        'status',
-        'class_schedule',
-        'home_address',
-        'contact_number',
-        'email',
-        'school',
         'grade_level',
-        'year_graduated',
-        'parent_name',
-        'parent_contact',
-        'parent_email',
+        'class_schedule',
+        'additional_notes',
+        'medical_info',
+        'special_accommodations',
         'payment_date',
         'downpayment',
         'payment_method',
         'balance',
         'receiptnumber',
+        'studentid',
+        'status',
         // 'section_id',
     ];
 
-    // Relationships remain the same
+    // Add accessor for profile picture URL
+    public function getProfilePictureUrlAttribute()
+    {
+        if ($this->profile_picture && Storage::exists('public/' . $this->profile_picture)) {
+            return Storage::url($this->profile_picture);
+        }
+        return null;
+    }
+
+    // Relationships
     public function payments()
     {
         return $this->hasMany(Payment::class, 'student_id');
@@ -76,7 +87,7 @@ class Student extends Model
 
     public function studentSubject()
     {
-        return $this->hasMany(StudentSubject::class, 'student_id');
+        return $this->hasMany(StudentSubject::class);
     }
 
     public function subjects()

@@ -103,7 +103,7 @@
                     </div>
 
                     <div>
-                        <a href="{{ route('subjectmanage.index') }}"><button class="btn btn-dark btn-sm">Manage
+                        <a href="{{ route('subjectmanage.index') }}"><button class="btn btn-outline-primary btn-sm">Manage
                                 Subjects</button></a>
                     </div>
                 </div>

@@ -108,9 +108,9 @@
                         <div class="autocomplete-container">
                             <input type="text" class="form-control p-1" id="subject_search"
                                 placeholder="Type subject code or name..." value="{{ old('subject_search') }}"
-                                class="@error('code') is-invalid @enderror">
-                            <input type="hidden" name="code" id="code" value="{{ old('code') }}"
                                 class="@error('code') is-invalid @enderror" required>
+                            <input type="hidden" name="code" id="code" value="{{ old('code') }}"
+                                class="@error('code') is-invalid @enderror">
                             <div class="autocomplete-suggestions" id="subjectSuggestions">
                                 @foreach ($subjects->whereNull('schedules') as $subject)
                                 <div class="suggestion-item" data-value="{{ $subject->subject_code }}"
@@ -126,7 +126,7 @@
                         </div>
                         <div class="note">Type to search for a subject without an existing schedule.</div>
                         @error('code')
-                        <div class="invalid-feedback">{{ $message }}</div>
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="mb-3">
@@ -134,7 +134,7 @@
                         <input type="text" class="form-control p-1" id="title" name="title" value="{{ old('title') }}"
                             class="@error('title') is-invalid @enderror" required readonly>
                         @error('title')
-                        <div class="invalid-feedback">{{ $message }}</div>
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="mb-3">
@@ -151,8 +151,8 @@
                             <input type="text" class="form-control p-1" id="section_search"
                                 placeholder="Type section name..." value="{{ old('section') }}"
                                 class="@error('section') is-invalid @enderror" required>
-                            <input type="hidden " name="section" id="section" value="{{ old('section') }}"
-                                class="@error('section') is-invalid @enderror" required hidden>
+                            <input type="hidden" name="section" id="section" value="{{ old('section') }}"
+                                class="@error('section') is-invalid @enderror">
                             <div class="autocomplete-suggestions" id="sectionSuggestions">
                                 @foreach ($sections as $section)
                                 <div class="suggestion-item" data-value="{{ $section->section_name }}">
@@ -252,17 +252,17 @@
                         @enderror
                     </div>
                     <div class="mb-3">
-                        <label for="teacher_search" class="form-label">Teacher</label>
+                        <label for="teacher_search" class="form-label">Teacher (Optional)</label>
                         <div class="autocomplete-container">
                             <input type="text" class="form-control p-1" id="teacher_search"
-                                placeholder="Type teacher name..." value="{{ old('teacher_search') }}"
-                                class="@error('teacher_id') is-invalid @enderror" required>
+                                placeholder="Type teacher name or leave empty..." value="{{ old('teacher_search') }}"
+                                class="@error('teacher_id') is-invalid @enderror">
                             <input type="hidden" name="teacher_id" id="teacher_id" value="{{ old('teacher_id') }}"
                                 class="@error('teacher_id') is-invalid @enderror">
                             <div class="autocomplete-suggestions" id="teacherSuggestions">
-                                <div class="suggestion-item" data-value="" data-name="No Teacher">
-                                    <i class="fa-solid fa-user" aria-hidden="true"></i>
-                                    No Teacher
+                                <div class="suggestion-item" data-value="" data-name="">
+                                    <i class="fa-solid fa-user-slash" aria-hidden="true"></i>
+                                    No Teacher Assigned
                                 </div>
                                 @foreach ($teachers as $teacher)
                                 <div class="suggestion-item" data-value="{{ $teacher->id }}"
@@ -276,7 +276,7 @@
                         <div id="teacher-assigned-note" class="teacher-assigned" style="display: none;">
                             This subject has an assigned teacher.
                         </div>
-                        <div class="note">Type to search for a teacher or select 'No Teacher'.</div>
+                        <div class="note">Leave empty or select "No Teacher Assigned" to create a section without a teacher. Teachers can later choose this section.</div>
                         @error('teacher_id')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -416,19 +416,27 @@
         // Subject autocomplete
         subjectSearchInput.addEventListener('input', function() {
             const query = this.value.toLowerCase().trim();
+            let found = false;
+            
             subjectSuggestionItems.forEach(item => {
                 const text = item.textContent.toLowerCase();
-                item.style.display = text.includes(query) && query ? 'block' : 'none';
+                const isVisible = text.includes(query) && query;
+                item.style.display = isVisible ? 'block' : 'none';
+                if (isVisible) found = true;
             });
-            subjectSuggestions.classList.toggle('show', query.length > 0);
-            codeHiddenInput.value = '';
-            titleInput.value = '';
-            descriptionInput.value = '';
-            sectionHiddenInput.value = '';
-            sectionSearchInput.value = '';
-            teacherHiddenInput.value = '';
-            teacherSearchInput.value = '';
-            teacherAssignedNote.style.display = 'none';
+            
+            subjectSuggestions.classList.toggle('show', found);
+            
+            if (!found) {
+                codeHiddenInput.value = '';
+                titleInput.value = '';
+                descriptionInput.value = '';
+                sectionHiddenInput.value = '';
+                sectionSearchInput.value = '';
+                teacherHiddenInput.value = '';
+                teacherSearchInput.value = '';
+                teacherAssignedNote.style.display = 'none';
+            }
         });
 
         subjectSearchInput.addEventListener('blur', function() {
@@ -452,14 +460,24 @@
                 const teacherId = this.getAttribute('data-teacher-id');
                 const text = this.textContent.replace(/.*<\/i>/, '').trim();
 
+                // Update fields
                 codeHiddenInput.value = value;
                 subjectSearchInput.value = text;
                 titleInput.value = title;
                 descriptionInput.value = description || '';
 
+                // Clear validation errors
+                subjectSearchInput.classList.remove('is-invalid');
+                titleInput.classList.remove('is-invalid');
+                const codeError = subjectSearchInput.parentElement.querySelector('.invalid-feedback');
+                const titleError = titleInput.parentElement.querySelector('.invalid-feedback');
+                if (codeError) codeError.style.display = 'none';
+                if (titleError) titleError.style.display = 'none';
+
                 if (section) {
                     sectionHiddenInput.value = section;
                     sectionSearchInput.value = section;
+                    sectionSearchInput.classList.remove('is-invalid');
                 } else {
                     sectionHiddenInput.value = '';
                     sectionSearchInput.value = '';
@@ -491,7 +509,7 @@
                 item.style.display = text.includes(query) && query ? 'block' : 'none';
             });
             sectionSuggestions.classList.toggle('show', query.length > 0);
-            sectionHiddenInput.value = '';
+            sectionHiddenInput.value = this.value;
         });
 
         sectionSearchInput.addEventListener('blur', function() {
@@ -511,6 +529,7 @@
                 const value = this.getAttribute('data-value');
                 sectionHiddenInput.value = value;
                 sectionSearchInput.value = value;
+                sectionSearchInput.classList.remove('is-invalid');
                 sectionSuggestions.classList.remove('show');
             });
         });
@@ -518,24 +537,32 @@
         // Teacher autocomplete
         teacherSearchInput.addEventListener('input', function() {
             const query = this.value.toLowerCase().trim();
+            if (!query) {
+                teacherHiddenInput.value = '';
+                teacherSearchInput.value = '';
+                teacherSuggestions.classList.remove('show');
+                return;
+            }
             teacherSuggestionItems.forEach(item => {
                 const text = item.textContent.toLowerCase();
-                item.style.display = text.includes(query) && query ? 'block' : 'none';
+                item.style.display = text.includes(query) ? 'block' : 'none';
             });
-            teacherSuggestions.classList.toggle('show', query.length > 0);
+            teacherSuggestions.classList.toggle('show', true);
             teacherHiddenInput.value = '';
         });
 
         teacherSearchInput.addEventListener('blur', function() {
             setTimeout(() => {
                 teacherSuggestions.classList.remove('show');
+                // If no teacher is selected, ensure the fields are empty
+                if (!teacherHiddenInput.value) {
+                    teacherSearchInput.value = '';
+                }
             }, 200);
         });
 
         teacherSearchInput.addEventListener('focus', function() {
-            if (this.value.trim()) {
-                teacherSuggestions.classList.add('show');
-            }
+            teacherSuggestions.classList.add('show');
         });
 
         teacherSuggestionItems.forEach(item => {
@@ -543,7 +570,7 @@
                 const value = this.getAttribute('data-value');
                 const name = this.getAttribute('data-name');
                 teacherHiddenInput.value = value;
-                teacherSearchInput.value = name;
+                teacherSearchInput.value = name || '';
                 teacherSuggestions.classList.remove('show');
             });
         });
@@ -602,6 +629,66 @@
                 if (invalidFeedback) {
                     invalidFeedback.textContent = 'The days field is required.';
                     invalidFeedback.style.display = 'block';
+                }
+            }
+        });
+
+        // Add form validation
+        form.addEventListener('submit', function(e) {
+            let hasError = false;
+
+            // Validate subject code
+            if (!codeHiddenInput.value) {
+                e.preventDefault();
+                hasError = true;
+                subjectSearchInput.classList.add('is-invalid');
+                const codeError = subjectSearchInput.parentElement.querySelector('.invalid-feedback') || 
+                    document.createElement('div');
+                codeError.className = 'invalid-feedback d-block';
+                codeError.textContent = 'Please select a valid subject.';
+                subjectSearchInput.parentElement.appendChild(codeError);
+            }
+
+            // Validate title
+            if (!titleInput.value) {
+                e.preventDefault();
+                hasError = true;
+                titleInput.classList.add('is-invalid');
+                const titleError = titleInput.parentElement.querySelector('.invalid-feedback') || 
+                    document.createElement('div');
+                titleError.className = 'invalid-feedback d-block';
+                titleError.textContent = 'Subject title is required.';
+                titleInput.parentElement.appendChild(titleError);
+            }
+
+            // Validate section
+            if (!sectionHiddenInput.value) {
+                e.preventDefault();
+                hasError = true;
+                sectionSearchInput.classList.add('is-invalid');
+                const sectionError = sectionSearchInput.parentElement.querySelector('.invalid-feedback') || 
+                    document.createElement('div');
+                sectionError.className = 'invalid-feedback d-block';
+                sectionError.textContent = 'Please select a valid section.';
+                sectionSearchInput.parentElement.appendChild(sectionError);
+            }
+
+            // Validate days
+            if (!daysHiddenInput.value) {
+                e.preventDefault();
+                hasError = true;
+                const daysError = daysHiddenInput.parentElement.querySelector('.invalid-feedback') || 
+                    document.createElement('div');
+                daysError.className = 'invalid-feedback d-block';
+                daysError.textContent = 'Please select at least one day.';
+                daysHiddenInput.parentElement.appendChild(daysError);
+            }
+
+            if (hasError) {
+                // Scroll to the first error
+                const firstError = document.querySelector('.is-invalid, .invalid-feedback.d-block');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
             }
         });

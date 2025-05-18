@@ -90,6 +90,7 @@
                             <thead>
                                 <tr>
                                     <th scope="col" class="align-middle">ID</th>
+                                    <th scope="col" class="align-middle">Profile</th>
                                     <th scope="col" class="align-middle">Firstname</th>
                                     <th scope="col" class="align-middle">Lastname</th>
                                     <th scope="col" class="align-middle">Email</th>
@@ -106,6 +107,15 @@
                                     data-employment-status="{{ $teacher->employment_status }}"
                                     data-status="{{ $teacher->status }}">
                                     <td>{{ $teacher->id }}</td>
+                                    <td class="text-center">
+                                        <div class="profile-pic-small">
+                                            @if($teacher->profile_picture && Storage::exists('public/' . $teacher->profile_picture))
+                                                <img src="{{ Storage::url($teacher->profile_picture) }}" alt="Profile Picture" class="rounded-circle" width="40" height="40">
+                                            @else
+                                                <i class="fas fa-user-circle fa-2x" style="color: #305cde;"></i>
+                                            @endif
+                                        </div>
+                                    </td>
                                     <td>{{ $teacher->first_name }}</td>
                                     <td>{{ $teacher->last_name }}</td>
                                     <td>{{ $teacher->email }}</td>
@@ -134,7 +144,7 @@
                                             <a
                                                 href="{{ route('teachers.edit', ['id' => $teacher->id, 'formtype' => 'view']) }}">
                                                 <button class="btn" title="View">
-                                                    <i class="fa-solid fa-eye" style="color:#305cde;"></i>
+                                                    <i class="fa-solid fa-file-lines" style="color:#305cde;"></i>
                                                 </button>
                                             </a>
                                         </div>
@@ -188,9 +198,9 @@
             const selectedEmploymentStatus = employmentStatusFilter.value;
 
             teacherRows.forEach(row => {
-                const firstName = row.cells[1].textContent.toLowerCase();
-                const lastName = row.cells[2].textContent.toLowerCase();
-                const email = row.cells[3].textContent.toLowerCase();
+                const firstName = row.cells[2].textContent.toLowerCase();
+                const lastName = row.cells[3].textContent.toLowerCase();
+                const email = row.cells[4].textContent.toLowerCase();
                 const specialization = row.getAttribute('data-specialization');
                 const status = row.getAttribute('data-status');
                 const employmentStatus = row.getAttribute('data-employment-status');
@@ -222,8 +232,8 @@
             }
 
             const matches = Array.from(teacherRows).filter(row => {
-                const firstName = row.cells[1].textContent.toLowerCase();
-                const lastName = row.cells[2].textContent.toLowerCase();
+                const firstName = row.cells[2].textContent.toLowerCase();
+                const lastName = row.cells[3].textContent.toLowerCase();
                 return firstName.includes(searchTerm) || lastName.includes(searchTerm);
             });
 
@@ -232,7 +242,7 @@
                     const suggestion = document.createElement('div');
                     suggestion.classList.add('p-2');
                     suggestion.textContent =
-                        `${row.cells[1].textContent} ${row.cells[2].textContent}`;
+                        `${row.cells[2].textContent} ${row.cells[3].textContent}`;
                     suggestion.addEventListener('click', () => {
                         searchInput.value = suggestion.textContent;
                         suggestionsDiv.style.display = 'none';
@@ -254,7 +264,7 @@
                 const teacherId = this.getAttribute('data-teacher-id');
                 const newStatus = this.value;
                 const row = this.closest('.teacher-row');
-                const teacherName = `${row.cells[1].textContent} ${row.cells[2].textContent}`;
+                const teacherName = `${row.cells[2].textContent} ${row.cells[3].textContent}`;
 
                 // Show confirmation dialog
                 if (confirm(

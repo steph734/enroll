@@ -95,12 +95,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/sections/{id}', [SectionController::class, 'destroy'])->name('section.destroy');
 
     // Payment routes
-    Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
+    Route::get('/enrollment/payment', [PaymentController::class, 'index'])->name('payment.index');
     Route::get('/payments/create', [PaymentController::class, 'create'])->name('payments.create');
     Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');
-    Route::get('/payments/{payment}', [PaymentController::class, 'show'])->name('payments.show');
-    Route::get('/payments/{payment}/edit', [PaymentController::class, 'edit'])->name('payments.edit');
-    Route::put('/payments/{payment}', [PaymentController::class, 'update'])->name('payments.update');
+    Route::get('/payments/{student}/history', [PaymentController::class, 'history'])->name('payments.history');
 
     // Section Line routes
     Route::get('/section/{section}/students', [SectionLineController::class, 'index'])->name('sectionline.index');
@@ -148,7 +146,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/accounts/{id}/status', [AccountsController::class, 'updateStatus'])->name('accounts.status.update');
     // Enrollment page (dynamic) - placed last to avoid conflicts
     Route::get('/enrollment/{page}', [EnrollmentController::class, 'show'])->name('enrollment.show')
-        ->where('page', '(dashboard|students|teachers|payment|class_schedule|reports|accounts|enrollment_form|teacher_form|edit|studentedit|sections)');
+        ->where('page', '(dashboard|students|teachers|class_schedule|reports|accounts|enrollment_form|teacher_form|edit|studentedit|sections)');
 });
 
 require __DIR__ . '/auth.php';

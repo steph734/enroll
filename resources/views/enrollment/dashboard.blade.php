@@ -59,6 +59,7 @@
                             <th scope="col">Grade Level</th>
                             <th scope="col">Strand</th>
                             <th scope="col">Status</th>
+                            <th scope="col">Enrolled Date</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -72,10 +73,21 @@
                             <td>{{ $student->grade_level }}</td>
                             <td>{{ $student->strand->strand_name }}</td>
                             <td>{{ $student->status }}</td>
+                            <td>{{ $student->created_at->format('M d, Y') }}</td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
+                
+                <!-- Pagination -->
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <!-- <div>
+                        Showing {{ $recentStudents->firstItem() ?? 0 }} to {{ $recentStudents->lastItem() ?? 0 }} of {{ $recentStudents->total() }} entries
+                    </div> -->
+                    <div>
+                        {{ $recentStudents->links() }}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

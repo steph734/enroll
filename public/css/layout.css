@@ -247,6 +247,25 @@ footer {
     transform: scale(1.2) !important; /* Slight icon zoom on hover */
 }
 
+/* Remove any special styling for the last item (logout) */
+#sidebar ul li:last-child {
+    margin: 5px 0 !important;
+}
+
+#sidebar ul li:last-child a {
+    color: var(--text-clr) !important;
+}
+
+#sidebar ul li:last-child a:hover {
+    background-color: var(--hover-clr) !important;
+    color: whitesmoke !important;
+}
+
+#sidebar ul li:last-child a:hover i {
+    color: whitesmoke !important;
+    transform: scale(1.2) !important;
+}
+
 /* Icon styling */
 #sidebar i {
     flex-shrink: 0 !important;
@@ -266,19 +285,6 @@ footer {
     margin: 15px 0 !important; /* More spacing */
 }
 
-/* Logout item styling */
-#sidebar ul li:last-child a {
-    color: #dc3545 !important; /* Red for logout */
-}
-
-#sidebar ul li:last-child a:hover {
-    background: #fce6e8 !important; /* Light red hover */
-    color: #c82333 !important;
-}
-
-#sidebar ul li:last-child a:hover i {
-    color: #c82333 !important;
-}
 /* Main content */
 #main-content {
     grid-area: main !important;

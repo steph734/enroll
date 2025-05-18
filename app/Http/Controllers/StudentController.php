@@ -26,11 +26,12 @@ class StudentController extends Controller
         // Pass students to the view
         return view('enrollment.students', compact('students', 'activePage'));
     }
+
     // Store a new student
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'profile_picture' => 'nullable|image|max:2048',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'first_name' => 'required|string|max:255',
             'middle_name' => 'nullable|string|max:255',
             'last_name' => 'required|string|max:255',
@@ -42,7 +43,7 @@ class StudentController extends Controller
             'zip_code' => 'required|string|max:20',
             'contact_number' => 'required|string|max:20',
             'secondary_contact' => 'nullable|string|max:20',
-            'email' => 'required|email|max:255|unique:students,email', // Add unique rule
+            'email' => 'required|email|unique:students,email',
             'guardian_first_name' => 'required|string|max:255',
             'guardian_middle_name' => 'nullable|string|max:255',
             'guardian_last_name' => 'required|string|max:255',
@@ -69,17 +70,22 @@ class StudentController extends Controller
             'studentid' => 'required|string|max:20|unique:students,studentid',
         ]);
 
+        // Handle profile picture upload
+        if ($request->hasFile('profile_picture')) {
+            $profilePicture = $request->file('profile_picture');
+            $filename = time() . '_' . $profilePicture->getClientOriginalName();
+            $profilePicturePath = $profilePicture->storeAs('public/profile_pictures', $filename);
+            $validated['profile_picture'] = str_replace('public/', '', $profilePicturePath);
+        }
+
         // Handle file uploads
-        $profilePicturePath = $request->file('profile_picture')
-            ? $request->file('profile_picture')->store('profile_pictures', 'public')
-            : null;
         $transcriptPath = $request->file('transcript')
             ? $request->file('transcript')->store('transcripts', 'public')
             : null;
 
         // Create the student record
         Student::create([
-            'profile_picture' => $profilePicturePath,
+            'profile_picture' => $validated['profile_picture'],
             'first_name' => $request->first_name,
             'middle_name' => $request->middle_name,
             'last_name' => $request->last_name,
@@ -116,7 +122,7 @@ class StudentController extends Controller
             'balance' => $request->balance,
             'receiptnumber' => $request->receiptnumber,
             'studentid' => $request->studentid,
-            // section_id is nullable, so it’s not included
+            // section_id is nullable, so it's not included
         ]);
 
         return redirect()->route('enrollment.show', 'students')->with('success', 'Student enrolled successfully.');
@@ -162,22 +168,24 @@ class StudentController extends Controller
 
         return redirect()->route('enrollment.show', 'students')->with('error', 'Invalid form type.');
     }
+
     // Update student
     public function update(Request $request, $id)
     {
+        $student = Student::findOrFail($id);
+
         $validated = $request->validate([
-            'profile_picture' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'first_name' => 'required|string|max:255',
             'middle_name' => 'nullable|string|max:255',
             'last_name' => 'required|string|max:255',
             'date_of_birth' => 'required|date',
-            'gender' => 'required|in:Male,Female,Other',
+            'gender' => 'required|in:Male,Female',
             'age' => 'required|integer|min:1',
             'nationality' => 'required|string|max:255',
             'home_address' => 'required|string|max:255',
-            'zip_code' => 'required|string|max:10',
+            'zip_code' => 'required|string|max:20',
             'contact_number' => 'required|string|max:20',
-            'secondary_contact' => 'nullable|string|max:20',
             'email' => 'required|email|unique:students,email,' . $id,
             'guardian_first_name' => 'required|string|max:255',
             'guardian_middle_name' => 'nullable|string|max:255',
@@ -205,13 +213,17 @@ class StudentController extends Controller
             'receiptnumber' => 'required|string|size:6|unique:students,receiptnumber,' . $id,
         ]);
 
-        $student = Student::findOrFail($id);
-
+        // Handle profile picture upload
         if ($request->hasFile('profile_picture')) {
+            // Delete old profile picture if it exists
             if ($student->profile_picture) {
-                Storage::disk('public')->delete($student->profile_picture);
+                Storage::delete('public/' . $student->profile_picture);
             }
-            $validated['profile_picture'] = $request->file('profile_picture')->store('profile_pictures', 'public');
+
+            $profilePicture = $request->file('profile_picture');
+            $filename = time() . '_' . $profilePicture->getClientOriginalName();
+            $profilePicturePath = $profilePicture->storeAs('profile_pictures', $filename, 'public');
+            $validated['profile_picture'] = $profilePicturePath;
         }
 
         $student->update($validated);
@@ -224,12 +236,12 @@ class StudentController extends Controller
     public function destroy($id)
     {
         $student = Student::findOrFail($id);
+        
+        // Delete profile picture if it exists
         if ($student->profile_picture) {
-            Storage::disk('public')->delete($student->profile_picture);
+            Storage::delete('public/' . $student->profile_picture);
         }
-        if ($student->transcript) {
-            Storage::disk('public')->delete($student->transcript);
-        }
+        
         $student->delete();
 
         return redirect()->route('enrollment.show', 'students')->with('success', 'Student deleted successfully.');

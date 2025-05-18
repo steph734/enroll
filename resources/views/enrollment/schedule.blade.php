@@ -121,6 +121,7 @@
                 <table class="table table-striped table-hover" style="cursor: pointer;">
                     <thead>
                         <tr>
+                            <th scope="col" class="p-1 text-center align-middle">ID</th>
                             <th scope="col" class="p-1 text-center align-middle">Code</th>
                             <th scope="col" class="p-1 text-center align-middle">Title</th>
                             <th scope="col" class="p-1 text-center align-middle">Description</th>
@@ -138,6 +139,7 @@
                     <tbody>
                         @forelse($schedules as $schedule)
                         <tr>
+                            <td class="text-center">SCH-{{ str_pad($schedule->id, 4, '0', STR_PAD_LEFT) }}</td>
                             <td class="text-center">{{ $schedule->code }}</td>
                             <td class="text-center">{{ $schedule->title }}</td>
                             <td class="text-center">{{ $schedule->description }}</td>
@@ -147,8 +149,12 @@
                             <td class="text-center">{{ $schedule->time }}</td>
                             <td class="text-center">{{ $schedule->room }}</td>
                             <td class="text-center">{{ $schedule->strand->strand_name }}</td>
-                            <td class="text-center">{{ $schedule->teacher->first_name }}
-                                {{ $schedule->teacher->last_name }}
+                            <td class="text-center">
+                                @if($schedule->teacher)
+                                    {{ $schedule->teacher->first_name }} {{ $schedule->teacher->last_name }}
+                                @else
+                                    <span class="text-muted"><i class="fa-solid fa-user-slash"></i> No Teacher Assigned</span>
+                                @endif
                             </td>
                             <td class="text-center">{{ $schedule->status }}</td>
                             <td class="text-center">

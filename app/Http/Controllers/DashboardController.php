@@ -18,11 +18,10 @@ class DashboardController extends Controller
         // Active students (students with 'active' or 'enrolled' status)
         $activeStudents = Student::where('status', 'ongoing')->count();
 
-        // Recent students
-        $recentStudents = Student::select('id', 'first_name', 'last_name', 'grade_level', 'strand_id', 'status')
+        // Recent students with pagination
+        $recentStudents = Student::select('id', 'first_name', 'last_name', 'grade_level', 'strand_id', 'status', 'created_at')
             ->orderBy('created_at', 'desc')
-            ->limit(5)
-            ->get();
+            ->paginate(5);
 
         // Data for pie charts (student distribution by strand)
         $hummsCount = Student::where('strand_id', 'HUMMS')->count();

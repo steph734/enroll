@@ -33,7 +33,7 @@
 @section('content')
 <div class="container">
     <h2>Accounts Management</h2>
-    <p>Manage admin accounts, profile, and view audit logs for the SHS Student Enrollment System.</p>
+    <p style="font-size: 18px; color:#555 !important;">Manage admin accounts, profile, and view audit logs for the SHS Student Enrollment System.</p>
 
     @if ($errors->any())
     <div class="alert alert-danger p-1 mb-3">
