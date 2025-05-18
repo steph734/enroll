@@ -20,13 +20,12 @@
 
     <!-- Summary Cards -->
     @php
-    $totalPayments = \App\Models\Payment::sum('payment_amount');
-    $totalBalance = \App\Models\Student::sum('balance');
-    $totalPaidStudents = \App\Models\Student::where('balance', 0)->count();
-    $totalDownpayments = \App\Models\PaymentLine::where('description', 'Down Payment')->sum('amount');
+    $totalPayments = $students->sum('total_paid');
+    $totalBalance = $students->sum('balance');
+    $totalPaidStudents = $students->where('balance', 0)->count();
     @endphp
     <div class="mb-3 row">
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="p-3 m-1 text-center card">
                 <div class="card-body">
                     <i class="fa-solid fa-money-bill-wave fa-2x text-success"></i>
@@ -35,7 +34,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="p-3 m-1 text-center card">
                 <div class="card-body">
                     <i class="fa-solid fa-balance-scale fa-2x text-warning"></i>
@@ -44,21 +43,12 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="p-3 m-1 text-center card">
                 <div class="card-body">
                     <i class="fa-solid fa-user-check fa-2x text-success"></i>
                     <h5 class="mt-2 card-title">{{ $totalPaidStudents }}</h5>
                     <p class="card-text">Fully Paid Students</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="p-3 m-1 text-center card">
-                <div class="card-body">
-                    <i class="fa-solid fa-money-check fa-2x text-primary"></i>
-                    <h5 class="mt-2 card-title">₱{{ number_format($totalDownpayments, 2) }}</h5>
-                    <p class="card-text">Total Downpayments</p>
                 </div>
             </div>
         </div>
@@ -85,10 +75,10 @@
                     <!-- Filters Section -->
                     <div class="mt-3 filters d-flex justify-content-between align-items-center">
                         <div class="gap-3 tabs d-flex">
-                            <button class="tab active" data-filter="all">All Payments</button>
-                            <button class="tab" data-filter="paid">Paid</button>
+                            <button class="tab active" data-filter="all">All Students</button>
+                            <button class="tab" data-filter="fullypaid">Fully Paid</button>
+                            <button class="tab" data-filter="partiallypaid">Partially Paid</button>
                             <button class="tab" data-filter="unpaid">Unpaid</button>
-                            <button class="tab" data-filter="downpayment">Downpayment</button>
                         </div>
                         <div class="gap-2 dropdowns d-flex">
                             <select class="form-select form-select-sm" id="gradeLevelFilter" style="width: 150px;">
@@ -96,19 +86,12 @@
                                 <option value="Grade 11">Grade 11</option>
                                 <option value="Grade 12">Grade 12</option>
                             </select>
-                            <select class="form-select form-select-sm" id="paymentMethodFilter" style="width: 150px;">
-                                <option value="">All Payment Methods</option>
-                                <option value="Cash">Cash</option>
-                                <option value="Bank Transfer">Bank Transfer</option>
-                                <option value="Credit Card">Credit Card</option>
-                                <option value="Debit Card">Debit Card</option>
-                            </select>
                             <select class="form-select form-select-sm" id="sortBy" style="width: 150px;">
                                 <option value="">Sort By</option>
                                 <option value="name-asc">Name (A-Z)</option>
                                 <option value="name-desc">Name (Z-A)</option>
-                                <option value="amount-paid-asc">Amount Paid (Low to High)</option>
-                                <option value="amount-paid-desc">Amount Paid (High to Low)</option>
+                                <option value="amount-paid-asc">Total Paid (Low to High)</option>
+                                <option value="amount-paid-desc">Total Paid (High to Low)</option>
                                 <option value="balance-asc">Balance (Low to High)</option>
                                 <option value="balance-desc">Balance (High to Low)</option>
                             </select>
@@ -141,99 +124,42 @@
                                     <th scope="col" class="align-middle">Student ID</th>
                                     <th scope="col" class="align-middle">Full Name</th>
                                     <th scope="col" class="align-middle">Grade & Section</th>
-                                    <th scope="col" class="align-middle">Payment Method</th>
-                                    <th scope="col" class="align-middle">Amount Paid</th>
-                                    <th scope="col" class="align-middle">Downpayment</th>
+                                    <th scope="col" class="align-middle">Total Amount Paid</th>
                                     <th scope="col" class="align-middle">Balance</th>
                                     <th scope="col" class="align-middle">Status</th>
-                                    <th scope="col" class="align-middle">Payment Date</th>
                                     <th scope="col" class="align-middle">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="paymentsTable">
-                                @forelse($payments as $payment)
-                                <tr class="payment-row"
-                                    data-status="{{ $payment->balance == 0 ? 'fullypaid' : 'paid' }}"
-                                    data-grade-level="{{ $payment->grade_level }}"
-                                    data-payment-method="{{ $payment->paymentLines->first()->payment_method ?? 'N/A' }}"
-                                    data-amount-paid="{{ $payment->payment_amount }}"
-                                    data-balance="{{ $payment->balance }}"
-                                    data-downpayment="{{ $payment->paymentLines->where('description', 'Down Payment')->sum('amount') > 0 ? 'yes' : 'no' }}">
-                                    <td>{{ $payment->student->studentid }}</td>
-                                    <td>{{ $payment->first_name }} {{ $payment->last_name }}</td>
-                                    <td>{{ $payment->grade_level }} -
-                                        {{ $payment->section ? $payment->section->code : 'N/A' }}
+                                @forelse($students as $student)
+                                <tr class="payment-row" data-status="{{ strtolower($student->status) }}"
+                                    data-grade-level="{{ $student->grade_level }}"
+                                    data-amount-paid="{{ $student->total_paid }}"
+                                    data-balance="{{ $student->balance }}">
+                                    <td>{{ $student->studentid }}</td>
+                                    <td>{{ $student->first_name }} {{ $student->last_name }}</td>
+                                    <td>{{ $student->grade_level }} -
+                                        {{ $student->section ? $student->section->code : 'N/A' }}
                                     </td>
-                                    <td>{{ $payment->paymentLines->first()->payment_method ?? 'N/A' }}</td>
-                                    <td>₱{{ number_format($payment->payment_amount, 2) }}</td>
-                                    <td>₱{{ number_format($payment->paymentLines->where('description', 'Down Payment')->sum('amount'), 2) }}
-                                    </td>
-                                    <td>₱{{ number_format($payment->balance, 2) }}</td>
-                                    <td>{{ $payment->balance == 0 ? 'Fully Paid' : 'Paid' }}</td>
-                                    <td>{{ $payment->payment_date ? \Carbon\Carbon::parse($payment->payment_date)->format('m/d/Y') : 'N/A' }}
-                                    </td>
+                                    <td>₱{{ number_format($student->total_paid, 2) }}</td>
+                                    <td>₱{{ number_format($student->balance, 2) }}</td>
+                                    <td>{{ $student->status }}</td>
                                     <td>
-                                        <div class="gap-2 d-flex justify-content-center">
-                                            <button class="btn view-transactions"
-                                                data-student-id="{{ $payment->student_id }}" data-bs-toggle="modal"
-                                                data-bs-target="#transactionModal" title="View Transactions">
+                                        <a href="{{ route('payments.history', $student->id) }}">
+                                            <button class="btn" title="View Payment History">
                                                 <i class="fa-solid fa-eye" style="color:#305cde; font-size: 18px;"></i>
                                             </button>
-                                            <a href="{{ route('payments.view', $payment->student_id) }}">
-                                                <button class="btn" title="View Details">
-                                                    <i class="fa-solid fa-info-circle"
-                                                        style="color:#007bff; font-size: 18px;"></i>
-                                                </button>
-                                            </a>
-                                        </div>
+                                        </a>
                                     </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="10" class="text-center">No payments found.</td>
+                                    <td colspan="7" class="text-center">No students found.</td>
                                 </tr>
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Transaction Modal -->
-    <div class="modal fade" id="transactionModal" tabindex="-1" aria-labelledby="transactionModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="transactionModalLabel">Payment History</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="loadingSpinner" class="text-center" style="display: none;">
-                        <div class="spinner-border" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                    </div>
-                    <table class="table table-striped" id="transactionTable">
-                        <thead>
-                            <tr>
-                                <th scope="col">Payment ID</th>
-                                <th scope="col">Amount</th>
-                                <th scope="col">Payment Method</th>
-                                <th scope="col">Description</th>
-                                <th scope="col">Payment Date</th>
-                            </tr>
-                        </thead>
-                        <tbody id="transactionTableBody"></tbody>
-                    </table>
-                    <div id="noTransactions" class="text-center" style="display: none;">
-                        No payment history found for this student.
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -248,7 +174,6 @@
         const suggestionsDiv = document.getElementById('suggestions');
         const paymentRows = document.querySelectorAll('.payment-row');
         const gradeLevelFilter = document.getElementById('gradeLevelFilter');
-        const paymentMethodFilter = document.getElementById('paymentMethodFilter');
         const sortBy = document.getElementById('sortBy');
         const clearFiltersBtn = document.getElementById('clearFilters');
         const tabs = document.querySelectorAll('.tab');
@@ -271,7 +196,6 @@
             const searchTerm = searchInput.value.toLowerCase();
             const selectedStatus = document.querySelector('.tab.active').getAttribute('data-filter');
             const selectedGradeLevel = gradeLevelFilter.value;
-            const selectedPaymentMethod = paymentMethodFilter.value;
             const sortValue = sortBy.value;
 
             let filteredRows = Array.from(paymentRows);
@@ -283,8 +207,6 @@
                 const gradeSection = row.cells[2].textContent.toLowerCase();
                 const status = row.getAttribute('data-status');
                 const gradeLevel = row.getAttribute('data-grade-level');
-                const paymentMethod = row.getAttribute('data-payment-method')?.toLowerCase() || '';
-                const hasDownpayment = row.getAttribute('data-downpayment');
 
                 const matchesSearch = !searchTerm ||
                     studentId.includes(searchTerm) ||
@@ -292,16 +214,11 @@
                     gradeSection.includes(searchTerm);
 
                 const matchesStatus = selectedStatus === 'all' ||
-                    (selectedStatus === 'fullypaid' && status === 'fullypaid') ||
-                    (selectedStatus === 'paid' && status === 'paid') ||
-                    (selectedStatus === 'unpaid' && status === 'unpaid') ||
-                    (selectedStatus === 'downpayment' && hasDownpayment === 'yes');
+                    status === selectedStatus;
 
                 const matchesGradeLevel = !selectedGradeLevel || gradeLevel === selectedGradeLevel;
-                const matchesPaymentMethod = !selectedPaymentMethod || paymentMethod ===
-                    selectedPaymentMethod.toLowerCase();
 
-                return matchesSearch && matchesStatus && matchesGradeLevel && matchesPaymentMethod;
+                return matchesSearch && matchesStatus && matchesGradeLevel;
             });
 
             // Sort rows
@@ -389,58 +306,16 @@
         });
 
         gradeLevelFilter.addEventListener('change', applyFilters);
-        paymentMethodFilter.addEventListener('change', applyFilters);
         sortBy.addEventListener('change', applyFilters);
 
         clearFiltersBtn.addEventListener('click', () => {
             searchInput.value = '';
             gradeLevelFilter.value = '';
-            paymentMethodFilter.value = '';
             sortBy.value = '';
             tabs.forEach(t => t.classList.remove('active'));
             document.querySelector('.tab[data-filter="all"]').classList.add('active');
             suggestionsDiv.style.display = 'none';
             applyFilters();
-        });
-
-        // Handle transaction modal
-        document.querySelectorAll('.view-transactions').forEach(button => {
-            button.addEventListener('click', function() {
-                const studentId = this.getAttribute('data-student-id');
-                const transactionTableBody = document.getElementById('transactionTableBody');
-                const noTransactions = document.getElementById('noTransactions');
-                const loadingSpinner = document.getElementById('loadingSpinner');
-
-                loadingSpinner.style.display = 'block';
-                transactionTableBody.innerHTML = '';
-                noTransactions.style.display = 'none';
-
-                fetch(`/api/payments/${studentId}/transactions`)
-                    .then(response => response.json())
-                    .then(data => {
-                        loadingSpinner.style.display = 'none';
-                        if (data.length === 0) {
-                            noTransactions.style.display = 'block';
-                            return;
-                        }
-                        data.forEach(transaction => {
-                            const row = document.createElement('tr');
-                            row.innerHTML = `
-                                <td>${transaction.payment_id}</td>
-                                <td>₱${parseFloat(transaction.amount).toFixed(2)}</td>
-                                <td>${transaction.payment_method}</td>
-                                <td>${transaction.description}</td>
-                                <td>${new Date(transaction.payment_date).toLocaleDateString('en-US')}</td>
-                            `;
-                            transactionTableBody.appendChild(row);
-                        });
-                    })
-                    .catch(error => {
-                        loadingSpinner.style.display = 'none';
-                        noTransactions.style.display = 'block';
-                        console.error('Error fetching transactions:', error);
-                    });
-            });
         });
     });
 </script>
