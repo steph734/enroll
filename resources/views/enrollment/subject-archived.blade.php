@@ -5,34 +5,25 @@
 <style>
     .action-btn {
         padding: 0.25rem 0.25rem;
-        /* Reduced padding */
         margin: 0 2px;
-        /* Minimal margin to prevent overlap */
     }
 </style>
 @endsection
 
 @section('content')
 <div class="subject-content">
-
     <div class="d-flex justify-content-between mb-1">
         <div>
-            <h2>List of Subjects</h2>
-            <p style="font-size: 18px; color:#555 !important;">For 1st Semester, Class of 2024-2025</p>
+            <h2>Archived Subjects</h2>
+            <p style="font-size: 18px; color:#555 !important;">View and manage archived subjects</p>
         </div>
         <div>
-            <a href="{{ route('subject.index') }}" style="text-decoration: none !important;"><button
-                    class="btn btn-sm btn-primary p-1" style="font-size: 14px;">
-                    <i class="fa-solid fa-book"></i> Subjects
-                </button>
-            </a>
-            <a href="{{ route('section.index') }}">
-                <button class="btn btn-sm text-dark p-1" style="font-size: 14px;">
-                    <i class="fa-solid fa-school"></i> Sections
-                </button>
+            <a href="{{ route('subject.index') }}" class="btn btn-primary btn-sm">
+                <i class="fa-solid fa-list"></i> Active Subjects
             </a>
         </div>
     </div>
+
     @if ($errors->any())
     <div class="alert alert-danger p-1 mb-3">
         <i class="fa-solid fa-circle-exclamation"></i>
@@ -50,23 +41,11 @@
         <strong><i class="fa-solid fa-circle-check"></i> Success!</strong> {{ session('success') }}
     </div>
     @endif
+
     <div class="card p-3">
         <div class="card-body">
             <div class="d-flex mb-3 justify-content-between">
                 <div class="d-flex gap-2">
-                    <a href="{{ route('subject.create') }}">
-                        <button class="btn btn-primary p-1"
-                            style="font-size: 14px !important; text-decoration: none !important;">
-                            <i class="fa fa-solid fa-plus"></i> Add Subject
-                        </button>
-                    </a>
-                    <a href="{{ route('subject.archived') }}">
-                        <button class="btn btn-warning p-1"
-                            style="font-size: 14px !important; text-decoration: none !important;">
-                            <i class="fa-solid fa-box-archive"></i> Archived Subjects
-                        </button>
-                    </a>
-    
                     <!-- Strand Filter Dropdown -->
                     <div class="dropdown">
                         <a class="btn btn-outline-dark p-1 btn-sm" href="#" role="button" data-bs-toggle="dropdown"
@@ -75,11 +54,11 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item {{ !$strand ? 'active' : '' }}"
-                                    href="{{ route('subject.index', ['search' => $search]) }}">All Strands</a></li>
+                                    href="{{ route('subject.archived', ['search' => $search]) }}">All Strands</a></li>
                             @foreach ($strands as $id => $strandName)
                             <li>
                                 <a class="dropdown-item {{ $strand && str_contains(strtolower($strandName), strtolower($strand)) ? 'active' : '' }}"
-                                    href="{{ route('subject.index', ['strand' => substr(strtolower($strandName), 0, strpos(strtolower($strandName), '(') - 1), 'sort' => $sort, 'search' => $search]) }}">
+                                    href="{{ route('subject.archived', ['strand' => substr(strtolower($strandName), 0, strpos(strtolower($strandName), '(') - 1), 'sort' => $sort, 'search' => $search]) }}">
                                     {{ $strandName }}
                                 </a>
                             </li>
@@ -95,27 +74,22 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item {{ $sort === 'newest' ? 'active' : '' }}"
-                                    href="{{ route('subject.index', ['strand' => $strand, 'sort' => 'newest', 'search' => $search]) }}">Newest-Oldest</a>
+                                    href="{{ route('subject.archived', ['strand' => $strand, 'sort' => 'newest', 'search' => $search]) }}">Newest-Oldest</a>
                             </li>
                             <li><a class="dropdown-item {{ $sort === 'oldest' ? 'active' : '' }}"
-                                    href="{{ route('subject.index', ['strand' => $strand, 'sort' => 'oldest', 'search' => $search]) }}">Oldest-Newest</a>
+                                    href="{{ route('subject.archived', ['strand' => $strand, 'sort' => 'oldest', 'search' => $search]) }}">Oldest-Newest</a>
                             </li>
                             <li><a class="dropdown-item {{ $sort === 'a-z' ? 'active' : '' }}"
-                                    href="{{ route('subject.index', ['strand' => $strand, 'sort' => 'a-z', 'search' => $search]) }}">A-Z</a>
+                                    href="{{ route('subject.archived', ['strand' => $strand, 'sort' => 'a-z', 'search' => $search]) }}">A-Z</a>
                             </li>
                             <li><a class="dropdown-item {{ $sort === 'z-a' ? 'active' : '' }}"
-                                    href="{{ route('subject.index', ['strand' => $strand, 'sort' => 'z-a', 'search' => $search]) }}">Z-A</a>
+                                    href="{{ route('subject.archived', ['strand' => $strand, 'sort' => 'z-a', 'search' => $search]) }}">Z-A</a>
                             </li>
                         </ul>
                     </div>
-
-                    <div>
-                        <a href="{{ route('subjectmanage.index') }}"><button class="btn btn-outline-primary btn-sm">Manage
-                                Subjects</button></a>
-                    </div>
                 </div>
                 <div>
-                    <form action="{{ route('subject.index') }}" method="GET" id="searchForm">
+                    <form action="{{ route('subject.archived') }}" method="GET" id="searchForm">
                         <div class="search-container-dash">
                             <i class="fa-solid fa-magnifying-glass"></i>
                             <input type="text" name="search" placeholder="Search..." id="searchInput"
@@ -157,59 +131,55 @@
                             <td class="text-center">{{ $subject->track->track_name }}</td>
                             <td class="text-center">
                                 <div class="d-flex justify-content-center gap-1">
-                                    <a href="{{ route('subject.edit', parameters: [$subject->id, 'formtype' => 'subjectedit']) }}"
-                                        class="action-btn text-primary" aria-label="Edit subject">
-                                        <i class="fa-solid fa-pen-to-square"></i>
-                                    </a>
-                                    <button type="button" class="action-btn text-warning custom-modal-toggle"
+                                    <button type="button" class="action-btn text-success custom-modal-toggle"
                                         data-subject-id="{{ $subject->id }}"
                                         data-subject-name="{{ $subject->subject_name }}"
-                                        aria-label="Archive subject {{ $subject->subject_name }}">
-                                        <i class="fa-solid fa-box-archive"></i>
+                                        aria-label="Restore subject {{ $subject->subject_name }}">
+                                        <i class="fa-solid fa-rotate-left"></i>
                                     </button>
                                 </div>
                             </td>
                         </tr>
-                        <!-- Custom Archive Confirmation Modal -->
+                        <!-- Custom Restore Confirmation Modal -->
                         <div class="custom-modal" id="customDeleteModal{{ $subject->id }}"
                             style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center; padding: 20px;">
                             <div
                                 style="background: white; border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
                                 <div
-                                    style="background: #ffc107; color: black; padding: 10px; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center;">
-                                    <h5 style="margin: 0;">Confirm Archive</h5>
+                                    style="background: #28a745; color: white; padding: 10px; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center;">
+                                    <h5 style="margin: 0;">Confirm Restore</h5>
                                     <button type="button" class="custom-modal-close"
                                         data-subject-id="{{ $subject->id }}"
-                                        style="background: none; border: none; color: black; font-size: 20px; cursor: pointer;"
-                                        aria-label="Close archive confirmation modal">
+                                        style="background: none; border: none; color: white; font-size: 20px; cursor: pointer;"
+                                        aria-label="Close restore confirmation modal">
                                         <i class="fa-solid fa-xmark"></i>
                                     </button>
                                 </div>
                                 <div style="text-align: center; font-size:50px;">
-                                    <i class="fa-solid fa-box-archive" style="color: #ffc107;"></i>
+                                    <i class="fa-solid fa-rotate-left" style="color: #28a745;"></i>
                                 </div>
                                 <div style="padding: 15px;">
-                                    Are you sure you want to archive the subject
-                                    <strong>{{ $subject->subject_name }}</strong>? This subject will be moved to the archive and can be restored later if needed.
+                                    Are you sure you want to restore the subject
+                                    <strong>{{ $subject->subject_name }}</strong>? This will make the subject active again.
                                 </div>
                                 <div style="padding: 10px; display: flex; justify-content: flex-end; gap: 5px;">
                                     <button type="button" class="custom-modal-close btn text-secondary"
                                         data-subject-id="{{ $subject->id }}" style="padding: 8px 16px; cursor: pointer;"
-                                        aria-label="Cancel archive subject">Cancel</button>
-                                    <form action="{{ route('subject.archive', $subject->id) }}" method="POST"
+                                        aria-label="Cancel restore subject">Cancel</button>
+                                    <form action="{{ route('subject.restore', $subject->id) }}" method="POST"
                                         style="display:inline;">
                                         @csrf
                                         @method('PUT')
                                         <button type="submit"
-                                            style="padding: 8px 16px; border: none; border-radius: 4px; background: #ffc107; color: black; cursor: pointer;"
-                                            aria-label="Confirm archive subject">Archive</button>
+                                            style="padding: 8px 16px; border: none; border-radius: 4px; background: #28a745; color: white; cursor: pointer;"
+                                            aria-label="Confirm restore subject">Restore</button>
                                     </form>
                                 </div>
                             </div>
                         </div>
                         @empty
                         <tr>
-                            <td colspan="6" class="text-center">No subjects found.</td>
+                            <td colspan="7" class="text-center">No archived subjects found.</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -217,7 +187,6 @@
             </div>
         </div>
     </div>
-
 </div>
 @endsection
 
@@ -259,13 +228,13 @@
             });
         });
 
-        // Submit form on input change (after a short delay for better UX)
+        // Submit form on input change
         let searchTimeout;
         searchInput.addEventListener('input', function() {
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
                 searchForm.submit();
-            }, 500); // 500ms delay to avoid too many submissions
+            }, 500);
         });
 
         // Clear search functionality
@@ -274,7 +243,6 @@
             searchForm.submit();
         };
 
-        // Direct event listener for clear button
         if (clearButton) {
             clearButton.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -284,4 +252,4 @@
         }
     });
 </script>
-@endsection
+@endsection 

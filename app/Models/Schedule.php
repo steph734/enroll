@@ -21,6 +21,7 @@ class Schedule extends Model
         'teacher_id', // Changed from teacher_name
         'strand_id',
         'status',
+        'archived'
     ];
 
     public function strand()

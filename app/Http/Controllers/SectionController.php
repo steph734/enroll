@@ -18,7 +18,8 @@ class SectionController extends Controller
 
         $strands = Strands::pluck('strand_name', 'id')->all();
 
-        $query = Section::with(['strand', 'track']);
+        $query = Section::where('archived', false)
+            ->with(['strand', 'track']);
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -166,5 +167,44 @@ class SectionController extends Controller
         $section->delete();
 
         return redirect()->route('section.index')->with('success', 'Section deleted successfully.');
+    }
+
+    /**
+     * Display archived sections.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function archived()
+    {
+        $sections = Section::where('archived', true)
+            ->with(['strand', 'track'])
+            ->get();
+        $tracks = Tracks::all();
+        $strands = Strands::all();
+        return view('enrollment.section-archived', compact('sections', 'tracks', 'strands'));
+    }
+
+    /**
+     * Archive the specified section.
+     *
+     * @param  \App\Models\Section  $section
+     * @return \Illuminate\Http\Response
+     */
+    public function archive(Section $section)
+    {
+        $section->update(['archived' => true]);
+        return redirect()->back()->with('success', 'Section has been archived successfully.');
+    }
+
+    /**
+     * Restore an archived section.
+     *
+     * @param  \App\Models\Section  $section
+     * @return \Illuminate\Http\Response
+     */
+    public function restore(Section $section)
+    {
+        $section->update(['archived' => false]);
+        return redirect()->back()->with('success', 'Section has been restored successfully.');
     }
 }

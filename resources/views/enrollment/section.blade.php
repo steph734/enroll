@@ -59,6 +59,12 @@
                             <i class="fa fa-solid fa-plus"></i> Add Section
                         </button>
                     </a>
+                    <a href="{{ route('section.archived') }}">
+                        <button class="btn btn-warning p-1"
+                            style="font-size: 14px !important; text-decoration: none !important;">
+                            <i class="fa-solid fa-box-archive"></i> Archived Sections
+                        </button>
+                    </a>
                     <!-- Strand Filter Dropdown -->
                     <div class="dropdown">
                         <a class="btn btn-outline-dark p-1 btn-sm" href="#" role="button" data-bs-toggle="dropdown"
@@ -157,53 +163,51 @@
                             <td class="text-center">
                                 <div class="d-flex justify-content-center">
                                     <a href="{{ route('section.edit', $section->id) }}"
-                                        class="btn text-primary action-btn" aria-label="Edit section">
+                                        class="action-btn text-primary" aria-label="Edit section">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </a>
-
-                                    <button type="button" class="btn text-danger custom-modal-toggle action-btn"
+                                    <button type="button" class="action-btn text-warning custom-modal-toggle"
                                         data-section-id="{{ $section->id }}"
                                         data-section-name="{{ $section->section_name }}"
-                                        aria-label="Delete section {{ $section->section_name }}">
-                                        <i class="fa-solid fa-ban"></i>
+                                        aria-label="Archive section {{ $section->section_name }}">
+                                        <i class="fa-solid fa-box-archive"></i>
                                     </button>
-
                                 </div>
                             </td>
                         </tr>
-                        <!-- Custom Delete Confirmation Modal -->
+                        <!-- Custom Archive Confirmation Modal -->
                         <div class="custom-modal" id="customDeleteModal{{ $section->id }}"
                             style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center; padding: 20px;">
                             <div
                                 style="background: white; border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
                                 <div
-                                    style="background: #dc3545; color: white; padding: 10px; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center;">
-                                    <h5 style="margin: 0;">Confirm Deletion</h5>
+                                    style="background: #ffc107; color: black; padding: 10px; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center;">
+                                    <h5 style="margin: 0;">Confirm Archive</h5>
                                     <button type="button" class="custom-modal-close"
                                         data-section-id="{{ $section->id }}"
-                                        style="background: none; border: none; color: white; font-size: 20px; cursor: pointer;"
-                                        aria-label="Close delete confirmation modal">
+                                        style="background: none; border: none; color: black; font-size: 20px; cursor: pointer;"
+                                        aria-label="Close archive confirmation modal">
                                         <i class="fa-solid fa-xmark"></i>
                                     </button>
                                 </div>
                                 <div style="text-align: center; font-size:50px;">
-                                    <i class="fa-solid fa-circle-minus" style="color: #dc3545;"></i>
+                                    <i class="fa-solid fa-box-archive" style="color: #ffc107;"></i>
                                 </div>
                                 <div style="padding: 15px;">
-                                    Are you sure you want to delete the section
-                                    <strong>{{ $section->section_name }}</strong>? This action cannot be undone.
+                                    Are you sure you want to archive the section
+                                    <strong>{{ $section->section_name }}</strong>? This section will be moved to the archive and can be restored later if needed.
                                 </div>
                                 <div style="padding: 10px; display: flex; justify-content: flex-end; gap: 5px;">
-                                    <button type="button" class="custom-modal-close btn text-danger"
+                                    <button type="button" class="custom-modal-close btn text-secondary"
                                         data-section-id="{{ $section->id }}" style="padding: 8px 16px; cursor: pointer;"
-                                        aria-label="Cancel delete section">Cancel</button>
-                                    <form action="{{ route('section.destroy', $section->id) }}" method="POST"
+                                        aria-label="Cancel archive section">Cancel</button>
+                                    <form action="{{ route('section.archive', $section->id) }}" method="POST"
                                         style="display:inline;">
                                         @csrf
-                                        @method('DELETE')
+                                        @method('PUT')
                                         <button type="submit"
-                                            style="padding: 8px 16px; border: none; border-radius: 4px; background: #dc3545; color: white; cursor: pointer;"
-                                            aria-label="Confirm delete section">Delete</button>
+                                            style="padding: 8px 16px; border: none; border-radius: 4px; background: #ffc107; color: black; cursor: pointer;"
+                                            aria-label="Confirm archive section">Archive</button>
                                     </form>
                                 </div>
                             </div>

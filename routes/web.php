@@ -68,6 +68,8 @@ Route::middleware('auth')->group(function () {
 
     // Subject routes
     Route::get('/enrollment/subjects', [SubjectController::class, 'index'])->name('subject.index');
+    Route::get('/enrollment/subjects/archived', [SubjectController::class, 'archived'])->name('subject.archived');
+    Route::put('/subjects/{subject}/restore', [SubjectController::class, 'restore'])->name('subject.restore');
     Route::get('/enrollment/subjects/create', [SubjectController::class, 'create'])->name('subject.create');
     Route::get('/enrollment/subjects/{id}/{formtype}', [SubjectController::class, 'edit'])
         ->name('subject.edit')
@@ -75,9 +77,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/enrollment/subjects', [SubjectController::class, 'store'])->name('subject.store');
     Route::put('/enrollment/subjects/{id}', [SubjectController::class, 'update'])->name('subject.update');
     Route::delete('/enrollment/subjects/{id}', [SubjectController::class, 'destroy'])->name('subject.destroy');
+    Route::put('/subjects/{subject}/archive', [SubjectController::class, 'archive'])->name('subject.archive');
 
     // Schedule routes
     Route::get('/enrollment/schedules', [ScheduleController::class, 'index'])->name('schedule.index');
+    Route::get('/enrollment/schedules/archived', [ScheduleController::class, 'archived'])->name('schedule.archived');
     Route::get('/enrollment/schedules/create', [ScheduleController::class, 'create'])->name('schedule.create');
     Route::post('/enrollment/schedules', [ScheduleController::class, 'store'])->name('schedule.store');
     Route::get('/enrollment/schedules/{schedule}/{formtype}', [ScheduleController::class, 'edit'])
@@ -85,14 +89,19 @@ Route::middleware('auth')->group(function () {
         ->where('formtype', 'view|scheduleedit');
     Route::put('/enrollment/schedules/{schedule}', [ScheduleController::class, 'update'])->name('schedule.update');
     Route::delete('/enrollment/schedules/{schedule}', [ScheduleController::class, 'destroy'])->name('schedule.destroy');
+    Route::put('/schedules/{schedule}/archive', [ScheduleController::class, 'archive'])->name('schedule.archive');
+    Route::put('/schedules/{schedule}/restore', [ScheduleController::class, 'restore'])->name('schedule.restore');
 
     // Section routes
     Route::get('/sections', [SectionController::class, 'index'])->name('section.index');
+    Route::get('/sections/archived', [SectionController::class, 'archived'])->name('section.archived');
     Route::get('/sections/create', [SectionController::class, 'create'])->name('section.create');
     Route::get('/sections/{id}/edit', [SectionController::class, 'edit'])->name('section.edit');
     Route::post('/sections', [SectionController::class, 'store'])->name('section.store');
     Route::put('/sections/{id}', [SectionController::class, 'update'])->name('section.update');
     Route::delete('/sections/{id}', [SectionController::class, 'destroy'])->name('section.destroy');
+    Route::put('/sections/{section}/archive', [SectionController::class, 'archive'])->name('section.archive');
+    Route::put('/sections/{section}/restore', [SectionController::class, 'restore'])->name('section.restore');
 
     // Payment routes
     Route::get('/enrollment/payment', [PaymentController::class, 'index'])->name('payment.index');

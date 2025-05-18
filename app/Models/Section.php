@@ -19,6 +19,7 @@ class Section extends Model
         'adviser',
         'room',
         'capacity',
+        'archived'
     ];
 
     public function track()

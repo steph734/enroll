@@ -18,13 +18,17 @@
             <h2>Class Schedule</h2>
             <p style="font-size: 18px; color:#555 !important;">For 1st Semester, Academic Year 2024-2025</p>
         </div>
-        <div>
+        <div class="d-flex gap-2">
+            <a href="{{ route('schedule.archived') }}" style="text-decoration: none !important;">
+                <button class="btn btn-sm btn-warning p-1" style="font-size: 14px;">
+                    <i class="fa-solid fa-box-archive"></i> Archived Schedules
+                </button>
+            </a>
             <a href="{{ route('schedule.index') }}" style="text-decoration: none !important;">
                 <button class="btn btn-sm btn-primary p-1" style="font-size: 14px;">
                     <i class="fa-solid fa-calendar"></i> Schedule
                 </button>
             </a>
-
         </div>
     </div>
 
@@ -163,56 +167,56 @@
                                         class="action-btn text-primary" aria-label="Edit schedule">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </a>
-                                    <button type="button" class="action-btn text-danger custom-modal-toggle"
+                                    <button type="button" class="action-btn text-warning custom-modal-toggle"
                                         data-schedule-id="{{ $schedule->id }}"
                                         data-schedule-title="{{ $schedule->title }}"
-                                        aria-label="Delete schedule {{ $schedule->title }}">
-                                        <i class="fa-solid fa-ban"></i>
+                                        aria-label="Archive schedule {{ $schedule->title }}">
+                                        <i class="fa-solid fa-box-archive"></i>
                                     </button>
                                 </div>
                             </td>
                         </tr>
-                        <!-- Custom Delete Confirmation Modal -->
+                        <!-- Custom Archive Confirmation Modal -->
                         <div class="custom-modal" id="customDeleteModal{{ $schedule->id }}"
                             style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center; padding: 20px;">
                             <div
                                 style="background: white; border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
                                 <div
-                                    style="background: #dc3545; color: white; padding: 10px; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center;">
-                                    <h5 style="margin: 0;">Confirm Deletion</h5>
+                                    style="background: #ffc107; color: black; padding: 10px; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center;">
+                                    <h5 style="margin: 0;">Confirm Archive</h5>
                                     <button type="button" class="custom-modal-close"
                                         data-schedule-id="{{ $schedule->id }}"
-                                        style="background: none; border: none; color: white; font-size: 20px; cursor: pointer;"
-                                        aria-label="Close delete confirmation modal">
+                                        style="background: none; border: none; color: black; font-size: 20px; cursor: pointer;"
+                                        aria-label="Close archive confirmation modal">
                                         <i class="fa-solid fa-xmark"></i>
                                     </button>
                                 </div>
                                 <div style="text-align: center; font-size:50px;">
-                                    <i class="fa-solid fa-circle-minus" style="color: #dc3545;"></i>
+                                    <i class="fa-solid fa-box-archive" style="color: #ffc107;"></i>
                                 </div>
                                 <div style="padding: 15px;">
-                                    Are you sure you want to delete the schedule for
-                                    <strong>{{ $schedule->title }}</strong>? This action cannot be undone.
+                                    Are you sure you want to archive the schedule
+                                    <strong>{{ $schedule->title }}</strong>? This schedule will be moved to the archive and can be restored later if needed.
                                 </div>
                                 <div style="padding: 10px; display: flex; justify-content: flex-end; gap: 5px;">
-                                    <button type="button" class="custom-modal-close btn text-danger"
+                                    <button type="button" class="custom-modal-close btn text-warning"
                                         data-schedule-id="{{ $schedule->id }}"
                                         style="padding: 8px 16px; cursor: pointer;"
-                                        aria-label="Cancel delete schedule">Cancel</button>
-                                    <form action="{{ route('schedule.destroy', $schedule->id) }}" method="POST"
+                                        aria-label="Cancel archive schedule">Cancel</button>
+                                    <form action="{{ route('schedule.archive', $schedule->id) }}" method="POST"
                                         style="display:inline;">
                                         @csrf
-                                        @method('DELETE')
+                                        @method('PUT')
                                         <button type="submit"
-                                            style="padding: 8px 16px; border: none; border-radius: 4px; background: #dc3545; color: white; cursor: pointer;"
-                                            aria-label="Confirm delete schedule">Delete</button>
+                                            style="padding: 8px 16px; border: none; border-radius: 4px; background: #ffc107; color: black; cursor: pointer;"
+                                            aria-label="Confirm archive schedule">Archive</button>
                                     </form>
                                 </div>
                             </div>
                         </div>
                         @empty
                         <tr>
-                            <td colspan="12" class="text-center">No schedules found.</td>
+                            <td colspan="13" class="text-center">No schedules found.</td>
                         </tr>
                         @endforelse
                     </tbody>

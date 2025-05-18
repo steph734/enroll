@@ -15,7 +15,7 @@ class SubjectController extends Controller
 
         $strands = \App\Models\Strands::pluck('strand_name', 'id')->all();
 
-        $query = Subject::with(['strand', 'track']);
+        $query = Subject::with(['strand', 'track'])->where('archived', false);
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -123,5 +123,87 @@ class SubjectController extends Controller
         $subject->delete();
 
         return redirect()->route('subject.index')->with('success', 'Subject deleted successfully.');
+    }
+
+    /**
+     * Archive the specified subject.
+     *
+     * @param  \App\Models\Subject  $subject
+     * @return \Illuminate\Http\Response
+     */
+    public function archive(Subject $subject)
+    {
+        $subject->update(['archived' => true]);
+        return redirect()->back()->with('success', 'Subject has been archived successfully.');
+    }
+
+    /**
+     * Display archived subjects.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function archived(Request $request)
+    {
+        $strand = $request->query('strand');
+        $sort = $request->query('sort');
+        $search = $request->query('search');
+
+        $strands = \App\Models\Strands::pluck('strand_name', 'id')->all();
+
+        $query = Subject::with(['strand', 'track'])->where('archived', true);
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('subject_code', 'like', "%{$search}%")
+                    ->orWhere('subject_name', 'like', "%{$search}%");
+            });
+        }
+
+        if ($strand) {
+            $fullStrandName = collect($strands)->filter(function ($name) use ($strand) {
+                return str_contains(strtolower($name), strtolower($strand));
+            })->first();
+
+            if ($fullStrandName) {
+                $query->whereHas('strand', function ($q) use ($fullStrandName) {
+                    $q->where('strand_name', $fullStrandName);
+                });
+            }
+        }
+
+        switch ($sort) {
+            case 'newest':
+                $query->orderBy('created_at', 'desc');
+                break;
+            case 'oldest':
+                $query->orderBy('created_at', 'asc');
+                break;
+            case 'a-z':
+                $query->orderBy('subject_name', 'asc');
+                break;
+            case 'z-a':
+                $query->orderBy('subject_name', 'desc');
+                break;
+            default:
+                $query->orderBy('created_at', 'desc');
+        }
+
+        $subjects = $query->get();
+        $activePage = 'subject-archived';
+
+        return view('enrollment.subject-archived', compact('subjects', 'strand', 'sort', 'strands', 'search', 'activePage'));
+    }
+
+    /**
+     * Restore an archived subject.
+     *
+     * @param  \App\Models\Subject  $subject
+     * @return \Illuminate\Http\Response
+     */
+    public function restore(Subject $subject)
+    {
+        $subject->update(['archived' => false]);
+        return redirect()->back()->with('success', 'Subject has been restored successfully.');
     }
 }

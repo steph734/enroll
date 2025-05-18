@@ -18,6 +18,7 @@ class Subject extends Model
         'semester',
         'term',
         'prerequisites',
+        'archived'
     ];
 
     public function track()
